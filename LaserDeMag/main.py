@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import QApplication
-from LaserDeMag.ui.main_window import MainWindow
+#from LaserDeMag.ui.main_window import MainWindow
 from PyQt6.QtCore import QTranslator, QLocale
 import sys
 
