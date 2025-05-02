@@ -1,0 +1,2 @@
+W celu zainstalowania requirments wykonać polecenie:
+    pip install -r requirements.txt
