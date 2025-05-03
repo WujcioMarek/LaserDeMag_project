@@ -9,7 +9,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 units.setup_matplotlib()
-from scipy.constants import *
 def fake_notebook(*args, **kwargs):
     kwargs.setdefault('dynamic_ncols', True)
     return tqdm.tqdm(*args, **kwargs)

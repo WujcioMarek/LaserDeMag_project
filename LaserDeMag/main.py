@@ -1,18 +1,15 @@
-from PyQt6.QtWidgets import QApplication
-#from LaserDeMag.ui.main_window import MainWindow
-from PyQt6.QtCore import QTranslator, QLocale
-import sys
+from ui.gui import get_input_parameters
+from physics.model_3TM import get_material_properties, create_structure
+from simulation.runner import run_simulation
+from visual.plotter import draw_structure
 
 def main():
-    app = QApplication(sys.argv)
+    params = get_input_parameters()
+    material_obj, prop = get_material_properties(params['material'], params['Tc'], params['mu'], params['ge'])
+    S = create_structure(material_obj, prop)
 
-    # 🔁 Wczytaj tłumaczenie
-    translator = QTranslator()
-    if translator.load("resources/translations/pl.qm"):
-        app.installTranslator(translator)
-    else:
-        print("❌ Nie udało się załadować tłumaczenia.")
+    draw_structure(S, material_obj)
+    run_simulation(S, params)
 
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec_())
+if __name__ == "__main__":
+    main()
