@@ -5,7 +5,7 @@ W celu zainstalowania requirments wykonać polecenie:
 Uruchamianie środowiska:
 
  .venv\Scripts\activate
- pyqt5-tools designer
+ pyqt6-tools designer
 
 
  Instalacja qtdesginer na kompie:
@@ -13,4 +13,5 @@ Uruchamianie środowiska:
  środowisko wirtualne:
     python -m venv .venv
     .venv\Scripts\activate
-pip install pyqt5==5.15.4 pyqt5-tools==5.15.4.3.2 pyqt5-plugins==5.15.4.2.2
+pip install requirements.txt
+pip install pyqt6-tools
