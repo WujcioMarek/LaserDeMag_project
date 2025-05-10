@@ -3,8 +3,8 @@
     "Language": "Language:",
     "Export Plot": "Export Plot",
     "Switch Plot View": "Switch Plot View",
-    "LaserDeMag App": "LaserDeMag App",
-    "Description": "A simulation tool for studying ultrafast laser-induced demagnetization.",
+    "LaserDeMag": "LaserDeMag",
+    "Description": "This is a simulation tool for studying ultrafast laser-induced demagnetization in nanoscale magnetic materials. It models magnetization dynamics, visualises results in real time and allows parameter customization for advanced research.",
     "Material": "Material",
     "Type of material": "Type of material",
     "Select the type": "Select the type",
@@ -19,14 +19,16 @@
     "Electron-spin constant coupling ges": "Electron-spin constant coupling ges",
     "Spin-flip probability asf": "Spin-flip probability asf",
     "Clear fields": "Clear fields",
-    "Start the simulation": "Start the simulation"
+    "Start the simulation": "Start the simulation",
+    "info_title": "About LaserDeMag",
+    "info_message": "LaserDeMag is an advanced simulation tool designed to analyze ultrafast laser-induced demagnetization in nanoscale magnetic materials. It models the nonequilibrium interactions between electrons, spins, phonons, and photons to study how dimensional constraints affect magnetization dynamics. Users can customize material properties, laser pulse parameters, and environmental conditions to observe temperature evolution and magnetization changes over time. The application provides real-time visualization of results through dynamic graphs and allows exporting data for further analysis. Designed for researchers and scientists, PulseDeMag offers a powerful and intuitive interface for exploring the physics of ultrafast magnetization processes."
   },
   "Polski": {
     "Language": "Język:",
     "Export Plot": "Eksportuj wykres",
     "Switch Plot View": "Zmień widok wykresu",
-    "LaserDeMag App": "LaserDeMag Aplikacja",
-    "Description": "Narzędzie do symulacji ultrakwantowej demagnetyzacji wywołanej laserem.",
+    "LaserDeMag": "LaserDeMag",
+    "Description": "Narzędzie symulacyjne do badania ultra szybkiej demagnetyzacji wywołanej laserem w materiałach magnetycznych w skali nano. Modeluje dynamikę namagnesowania, wizualizuje wyniki w czasie rzeczywistym i umożliwia dostosowanie parametrów do zaawansowanych badań.",
     "Material": "Materiał",
     "Type of material": "Rodzaj materiału",
     "Select the type": "Wybierz rodzaj",
@@ -41,6 +43,8 @@
     "Electron-spin constant coupling ges": "Stała sprzężenia elektron-spin ges",
     "Spin-flip probability asf": "Prawdopodobieństwo fluktuacji spinu asf",
     "Clear fields": "Wyczyść pola",
-    "Start the simulation": "Uruchom symulację"
+    "Start the simulation": "Uruchom symulację",
+    "info_title": "O LaserDeMag",
+    "info_message": "LaserDeMag to zaawansowane narzędzie symulacyjne zaprojektowane do analizy błyskawicznego demagnetyzowania wywołanego przez laser w nanoskalowych materiałach magnetycznych. Modeluje ono interakcje w stanie nierównowagi pomiędzy elektronami, spinami, fononami i fotonami w celu badania, jak ograniczenia wymiarowe wpływają na dynamikę magnetyzacji. Użytkownicy mogą dostosować właściwości materiałów, parametry impulsu laserowego i warunki środowiskowe, aby obserwować ewolucję temperatury i zmiany magnetyzacji w czasie. Aplikacja oferuje wizualizację wyników w czasie rzeczywistym za pomocą dynamicznych wykresów i umożliwia eksport danych do dalszej analizy. Zaprojektowana z myślą o badaczach i naukowcach, PulseDeMag oferuje potężny i intuicyjny interfejs do badania fizyki ultrafastowych procesów magnetyzacji."
   }
 }

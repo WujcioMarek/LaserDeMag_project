@@ -1,8 +1,9 @@
 import json
 from PyQt6.QtCore import QSize, Qt, QEvent, pyqtSignal, QPoint
-from PyQt6.QtGui import QPalette, QIcon, QColor
+from PyQt6.QtGui import QPalette, QIcon, QColor, QFont, QPixmap
 from PyQt6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QMainWindow, QToolButton, QVBoxLayout, QWidget,
-QPushButton, QGroupBox, QGridLayout, QLineEdit, QComboBox, QFrame)
+                             QPushButton, QGroupBox, QGridLayout, QLineEdit, QComboBox, QFrame, QMessageBox,
+                             QSizePolicy, QSplitter, QSpacerItem)
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
@@ -26,27 +27,26 @@ class PlotCanvas(FigureCanvas):
 
 class CustomTitleBar(QWidget):
     theme_changed = pyqtSignal(str)  # Sygnał do zmiany motywu
+    info_clicked = pyqtSignal()
     def __init__(self, parent):
         super().__init__(parent)
         self.setAutoFillBackground(True)
-        self.setBackgroundRole(QPalette.ColorRole.Highlight)
         self.initial_pos = None
         title_bar_layout = QHBoxLayout(self)
         title_bar_layout.setContentsMargins(5, 0, 5, 0)
         title_bar_layout.setSpacing(2)
 
         self.title = QLabel(f"{self.__class__.__name__}", self)
-        self.title.setStyleSheet(
-            """font-weight: bold;
-               border: 2px solid black;
-               border-radius: 12px;
-               margin: 2px;
-            """
-        )
         self.title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         if title := parent.windowTitle():
             self.title.setText(title)
         title_bar_layout.addWidget(self.title)
+
+        self.info_button = QPushButton()
+        self.info_button.setIcon(QIcon("../resources/images/info_light.png"))  # Upewnij się, że masz plik info.png
+        self.info_button.setIconSize(QSize(32, 32))
+        self.info_button.setStyleSheet("border: none;")
+        self.info_button.clicked.connect(self.info_clicked.emit)
 
         # Theme switch button
         self.theme_switch_btn = QToolButton(self)
@@ -86,6 +86,7 @@ class CustomTitleBar(QWidget):
 
         # Add buttons
         buttons = [
+            self.info_button,
             self.theme_switch_btn,
             self.polish_btn,
             self.english_btn,
@@ -101,6 +102,8 @@ class CustomTitleBar(QWidget):
             button.setStyleSheet("border: none; background-color: transparent; border-radius: 15px;")
             title_bar_layout.addWidget(button)
 
+
+
     def mouseDoubleClickEvent(self, event):
         win = self.window()
         if win.isMaximized():
@@ -111,31 +114,39 @@ class CustomTitleBar(QWidget):
 
     def toggle_theme(self):
         """Toggles between light and dark theme."""
-        current_palette = QApplication.palette()
+        pal = QApplication.palette()
+        bg = pal.color(QPalette.ColorRole.Window).name()
 
         # Check the current theme and switch
-        if current_palette.color(QPalette.ColorRole.Window).lightness() > 127:
-            self.theme_changed.emit('dark')  # Emitujemy sygnał zmiany na ciemny
+        if pal.color(QPalette.ColorRole.Window).lightness() > 127:
+            self.theme_changed.emit('dark')
             self.theme_switch_btn.setIcon(QIcon('../resources/images/dark_ui.png'))
             self.title.setStyleSheet(
-                """font-weight: bold;
-                   border: 2px solid white;
+                f"""font-weight: bold;
+                   border: 2px solid {bg};
                    border-radius: 12px;
                    margin: 2px;
+                   color: {bg};
+                   background-color: transparent;
                 """
             )
             self.setStyleSheet("background-color: #336699;")
+            self.info_button.setIcon(QIcon("../resources/images/info_dark.png"))
+
 
         else:
-            self.theme_changed.emit('light')  # Emitujemy sygnał zmiany na jasny
+            self.theme_changed.emit('light')
             self.theme_switch_btn.setIcon(QIcon('../resources/images/light_ui.png'))
             self.title.setStyleSheet(
-                """font-weight: bold;
-                   border: 2px solid black;
+                f"""font-weight: bold;
+                   border: 2px solid {bg};
                    border-radius: 12px;
                    margin: 2px;
+                   color: {bg};
+                   background-color: transparent;
                 """
             )
+            self.info_button.setIcon(QIcon("../resources/images/info_light.png"))
 
     def window_state_changed(self, state):
         if state == Qt.WindowState.WindowMaximized:
@@ -149,7 +160,7 @@ class CustomTitleBar(QWidget):
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Custom Title Bar")
+        self.setWindowTitle("LaserDeMag App")
         self.resize(1024, 768)
         with open("../resources/translations/translations.json", "r", encoding="utf-8") as f:
             self.translations = json.load(f)
@@ -160,17 +171,37 @@ class MainWindow(QMainWindow):
         main_layout = QHBoxLayout()  # Use HBox layout to arrange the form and plot side by side
 
         self.title_bar = CustomTitleBar(self)
+        self.title_bar.info_clicked.connect(self.show_info_message)
         self.title_bar.setFixedHeight(40)  # Set a fixed height for the title bar
         # Control panel for form fields
         control_panel = QVBoxLayout()
-        self.export_btn = QPushButton("Export Plot")
-        self.switch_plot_btn = QPushButton("Switch Plot View")
         self.widgets = {}
 
         # Title and description for the form
+        header_layout = QHBoxLayout()
+        self.logo_label = QLabel()
+        self.logo_pixmap = QPixmap("../resources/images/logo_light.png").scaled(90, 90, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+        self.logo_label.setPixmap(self.logo_pixmap)
+        #title_label = QLabel("LaserDeMag")
         self.widgets['title'] = QLabel("LaserDeMag")
+        self.widgets['title'].setFont(QFont("Arial", 16, QFont.Weight.Bold))
+
+        # Dodanie elementów do headera
+        header_layout.addWidget(self.logo_label)
+        header_layout.addSpacing(10)
+        header_layout.addWidget(self.widgets['title'])
+        header_layout.setAlignment(self.widgets['title'], Qt.AlignmentFlag.AlignVCenter)
+        header_layout.addStretch()
+
+        # Opis
         self.widgets['description'] = QLabel("This is a simulation application.")
-        control_panel.addWidget(self.widgets['title'])
+        self.widgets['description'].adjustSize()
+        self.widgets['description'].setWordWrap(True)
+        self.widgets['description'].setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
+        self.widgets['description'].setStyleSheet("color: gray; font-size: 12px; margin-top: -5px;")
+
+        # --- Dodanie do panelu ---
+        control_panel.addLayout(header_layout)
         control_panel.addWidget(self.widgets['description'])
 
         # Material Box
@@ -254,12 +285,57 @@ class MainWindow(QMainWindow):
         self.canvas = PlotCanvas()
         plot_layout.addWidget(self.canvas)
 
-        # Add the plot section to the main layout on the right
-        main_layout.addLayout(control_panel, 1)  # The form goes on the left
-        main_layout.addWidget(plot_frame, 4)  # The plot goes on the right
+        right_widget = QWidget()
+        right_layout = QVBoxLayout()
+        buttons_panel = QVBoxLayout()
+        switch_plot_layout = QVBoxLayout()
+        self.up_arrow_btn = QToolButton()
+        self.up_arrow_btn.setIcon(QIcon("../resources/images/up_light.png"))
+        self.down_arrow_btn = QToolButton()
+        self.down_arrow_btn.setIcon(QIcon("../resources/images/down_light.png"))
+        switch_plot_layout.addWidget(self.up_arrow_btn)
+        switch_plot_layout.addWidget(self.down_arrow_btn)
 
-        # Set the central widget layout
+        # Sekcja z przyciskami do pobierania danych
+        download_layout = QVBoxLayout()
+        self.download_current_btn = QToolButton()
+        self.download_current_btn.setIcon(QIcon("../resources/images/download_photo_light.png"))  # Ikona pobierania wykresu
+        self.download_current_btn.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.download_current_btn.setFixedSize(QSize(30, 30))
+        self.download_current_btn.setIconSize(QSize(30, 30))
+        self.download_current_btn.setStyleSheet("border: none; background-color: transparent; border-radius: 15px;")
+        self.download_all_btn = QToolButton()
+        self.download_all_btn.setIcon(QIcon("../resources/images/download_all_light.png"))  # Ikona pobierania wszystkich wykresów
+        self.download_data_btn = QToolButton()
+        self.download_data_btn.setIcon(QIcon("../resources/images/download_data_light.png"))  # Ikona pobierania danych
+        self.zoom_btn = QToolButton()
+        self.zoom_btn.setIcon(QIcon("../resources/images/maxGraph_light.png"))  # Ikona powiększania wykresu
+
+        download_layout.addWidget(self.download_current_btn)
+        download_layout.addWidget(self.download_all_btn)
+        download_layout.addWidget(self.download_data_btn)
+        download_layout.addWidget(self.zoom_btn)
+
+        buttons_panel.addLayout(switch_plot_layout)
+        buttons_panel.addItem(QSpacerItem(20, 20, QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Expanding))
+        buttons_panel.addLayout(download_layout)
+        right_layout.addLayout(buttons_panel)
+        right_widget.setLayout(right_layout)
+
+        control_panel_widget = QWidget()
+        control_panel_widget.setLayout(control_panel)
+
+        splitter = QSplitter(Qt.Orientation.Horizontal)
+        splitter.addWidget(control_panel_widget)  # Left side: control panel with form elements
+        splitter.addWidget(plot_frame)  # Right side: plot area
+        splitter.addWidget(right_widget)
+        splitter.setStretchFactor(0, 1)  # Left part should not stretch
+        splitter.setStretchFactor(1, 2)  # Right part (plot) should take more space
+        splitter.setStretchFactor(2, 1)  # Right part (plot) should take more space
+
+        main_layout.addWidget(splitter)
         central_widget.setLayout(main_layout)
+
 
         # Creating a main layout and adding the title bar at the top
         title_bar_layout = QVBoxLayout()
@@ -278,8 +354,21 @@ class MainWindow(QMainWindow):
         # Connect buttons to functions
         self.widgets['clear_btn'].clicked.connect(self.clear_fields)
         self.widgets['start_btn'].clicked.connect(self.run_simulation_placeholder)
-        self.export_btn.clicked.connect(self.export_plot)
-        self.switch_plot_btn.clicked.connect(self.switch_plot)
+
+        self.up_arrow_btn.clicked.connect(self.switch_plot_up)
+        self.down_arrow_btn.clicked.connect(self.switch_plot_down)
+        self.download_current_btn.clicked.connect(self.download_current_plot)
+        self.download_all_btn.clicked.connect(self.download_all_plots)
+        self.download_data_btn.clicked.connect(self.download_data)
+        self.zoom_btn.clicked.connect(self.zoom_plot)
+
+    def show_info_message(self):
+        t = self.translations[self.current_language]
+        msg = QMessageBox(self)
+        msg.setWindowTitle(t["info_title"])
+        msg.setTextFormat(Qt.TextFormat.RichText)
+        msg.setText(f"<div style='min-width: 600px; max-width: 800px; text-align: justify;'>{t['info_message']}</div>")
+        msg.exec()
 
     def changeEvent(self, event):
         if event.type() == QEvent.Type.WindowStateChange:
@@ -337,10 +426,9 @@ class MainWindow(QMainWindow):
         self.material_type.setCurrentIndex(0)
 
     def update_language(self, lang):
+        self.current_language = lang
         t = self.translations[lang]
-        self.export_btn.setText(t['Export Plot'])
-        self.switch_plot_btn.setText(t['Switch Plot View'])
-        self.widgets['title'].setText(t['LaserDeMag App'])
+        self.widgets['title'].setText(t['LaserDeMag'])
         self.widgets['description'].setText(t['Description'])
         self.widgets['material_box'].setTitle(t['Material'])
         self.widgets['material_label'].setText(t['Type of material'])
@@ -372,6 +460,16 @@ class MainWindow(QMainWindow):
         self.widgets['material_box'].setStyleSheet("color: white;")
         self.widgets['laser_box'].setStyleSheet("color: white;")
         self.widgets['others_box'].setStyleSheet("color: white;")
+        self.widgets['description'].setStyleSheet("color: white;")
+        self.widgets['title'].setStyleSheet("color: white;")
+        new_logo = QPixmap("../resources/images/logo_dark.png").scaled(90, 90, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+        self.logo_label.setPixmap(new_logo)
+        self.download_current_btn.setIcon(QIcon("../resources/images/download_photo_dark.png"))
+        self.download_data_btn.setIcon(QIcon("../resources/images/download_data_dark.png"))
+        self.zoom_btn.setIcon(QIcon("../resources/images/maxGraph_dark.png"))
+        self.down_arrow_btn.setIcon(QIcon("../resources/images/down_dark.png"))
+        self.up_arrow_btn.setIcon(QIcon("../resources/images/up_dark.png"))
+        self.download_all_btn.setIcon(QIcon("../resources/images/download_all_dark.png"))
 
         for le in self.centralWidget().findChildren(QLineEdit):
             le.setStyleSheet("""
@@ -398,6 +496,32 @@ class MainWindow(QMainWindow):
                             selection-color: black;
                         }
                     """)
+        QApplication.instance().setStyleSheet("""
+            QMessageBox {
+                background-color: black;
+                color: white;
+            }
+            QMessageBox QLabel {
+                color: white;
+                font-size: 14px;
+            }
+            QMessageBox QPushButton {
+                min-width: 80px;
+                padding: 5px;
+                background-color: black;
+                border:1px solid white;
+            }
+        """)
+
+        for button in self.findChildren(QToolButton):
+            button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+            button.setFixedSize(QSize(30, 30))
+            button.setIconSize(QSize(30, 30))
+            button.setStyleSheet("""
+                       border: none;
+                       background-color: transparent;
+                       border-radius: 15px;
+        """)
 
         # Buttons
         self.widgets['clear_btn'].setStyleSheet("background-color: #444; color: white; border-radius: 5px;")
@@ -424,6 +548,16 @@ class MainWindow(QMainWindow):
         self.widgets['material_box'].setStyleSheet("color: black;")
         self.widgets['laser_box'].setStyleSheet("color: black;")
         self.widgets['others_box'].setStyleSheet("color: black;")
+        self.widgets['description'].setStyleSheet("color: black;")
+        self.widgets['title'].setStyleSheet("color: black;")
+        new_logo = QPixmap("../resources/images/logo_light.png").scaled(90, 90, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+        self.logo_label.setPixmap(new_logo)
+        self.download_current_btn.setIcon(QIcon("../resources/images/download_photo_light.png"))
+        self.download_data_btn.setIcon(QIcon("../resources/images/download_data_light.png"))
+        self.zoom_btn.setIcon(QIcon("../resources/images/maxGraph_light.png"))
+        self.down_arrow_btn.setIcon(QIcon("../resources/images/down_light.png"))
+        self.up_arrow_btn.setIcon(QIcon("../resources/images/up_light.png"))
+        self.download_all_btn.setIcon(QIcon("../resources/images/download_all_light.png"))
 
         # Buttons
         self.widgets['clear_btn'].setStyleSheet("background-color: #ddd; color: black; border-radius: 5px;")
@@ -443,6 +577,30 @@ class MainWindow(QMainWindow):
                             selection-color: black;
                         }
                     """)
+        QApplication.instance().setStyleSheet("""
+            QMessageBox {
+                background-color: white;
+                color: black;
+            }
+            QMessageBox QLabel {
+                color: black;
+                font-size: 14px;
+            }
+            QMessageBox QPushButton {
+                min-width: 80px;
+                padding: 5px;
+            }
+        """)
+
+        for button in self.findChildren(QToolButton):
+            button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+            button.setFixedSize(QSize(30, 30))
+            button.setIconSize(QSize(30, 30))
+            button.setStyleSheet("""
+                       border: none;
+                       background-color: transparent;
+                       border-radius: 15px;
+        """)
 
         light_palette = QPalette()
 
@@ -462,16 +620,34 @@ class MainWindow(QMainWindow):
     def run_simulation_placeholder(self):
         pass
 
-    def export_plot(self):
+    def switch_plot_up(self):
+        # Logika przełączania wykresu w górę
         pass
 
-    def switch_plot(self):
+    def switch_plot_down(self):
+        # Logika przełączania wykresu w dół
         pass
 
+    def download_current_plot(self):
+        # Logika pobierania obecnego wykresu
+        pass
+
+    def download_all_plots(self):
+        # Logika pobierania wszystkich wykresów
+        pass
+
+    def download_data(self):
+        # Logika pobierania danych
+        pass
+
+    def zoom_plot(self):
+        # Logika powiększania wykresu w oddzielnym oknie
+        pass
 
 if __name__ == "__main__":
     app = QApplication([])
     window = MainWindow()
-    window.set_light_ui()
+    window.set_dark_ui()
+    window.title_bar.toggle_theme()
     window.show()
     app.exec()
