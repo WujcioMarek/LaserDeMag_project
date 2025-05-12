@@ -23,7 +23,7 @@ def get_input_parameters():
      """
     # Domyślne wartości parametrów
     default_params = {
-        'material': 'CoNi',  # Domyślny materiał: Co
+        'material': 'Co',  # Domyślny materiał: Co
         'T0': 300,  # Temperatura początkowa (w K)
         'Tc': 1388,  # Temperatura Curie (w K)
         'mu': 1.5,  # Moment magnetyczny (np. w µB)
@@ -73,6 +73,7 @@ def get_input_parameters():
 def get_material_properties(material, Tc, mu, ge):
     if material == 'Co':
         material_obj = ud.Atom('Co')
+        print(material_obj.name)
     elif material == 'Ni':
         material_obj = ud.Atom('Ni')
     elif material == 'CoNi':
@@ -224,7 +225,8 @@ def main():
 
     plt.figure(figsize=[6, 8])
     plt.subplot(2, 1, 1)
-    select = S.get_all_positions_per_unique_layer()['CoNi']
+    print(S.get_all_positions_per_unique_layer().keys())
+    select = S.get_all_positions_per_unique_layer()[material_obj.name]
     plt.plot(delays.to('ps'), np.mean(temp_map[:, select, 0], 1), label='electrons')
     plt.plot(delays.to('ps'), np.mean(temp_map[:, select, 1], 1), label='phonons')
     plt.ylabel('Temperature [K]')

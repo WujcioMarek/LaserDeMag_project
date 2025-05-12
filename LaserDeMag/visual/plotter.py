@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import udkm1Dsim as ud
 
-def draw_structure(structure, material_name):
+def draw_structure(structure,material_name):
     num_layers = structure.get_number_of_layers()
     thicknesses = []
     names = []
@@ -28,7 +28,7 @@ def draw_structure(structure, material_name):
     plt.tight_layout()
     plt.show()
 
-def plot_results(S, delays, temp_map):
+def plot_results(S, delays, temp_map,material_name):
     import numpy as np
     distances = S.get_distances_of_layers()[2]
     plt.figure(figsize=[6, 12])
@@ -44,7 +44,7 @@ def plot_results(S, delays, temp_map):
     plt.tight_layout()
     plt.show()
 
-    select = S.get_all_positions_per_unique_layer()['CoNi']
+    select = S.get_all_positions_per_unique_layer()[material_name]
     plt.figure(figsize=[6, 8])
     plt.subplot(2, 1, 1)
     plt.plot(delays.to('ps'), np.mean(temp_map[:, select, 0], 1), label='electrons')

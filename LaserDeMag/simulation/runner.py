@@ -7,7 +7,7 @@ from LaserDeMag.visual.plotter import plot_results
 
 units = ud.u
 
-def run_simulation(S, params):
+def run_simulation(S, params,material_name):
     h = ud.Heat(S, True)
     h.save_data = False
     h.disp_messages = True
@@ -30,4 +30,4 @@ def run_simulation(S, params):
     delays = np.r_[-1:5:0.005] * units.ps
     temp_map, _ = h.get_temp_map(delays, init_temp)
 
-    plot_results(S, delays, temp_map)
+    plot_results(S, delays, temp_map,material_name)
