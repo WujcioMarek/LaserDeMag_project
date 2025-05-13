@@ -21,14 +21,14 @@ def get_material_properties(material, Tc, mu, ge):
         material_obj = ud.Atom('Co')
     elif material == 'Ni':
         material_obj = ud.Atom('Ni')
-    elif material == 'CoNi':
-        material_obj = ud.AtomMixed('CoNi')
-        Co = ud.Atom('Co')
-        Ni = ud.Atom('Ni')
-        material_obj.add_atom(Co, 0.5)
-        material_obj.add_atom(Ni, 0.5)
+    elif material == "Gd":
+        material_obj = ud.Atom('Gd')
+    elif material == "Fe":
+        material_obj = ud.Atom('Fe')
     else:
         raise ValueError(f"Nieznany materiał: {material}")
+
+    print(material_obj)
 
     prop = {
         'heat_capacity': ['0.1*T', 532 * units.J / units.kg / units.K, 1 / 7000],

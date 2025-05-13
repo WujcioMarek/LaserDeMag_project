@@ -5,24 +5,59 @@ from PyQt6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QMainWindow, QTo
                              QPushButton, QGroupBox, QGridLayout, QLineEdit, QComboBox, QFrame, QMessageBox,
                              QSizePolicy, QSplitter, QSpacerItem)
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+#from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg as FigureCanvas
 from matplotlib.figure import Figure
 from LaserDeMag.main import main
+from matplotlib.collections import QuadMesh
+from LaserDeMag.visual.plotter import plot_results
+from LaserDeMag.simulation.runner import plot_results
 
 class PlotCanvas(FigureCanvas):
     def __init__(self, parent=None):
-        fig = Figure(figsize=(5, 4), dpi=100)
-        self.axes = fig.add_subplot(111)
-        super().__init__(fig)
+        self.fig = Figure(figsize=(5, 4), dpi=100)
+        super().__init__(self.fig)
         self.setParent(parent)
-        self.plot_placeholder()
 
-    def plot_placeholder(self):
-        self.axes.clear()
-        self.axes.set_title("Simulation Result")
-        self.axes.set_xlabel("Delay (ps)")
-        self.axes.set_ylabel("Value")
-        self.axes.plot([], [])  # Placeholder empty plot
+    def show_map_plot(self, map_data):
+        self.fig.clf()
+        axs = self.fig.subplots(3, 1)
+        for i, ax in enumerate(axs):
+            d = map_data[i]
+            im = ax.pcolormesh(d["x"], d["y"], d["z"], shading="auto")
+            ax.set_xlabel(d["xlabel"])
+            ax.set_ylabel(d["ylabel"])
+            ax.set_title(d["title"])
+            self.fig.colorbar(im, ax=ax)
+        self.fig.tight_layout()  # Automatyczne dostosowanie
+        self.fig.subplots_adjust(hspace=0.4)  # Dostosowanie odstępu (spróbuj różnych wartości)
         self.draw()
+
+    def show_line_plot(self, line_data):
+        self.fig.clf()
+        axs = self.fig.subplots(2, 1)
+        axs[0].plot(line_data[0]["x"], line_data[0]["y"], label=line_data[0]["label"])
+        axs[0].plot(line_data[1]["x"], line_data[1]["y"], label=line_data[1]["label"])
+        axs[0].set_title(line_data[0]["title"])
+        axs[0].set_xlabel(line_data[0]["xlabel"])
+        axs[0].set_ylabel(line_data[0]["ylabel"])
+        axs[0].legend()
+
+        axs[1].plot(line_data[2]["x"], line_data[2]["y"], label=line_data[2]["label"])
+        axs[1].set_title(line_data[2]["title"])
+        axs[1].set_xlabel(line_data[2]["xlabel"])
+        axs[1].set_ylabel(line_data[2]["ylabel"])
+        axs[1].legend()
+        self.draw()
+
+    def next_plot(self):
+        if self.plots:
+            new_index = (self.current_plot_index + 1) % len(self.plots)
+            self.show_plot(new_index)
+
+    def previous_plot(self):
+        if self.plots:
+            new_index = (self.current_plot_index - 1) % len(self.plots)
+            self.show_plot(new_index)
 
 
 class CustomTitleBar(QWidget):
@@ -161,7 +196,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("LaserDeMag App")
-        self.resize(1024, 768)
+        self.resize(1200, 900)
         with open("../resources/translations/translations.json", "r", encoding="utf-8") as f:
             self.translations = json.load(f)
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
@@ -279,11 +314,13 @@ class MainWindow(QMainWindow):
         control_panel.addLayout(btn_layout)
 
         # Plot Layout (on the right side of the form)
-        plot_frame = QFrame()
-        plot_frame.setFrameShape(QFrame.Shape.StyledPanel)
-        plot_layout = QVBoxLayout(plot_frame)
-        self.canvas = PlotCanvas()
-        plot_layout.addWidget(self.canvas)
+        self.plot_frame = QFrame()
+        self.plot_frame.setFrameShape(QFrame.Shape.StyledPanel)
+        plot_layout = QVBoxLayout(self.plot_frame)
+        #self.canvas = PlotCanvas()
+        self.plot_canvas = PlotCanvas(self.plot_frame)
+        plot_layout.addWidget(self.plot_canvas)
+
 
         right_widget = QWidget()
         right_layout = QVBoxLayout()
@@ -324,10 +361,11 @@ class MainWindow(QMainWindow):
 
         control_panel_widget = QWidget()
         control_panel_widget.setLayout(control_panel)
+        control_panel_widget.setFixedWidth(320)
 
         splitter = QSplitter(Qt.Orientation.Horizontal)
         splitter.addWidget(control_panel_widget)  # Left side: control panel with form elements
-        splitter.addWidget(plot_frame)  # Right side: plot area
+        splitter.addWidget(self.plot_frame)  # Right side: plot area
         splitter.addWidget(right_widget)
         splitter.setStretchFactor(0, 1)  # Left part should not stretch
         splitter.setStretchFactor(1, 2)  # Right part (plot) should take more space
@@ -433,7 +471,7 @@ class MainWindow(QMainWindow):
         self.widgets['material_box'].setTitle(t['Material'])
         self.widgets['material_label'].setText(t['Type of material'])
         self.material_type.clear()
-        self.material_type.addItems([t['Select the type'], "Fe", "Ni", "Co"])
+        self.material_type.addItems([t['Select the type'], "Fe", "Ni", "Co", "Gd"])
         self.widgets['init_temp_label'].setText(t['Initial temperature T0'])
         self.widgets['curie_temp_label'].setText(t['Curie temperature TC'])
         self.widgets['mag_moment_label'].setText(t['Magnetic moment μat'])
@@ -641,15 +679,26 @@ class MainWindow(QMainWindow):
         }
 
     def start_simulation(self):
+        self.current_plot_index = 0
         params = self.get_params_from_form()
-        main(params)
+        print(params)
+        self.plot_data = main(params)  # << zamiast 'figures'
+        self.update_plot()
+        #main(params)
+
+    def update_plot(self):
+        if self.current_plot_index == 0:
+            self.plot_canvas.show_map_plot(self.plot_data["maps"])
+        else:
+            self.plot_canvas.show_line_plot(self.plot_data["lines"])
+
     def switch_plot_up(self):
-        # Logika przełączania wykresu w górę
-        pass
+        self.current_plot_index = (self.current_plot_index + 1) % 2
+        self.update_plot()
 
     def switch_plot_down(self):
-        # Logika przełączania wykresu w dół
-        pass
+        self.current_plot_index = (self.current_plot_index - 1) % 2
+        self.update_plot()
 
     def download_current_plot(self):
         # Logika pobierania obecnego wykresu

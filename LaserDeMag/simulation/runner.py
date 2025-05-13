@@ -30,4 +30,4 @@ def run_simulation(S, params,material_name):
     delays = np.r_[-1:5:0.005] * units.ps
     temp_map, _ = h.get_temp_map(delays, init_temp)
 
-    plot_results(S, delays, temp_map,material_name)
+    return plot_results(S, delays, temp_map, material_name)
