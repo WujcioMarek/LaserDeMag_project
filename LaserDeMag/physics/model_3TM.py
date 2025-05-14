@@ -2,7 +2,6 @@ import sys
 
 import tqdm
 
-# Nadpisanie modułu tqdm.notebook w sys.modules, zanim załaduje go udkm1Dsim
 sys.modules['tqdm.notebook'] = tqdm
 import udkm1Dsim as ud
 units = ud.u
@@ -27,8 +26,6 @@ def get_material_properties(material, Tc, mu, ge):
         material_obj = ud.Atom('Fe')
     else:
         raise ValueError(f"Nieznany materiał: {material}")
-
-    print(material_obj)
 
     prop = {
         'heat_capacity': ['0.1*T', 532 * units.J / units.kg / units.K, 1 / 7000],

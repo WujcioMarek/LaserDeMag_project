@@ -31,3 +31,4 @@ def run_simulation(S, params,material_name):
     temp_map, _ = h.get_temp_map(delays, init_temp)
 
     return plot_results(S, delays, temp_map, material_name)
+

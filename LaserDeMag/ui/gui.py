@@ -1,16 +1,38 @@
-import json
+import json, os
+import numpy as np
 from PyQt6.QtCore import QSize, Qt, QEvent, pyqtSignal, QPoint
 from PyQt6.QtGui import QPalette, QIcon, QColor, QFont, QPixmap
 from PyQt6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QMainWindow, QToolButton, QVBoxLayout, QWidget,
                              QPushButton, QGroupBox, QGridLayout, QLineEdit, QComboBox, QFrame, QMessageBox,
-                             QSizePolicy, QSplitter, QSpacerItem)
+                             QSizePolicy, QSplitter, QSpacerItem, QFileDialog)
+from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-#from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg as FigureCanvas
 from matplotlib.figure import Figure
+from LaserDeMag.physics.model_3TM import get_material_properties
 from LaserDeMag.main import main
-from matplotlib.collections import QuadMesh
-from LaserDeMag.visual.plotter import plot_results
-from LaserDeMag.simulation.runner import plot_results
+from pint import Quantity
+import xml.etree.ElementTree as ET
+import xml.dom.minidom
+
+class ParameterEncoder(json.JSONEncoder):
+    def default(self, obj):
+        # Pint Quantity
+        if isinstance(obj, Quantity):
+            return {"value": obj.magnitude, "unit": str(obj.units)}
+        # NumPy scalar
+        if isinstance(obj, (np.generic,)):
+            return obj.item()
+        # NumPy array
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        # Complex
+        if isinstance(obj, complex):
+            return {"real": obj.real, "imag": obj.imag}
+        # tuple -> list
+        if isinstance(obj, tuple):
+            return list(obj)
+        # everything else
+        return super().default(obj)
 
 class PlotCanvas(FigureCanvas):
     def __init__(self, parent=None):
@@ -18,7 +40,17 @@ class PlotCanvas(FigureCanvas):
         super().__init__(self.fig)
         self.setParent(parent)
 
+        self.orig_parent = parent
+        self.orig_layout = parent.layout() if parent else None
+
+        self.warning_message = ""
+        self.information_message = ""
+        self.critical_message = ""
+
     def show_map_plot(self, map_data):
+        self.current_plot_type = "map"
+        self.current_plot_index = 0
+        self.plot_data["maps"] = map_data
         self.fig.clf()
         axs = self.fig.subplots(3, 1)
         for i, ax in enumerate(axs):
@@ -33,6 +65,9 @@ class PlotCanvas(FigureCanvas):
         self.draw()
 
     def show_line_plot(self, line_data):
+        self.current_plot_type = "line"
+        self.current_plot_index = 0
+        self.plot_data["lines"] = line_data
         self.fig.clf()
         axs = self.fig.subplots(2, 1)
         axs[0].plot(line_data[0]["x"], line_data[0]["y"], label=line_data[0]["label"])
@@ -49,16 +84,129 @@ class PlotCanvas(FigureCanvas):
         axs[1].legend()
         self.draw()
 
-    def next_plot(self):
-        if self.plots:
-            new_index = (self.current_plot_index + 1) % len(self.plots)
-            self.show_plot(new_index)
+    def save_current_plot(self, file_path):
+        try:
+            self.fig.savefig(file_path, bbox_inches='tight')
+            QMessageBox.information(
+                self,
+                self.information_message["title"],
+                f"{self.information_message['message']}\n{file_path}"
+            )
+        except Exception as e:
+            QMessageBox.critical(
+                self,
+                self.critical_message["title"],
+                f"{self.critical_message['message']}:\n{str(e)}"
+            )
 
-    def previous_plot(self):
-        if self.plots:
-            new_index = (self.current_plot_index - 1) % len(self.plots)
-            self.show_plot(new_index)
+    def save_all_plots(self, directory):
+        try:
+            if not hasattr(self, "plot_data") or not self.plot_data:
+                QMessageBox.warning(self, self.warning_message["title"], self.warning_message["message"])
+                return
 
+            all_plots = [
+                *[(data, "map") for data in self.plot_data.get("maps", [])],
+                *[(data, "line") for data in self.plot_data.get("lines", [])]
+            ]
+
+            for idx, (data, kind) in enumerate(all_plots):
+                fig, ax = plt.subplots()
+                if kind == "map":
+                    im = ax.pcolormesh(data["x"], data["y"], data["z"], shading="auto")
+                    plt.colorbar(im, ax=ax)
+                elif kind == "line":
+                    ax.plot(data["x"], data["y"], label=data["label"])
+                    ax.legend()
+
+                ax.set_title(data["title"])
+                ax.set_xlabel(data["xlabel"])
+                ax.set_ylabel(data["ylabel"])
+                fig.tight_layout()
+                fig.savefig(os.path.join(directory, f"plot_{kind}_{idx}.png"))
+                plt.close(fig)
+
+            QMessageBox.information(self, self.information_message["title"], self.information_message["message"])
+
+
+        except Exception as e:
+            QMessageBox.critical(self, self.critical_message["title"], f"{self.critical_message['message']}:\n{str(e)}")
+
+
+    def set_all_plots(self, figures):
+        self.plot_data = figures
+
+    def update_messages(self, translations):
+        self.warning_message = {
+            "title": translations.get('warning_title', 'Warning'),
+            "message": translations.get('warning_message', 'No plot data to save.')
+        }
+        self.information_message = {
+            "title": translations.get('information_title', 'Information'),
+            "message": translations.get('information_message', 'All plots saved successfully.')
+        }
+        self.critical_message = {
+            "title": translations.get('critical_title', 'Critical Error'),
+            "message": translations.get('critical_message', 'Error saving all plots')
+        }
+        self.fullscreen_title = translations.get('fullscreen_title', "Chart Fullscreen Preview")
+
+    def show_warning(self):
+        QMessageBox.warning(
+            self,
+            "Warning",
+            self.warning_message
+        )
+
+    def show_information(self):
+        QMessageBox.information(
+            self,
+            "Information",
+            self.information_message
+        )
+
+    def show_critical(self):
+        QMessageBox.critical(
+            self,
+            "Critical Error",
+            self.critical_message
+        )
+
+    def open_current_plot_fullscreen(self):
+        if not hasattr(self, "plot_data") or not self.plot_data:
+            QMessageBox.warning(self, "Brak danych", "Brak danych wykresów do zapisu.")
+            return
+
+        # 1) Utwórz nowe pełnoekranowe okno
+        w = QMainWindow(self.orig_parent)
+        w.setWindowTitle(self.fullscreen_title)
+        w.showFullScreen()
+
+        # 2) Stwórz nowy PlotCanvas w tym oknie
+        full_canvas = PlotCanvas(parent=w)
+        full_canvas.plot_data = self.plot_data.copy()  # lub deepcopy jeśli trzeba
+        full_canvas.current_plot_type = self.current_plot_type
+        full_canvas.current_plot_index = self.current_plot_index
+
+        # 3) Wywołaj odpowiednią metodę rysującą
+        if full_canvas.current_plot_type == "map":
+            full_canvas.show_map_plot(full_canvas.plot_data["maps"])
+        else:
+            full_canvas.show_line_plot(full_canvas.plot_data["lines"])
+
+        # 4) Włóż go do okna
+        container = QWidget()
+        layout = QVBoxLayout(container)
+        layout.addWidget(full_canvas)
+        w.setCentralWidget(container)
+
+        # 5) Obsługa Esc
+        def on_key(event):
+            if event.key()  == 16777216:
+                w.close()
+        w.keyPressEvent = on_key
+
+        w.show()
 
 class CustomTitleBar(QWidget):
     theme_changed = pyqtSignal(str)  # Sygnał do zmiany motywu
@@ -317,7 +465,6 @@ class MainWindow(QMainWindow):
         self.plot_frame = QFrame()
         self.plot_frame.setFrameShape(QFrame.Shape.StyledPanel)
         plot_layout = QVBoxLayout(self.plot_frame)
-        #self.canvas = PlotCanvas()
         self.plot_canvas = PlotCanvas(self.plot_frame)
         plot_layout.addWidget(self.plot_canvas)
 
@@ -484,6 +631,17 @@ class MainWindow(QMainWindow):
         self.widgets['asf_label'].setText(t['Spin-flip probability asf'])
         self.widgets['clear_btn'].setText(t['Clear fields'])
         self.widgets['start_btn'].setText(t['Start the simulation'])
+        self.plot_canvas.update_messages(t)
+
+        self.information_title = t['information_title']
+        self.critical_title = t['critical_title']
+
+        self.save_success_json = t['save_success_json']
+        self.save_error_json = t['save_error_json']
+
+        self.save_success_xml = t['save_success_xml']
+        self.save_error_xml = t['save_error_xml']
+
 
     def change_theme(self, theme: str):
         """Zmienia motyw na ciemny lub jasny na podstawie sygnału."""
@@ -681,12 +839,18 @@ class MainWindow(QMainWindow):
     def start_simulation(self):
         self.current_plot_index = 0
         params = self.get_params_from_form()
-        print(params)
-        self.plot_data = main(params)  # << zamiast 'figures'
+
+        material_obj, prop = get_material_properties(
+        params['material'], params['Tc'], params['mu'], params['ge'])
+        self.material_props = prop
+        self.material_name = material_obj.name
+
+        self.plot_data = main(params)
+        self.plot_canvas.set_all_plots(self.plot_data)
         self.update_plot()
-        #main(params)
 
     def update_plot(self):
+        self.plot_canvas.current_plot_index = self.current_plot_index  # zapewnia spójność z GUI
         if self.current_plot_index == 0:
             self.plot_canvas.show_map_plot(self.plot_data["maps"])
         else:
@@ -701,25 +865,151 @@ class MainWindow(QMainWindow):
         self.update_plot()
 
     def download_current_plot(self):
-        # Logika pobierania obecnego wykresu
-        pass
+        file_path, _ = QFileDialog.getSaveFileName(
+            self,
+            "Zapisz wykres",
+            "",
+            "Plik PNG (*.png);;Plik PDF (*.pdf);;Plik SVG (*.svg)",
+            options=QFileDialog.Option.DontUseNativeDialog
+        )
+        if file_path:
+            self.plot_canvas.save_current_plot(file_path)
 
     def download_all_plots(self):
-        # Logika pobierania wszystkich wykresów
-        pass
+        directory = QFileDialog.getExistingDirectory(
+            self,
+            "Wybierz folder do zapisania wszystkich wykresów",
+            options=QFileDialog.Option.ShowDirsOnly | QFileDialog.Option.DontUseNativeDialog
+        )
+        if directory:
+            self.plot_canvas.save_all_plots(directory)
 
     def download_data(self):
-        # Logika pobierania danych
-        pass
+        """
+        Ask user whether JSON or XML, then save.
+        """
+        params = self.collect_simulation_parameters()
+
+        file_path, selected_filter = QFileDialog.getSaveFileName(
+            self,
+            "Zapisz parametry symulacji",
+            "",
+            "JSON (*.json);;XML (*.xml)",
+            options=QFileDialog.Option.DontUseNativeDialog
+        )
+        if not file_path:
+            return
+
+        def quantity_to_plain(obj):
+            if hasattr(obj, 'magnitude') and hasattr(obj, 'units'):
+                return f"{obj.magnitude} {obj.units}"
+            if isinstance(obj, list):
+                return [quantity_to_plain(x) for x in obj]
+            if isinstance(obj, dict):
+                return {k: quantity_to_plain(v) for k, v in obj.items()}
+            return obj
+
+        def pretty_print_xml(elem):
+            """Zamień Element na sformatowany XML string z wcięciami."""
+            rough_string = ET.tostring(elem, 'utf-8')
+            reparsed = xml.dom.minidom.parseString(rough_string)
+            return reparsed.toprettyxml(indent="  ")
+
+        # JSON
+        if selected_filter.startswith("JSON"):
+            if not file_path.lower().endswith(".json"):
+                file_path += ".json"
+
+            def quantity_serializer(obj):
+                if hasattr(obj, 'magnitude') and hasattr(obj, 'units'):
+                    return {
+                        'value': obj.magnitude,
+                        'unit': str(obj.units)
+                    }
+
+                if isinstance(obj, list) and obj and hasattr(obj[0], 'magnitude'):
+                    return [quantity_serializer(x) for x in obj]
+                raise TypeError(f"Obiekt {obj!r} nie jest serializowalny do JSON")
+
+            try:
+                with open(file_path, 'w', encoding='utf-8') as f:
+                    json.dump(params, f, indent=2, ensure_ascii=False, cls=ParameterEncoder)
+                QMessageBox.information(
+                    self,
+                    self.information_title,
+                    self.save_success_json.format(path=file_path)
+                )
+            except Exception as e:
+                QMessageBox.critical(
+                    self,
+                    self.critical_title,
+                    self.save_error_json.format(err=str(e))
+                )
+            return
+
+        #XML
+        elif selected_filter.startswith("XML"):
+            if not file_path.lower().endswith(".xml"):
+                file_path += ".xml"
+            try:
+                plain_params = quantity_to_plain(params)
+                root = ET.Element("simulation_parameters")
+
+                def add_dict_to_xml(parent, data):
+                    if isinstance(data, dict):
+                        for key, value in data.items():
+                            child = ET.SubElement(parent, str(key))
+                            add_dict_to_xml(child, value)
+                    elif isinstance(data, list):
+                        for item in data:
+                            item_elem = ET.SubElement(parent, "item")
+                            add_dict_to_xml(item_elem, item)
+                    else:
+                        parent.text = str(data)
+
+                add_dict_to_xml(root, plain_params)
+
+                with open(file_path, 'w', encoding='utf-8') as f:
+                    f.write(pretty_print_xml(root))
+
+                QMessageBox.information(
+                    self,
+                    self.information_title,
+                    self.save_success_xml.format(path=file_path)
+                )
+            except Exception as e:
+                QMessageBox.critical(
+                    self,
+                    self.critical_title,
+                    self.save_error_xml.format(err=str(e))
+                )
+            return
 
     def zoom_plot(self):
-        # Logika powiększania wykresu w oddzielnym oknie
-        pass
+        self.plot_canvas.open_current_plot_fullscreen()
+
+    def collect_simulation_parameters(self):
+        """
+        Returns a dict of all parameters:
+        - form inputs
+        - internal simulation settings (e.g. S, ud.Heat settings, units, etc.)
+        """
+        params = {
+            'user': self.get_params_from_form(),
+            'material': {
+                'name': getattr(self, 'material_name', None),
+                **getattr(self, 'material_props', {})
+            },
+        }
+        return params
+
 
 if __name__ == "__main__":
     app = QApplication([])
     window = MainWindow()
     window.set_dark_ui()
+    t = window.current_language
+    window.update_language(t)
     window.title_bar.toggle_theme()
     window.show()
     app.exec()

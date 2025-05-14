@@ -1,4 +1,4 @@
-# LaserDeMag/visual/plotter.py
+
 def plot_results(S, delays, temp_map, material_name):
     import numpy as np
 

@@ -21,7 +21,21 @@
     "Clear fields": "Clear fields",
     "Start the simulation": "Start the simulation",
     "info_title": "About LaserDeMag",
-    "info_message": "LaserDeMag is an advanced simulation tool designed to analyze ultrafast laser-induced demagnetization in nanoscale magnetic materials. It models the nonequilibrium interactions between electrons, spins, phonons, and photons to study how dimensional constraints affect magnetization dynamics. Users can customize material properties, laser pulse parameters, and environmental conditions to observe temperature evolution and magnetization changes over time. The application provides real-time visualization of results through dynamic graphs and allows exporting data for further analysis. Designed for researchers and scientists, PulseDeMag offers a powerful and intuitive interface for exploring the physics of ultrafast magnetization processes."
+    "info_message": "LaserDeMag is an advanced simulation tool designed to analyze ultrafast laser-induced demagnetization in nanoscale magnetic materials. It models the nonequilibrium interactions between electrons, spins, phonons, and photons to study how dimensional constraints affect magnetization dynamics. Users can customize material properties, laser pulse parameters, and environmental conditions to observe temperature evolution and magnetization changes over time. The application provides real-time visualization of results through dynamic graphs and allows exporting data for further analysis. Designed for researchers and scientists, PulseDeMag offers a powerful and intuitive interface for exploring the physics of ultrafast magnetization processes.",
+    "information_title": "Saved",
+    "information_message": "Save completed successfully.",
+    "critical_title": "Error",
+    "critical_message": "An error occurred during saving.",
+    "warning_title": "No Data",
+    "warning_message": "No plot data to save.",
+    "fullscreen_title": "Chart Fullscreen Preview",
+    "save_dialog_title": "Save simulation parameters",
+    "save_filter_json": "JSON File (*.json)",
+    "save_filter_xml": "XML File (*.xml)",
+    "save_success_json": "Parameters saved as JSON:\n{path}",
+    "save_success_xml": "Parameters saved as XML:\n{path}",
+    "save_error_json": "Could not save JSON:\n{err}",
+    "save_error_xml": "Could not save XML:\n{err}"
   },
   "Polski": {
     "Language": "Język:",
@@ -45,6 +59,20 @@
     "Clear fields": "Wyczyść pola",
     "Start the simulation": "Uruchom symulację",
     "info_title": "O LaserDeMag",
-    "info_message": "LaserDeMag to zaawansowane narzędzie symulacyjne zaprojektowane do analizy błyskawicznego demagnetyzowania wywołanego przez laser w nanoskalowych materiałach magnetycznych. Modeluje ono interakcje w stanie nierównowagi pomiędzy elektronami, spinami, fononami i fotonami w celu badania, jak ograniczenia wymiarowe wpływają na dynamikę magnetyzacji. Użytkownicy mogą dostosować właściwości materiałów, parametry impulsu laserowego i warunki środowiskowe, aby obserwować ewolucję temperatury i zmiany magnetyzacji w czasie. Aplikacja oferuje wizualizację wyników w czasie rzeczywistym za pomocą dynamicznych wykresów i umożliwia eksport danych do dalszej analizy. Zaprojektowana z myślą o badaczach i naukowcach, PulseDeMag oferuje potężny i intuicyjny interfejs do badania fizyki ultrafastowych procesów magnetyzacji."
+    "info_message": "LaserDeMag to zaawansowane narzędzie symulacyjne zaprojektowane do analizy błyskawicznego demagnetyzowania wywołanego przez laser w nanoskalowych materiałach magnetycznych. Modeluje ono interakcje w stanie nierównowagi pomiędzy elektronami, spinami, fononami i fotonami w celu badania, jak ograniczenia wymiarowe wpływają na dynamikę magnetyzacji. Użytkownicy mogą dostosować właściwości materiałów, parametry impulsu laserowego i warunki środowiskowe, aby obserwować ewolucję temperatury i zmiany magnetyzacji w czasie. Aplikacja oferuje wizualizację wyników w czasie rzeczywistym za pomocą dynamicznych wykresów i umożliwia eksport danych do dalszej analizy. Zaprojektowana z myślą o badaczach i naukowcach, PulseDeMag oferuje potężny i intuicyjny interfejs do badania fizyki ultrafastowych procesów magnetyzacji.",
+    "information_title": "Zapisano",
+    "information_message": "Zapis zakończony pomyślnie.",
+    "critical_title": "Błąd",
+    "critical_message": "Błąd podczas zapisu.",
+    "warning_title": "Brak danych",
+    "warning_message": "Brak danych wykresów do zapisu.",
+    "fullscreen_title": "Podgląd wykresu – pełny ekran",
+    "save_dialog_title": "Zapisz parametry symulacji",
+    "save_filter_json": "Plik JSON (*.json)",
+    "save_filter_xml": "Plik XML (*.xml)",
+    "save_success_json": "Parametry zapisane jako JSON:\n{path}",
+    "save_success_xml": "Parametry zapisane jako XML:\n{path}",
+    "save_error_json": "Nie udało się zapisać JSON:\n{err}",
+    "save_error_xml": "Nie udało się zapisać XML:\n{err}"
   }
 }
