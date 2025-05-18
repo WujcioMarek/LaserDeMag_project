@@ -11,8 +11,7 @@ from matplotlib.figure import Figure
 from LaserDeMag.physics.model_3TM import get_material_properties
 from LaserDeMag.main import main
 from pint import Quantity
-import xml.etree.ElementTree as ET
-import xml.dom.minidom
+from LaserDeMag.io.file_handler import save_simulation_parameters, load_simulation_parameters
 
 class ParameterEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -450,9 +449,12 @@ class MainWindow(QMainWindow):
         self.widgets['others_box'] = others_box
 
         # Buttons for actions
+        self.load_from_file_btn = QToolButton()
+        self.load_from_file_btn.setIcon(QIcon("../resources/images/from_file_light.png"))
         self.widgets['clear_btn'] = QPushButton("Clear Fields")
         self.widgets['start_btn'] = QPushButton("Start Simulation")
         btn_layout = QHBoxLayout()
+        btn_layout.addWidget(self.load_from_file_btn)
         btn_layout.addWidget(self.widgets['clear_btn'])
         btn_layout.addWidget(self.widgets['start_btn'])
 
@@ -537,6 +539,7 @@ class MainWindow(QMainWindow):
         self.update_language("English")
 
         # Connect buttons to functions
+        self.load_from_file_btn.clicked.connect(self.load_user_data)
         self.widgets['clear_btn'].clicked.connect(self.clear_fields)
         self.widgets['start_btn'].clicked.connect(self.start_simulation)
 
@@ -632,6 +635,12 @@ class MainWindow(QMainWindow):
         self.widgets['clear_btn'].setText(t['Clear fields'])
         self.widgets['start_btn'].setText(t['Start the simulation'])
         self.plot_canvas.update_messages(t)
+        self.missing_fields_error = t['missing_fields_error']
+        self.error_invalid_format = t['error_invalid_format']
+        self.error_json_decode = t['error_json_decode']
+        self.error_file_not_found = t['error_file_not_found']
+
+
 
         self.information_title = t['information_title']
         self.critical_title = t['critical_title']
@@ -666,6 +675,7 @@ class MainWindow(QMainWindow):
         self.down_arrow_btn.setIcon(QIcon("../resources/images/down_dark.png"))
         self.up_arrow_btn.setIcon(QIcon("../resources/images/up_dark.png"))
         self.download_all_btn.setIcon(QIcon("../resources/images/download_all_dark.png"))
+        self.load_from_file_btn.setIcon(QIcon("../resources/images/from_file_dark.png"))
 
         for le in self.centralWidget().findChildren(QLineEdit):
             le.setStyleSheet("""
@@ -754,6 +764,7 @@ class MainWindow(QMainWindow):
         self.down_arrow_btn.setIcon(QIcon("../resources/images/down_light.png"))
         self.up_arrow_btn.setIcon(QIcon("../resources/images/up_light.png"))
         self.download_all_btn.setIcon(QIcon("../resources/images/download_all_light.png"))
+        self.load_from_file_btn.setIcon(QIcon("../resources/images/from_file_light.png"))
 
         # Buttons
         self.widgets['clear_btn'].setStyleSheet("background-color: #ddd; color: black; border-radius: 5px;")
@@ -889,12 +900,13 @@ class MainWindow(QMainWindow):
         Ask user whether JSON or XML, then save.
         """
         params = self.collect_simulation_parameters()
+        t = self.translations[self.current_language]
 
         file_path, selected_filter = QFileDialog.getSaveFileName(
             self,
-            "Zapisz parametry symulacji",
+            t['save_dialog_title'],
             "",
-            "JSON (*.json);;XML (*.xml)",
+            f"{t['save_filter_json']};;{t['save_filter_xml']}",
             options=QFileDialog.Option.DontUseNativeDialog
         )
         if not file_path:
@@ -909,81 +921,23 @@ class MainWindow(QMainWindow):
                 return {k: quantity_to_plain(v) for k, v in obj.items()}
             return obj
 
-        def pretty_print_xml(elem):
-            """Zamień Element na sformatowany XML string z wcięciami."""
-            rough_string = ET.tostring(elem, 'utf-8')
-            reparsed = xml.dom.minidom.parseString(rough_string)
-            return reparsed.toprettyxml(indent="  ")
+        # Wybierz format
+        file_format = "json" if selected_filter.startswith("JSON") else "xml"
 
-        # JSON
-        if selected_filter.startswith("JSON"):
-            if not file_path.lower().endswith(".json"):
-                file_path += ".json"
+        try:
+            saved_path = save_simulation_parameters(
+                params=params,
+                file_path=file_path,
+                file_format=file_format,
+                parameter_encoder=ParameterEncoder,
+                quantity_to_plain_func=quantity_to_plain
+            )
+            success_msg = t['save_success_json'] if file_format == "json" else t['save_success_xml']
+            QMessageBox.information(self, t['information_title'], success_msg.format(path=saved_path))
 
-            def quantity_serializer(obj):
-                if hasattr(obj, 'magnitude') and hasattr(obj, 'units'):
-                    return {
-                        'value': obj.magnitude,
-                        'unit': str(obj.units)
-                    }
-
-                if isinstance(obj, list) and obj and hasattr(obj[0], 'magnitude'):
-                    return [quantity_serializer(x) for x in obj]
-                raise TypeError(f"Obiekt {obj!r} nie jest serializowalny do JSON")
-
-            try:
-                with open(file_path, 'w', encoding='utf-8') as f:
-                    json.dump(params, f, indent=2, ensure_ascii=False, cls=ParameterEncoder)
-                QMessageBox.information(
-                    self,
-                    self.information_title,
-                    self.save_success_json.format(path=file_path)
-                )
-            except Exception as e:
-                QMessageBox.critical(
-                    self,
-                    self.critical_title,
-                    self.save_error_json.format(err=str(e))
-                )
-            return
-
-        #XML
-        elif selected_filter.startswith("XML"):
-            if not file_path.lower().endswith(".xml"):
-                file_path += ".xml"
-            try:
-                plain_params = quantity_to_plain(params)
-                root = ET.Element("simulation_parameters")
-
-                def add_dict_to_xml(parent, data):
-                    if isinstance(data, dict):
-                        for key, value in data.items():
-                            child = ET.SubElement(parent, str(key))
-                            add_dict_to_xml(child, value)
-                    elif isinstance(data, list):
-                        for item in data:
-                            item_elem = ET.SubElement(parent, "item")
-                            add_dict_to_xml(item_elem, item)
-                    else:
-                        parent.text = str(data)
-
-                add_dict_to_xml(root, plain_params)
-
-                with open(file_path, 'w', encoding='utf-8') as f:
-                    f.write(pretty_print_xml(root))
-
-                QMessageBox.information(
-                    self,
-                    self.information_title,
-                    self.save_success_xml.format(path=file_path)
-                )
-            except Exception as e:
-                QMessageBox.critical(
-                    self,
-                    self.critical_title,
-                    self.save_error_xml.format(err=str(e))
-                )
-            return
+        except Exception as e:
+            error_msg = t['save_error_json'] if file_format == "json" else t['save_error_xml']
+            QMessageBox.critical(self, t['critical_title'], error_msg.format(err=str(e)))
 
     def zoom_plot(self):
         self.plot_canvas.open_current_plot_fullscreen()
@@ -1002,6 +956,54 @@ class MainWindow(QMainWindow):
             },
         }
         return params
+
+    def load_user_data(self):
+        t = self.translations[self.current_language]
+
+        file_path, _ = QFileDialog.getOpenFileName(
+            self,
+            t['open_dialog_title'],
+            "",
+            t['open_filter_json'],
+            options=QFileDialog.Option.DontUseNativeDialog
+        )
+        if not file_path:
+            return
+
+        try:
+            user_data = load_simulation_parameters(file_path,self)
+
+            # Przekaż dane do formularza
+            self.populate_user_form(user_data)
+
+            QMessageBox.information(
+                self,
+                t['information_title'],
+                t['load_success_json'].format(path=file_path)
+            )
+        except Exception as e:
+            QMessageBox.critical(
+                self,
+                self.critical_title,
+                str(e)
+            )
+
+    def populate_user_form(self, data: dict):
+        """
+        Wypełnia formularz GUI na podstawie danych z pliku.
+
+        Args:
+            data (dict): Słownik z parametrami do ustawienia
+        """
+        self.material_type.setCurrentText(data["material"])
+        self.init_temp.setText(str(data["T0"]))
+        self.curie_temp.setText(str(data["Tc"]))
+        self.mag_moment.setText(str(data["mu"]))
+        self.power.setText(str(data["fluence"]))
+        self.duration.setText(str(data["pulse_duration"] / 1000))  # fs → ps
+        self.wavelength.setText(str(data["laser_wavelength"]))
+        self.ges.setText(str(data["ge"]))
+        self.asf.setText(str(data["asf"]))
 
 
 if __name__ == "__main__":

@@ -35,7 +35,15 @@
     "save_success_json": "Parameters saved as JSON:\n{path}",
     "save_success_xml": "Parameters saved as XML:\n{path}",
     "save_error_json": "Could not save JSON:\n{err}",
-    "save_error_xml": "Could not save XML:\n{err}"
+    "save_error_xml": "Could not save XML:\n{err}",
+    "open_dialog_title": "Load user data",
+    "open_filter_json": "JSON (*.json)",
+    "load_success_json": "Successfully loaded data:\n{path}",
+    "load_error_json": "Error loading JSON:\n{err}",
+    "error_invalid_format": "Invalid file format. Required fields: {fields}",
+    "missing_fields_error": "Missing required fields: {fields}",
+    "error_json_decode": "Failed to parse the file – invalid JSON syntax.",
+    "error_file_not_found": "File not found: {path}"
   },
   "Polski": {
     "Language": "Język:",
@@ -73,6 +81,14 @@
     "save_success_json": "Parametry zapisane jako JSON:\n{path}",
     "save_success_xml": "Parametry zapisane jako XML:\n{path}",
     "save_error_json": "Nie udało się zapisać JSON:\n{err}",
-    "save_error_xml": "Nie udało się zapisać XML:\n{err}"
+    "save_error_xml": "Nie udało się zapisać XML:\n{err}",
+    "open_dialog_title": "Wczytaj dane użytkownika",
+    "open_filter_json": "JSON (*.json)",
+    "load_success_json": "Pomyślnie wczytano dane:\n{path}",
+    "load_error_json": "Błąd wczytywania JSON:\n{err}",
+    "error_invalid_format": "Nieprawidłowy format pliku. Wymagane pola: {fields}",
+    "missing_fields_error": "Brakuje wymaganych pól: {fields}",
+    "error_json_decode": "Nie udało się odczytać pliku – niepoprawna składnia JSON.",
+    "error_file_not_found": "Nie znaleziono pliku: {path}"
   }
 }
