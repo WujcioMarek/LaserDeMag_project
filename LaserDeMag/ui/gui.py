@@ -1,4 +1,4 @@
-import json, os
+import json, os, time
 import numpy as np
 from PyQt6.QtCore import QSize, Qt, QEvent, pyqtSignal, QPoint
 from PyQt6.QtGui import QPalette, QIcon, QColor, QFont, QPixmap
@@ -11,7 +11,7 @@ from matplotlib.figure import Figure
 from LaserDeMag.physics.model_3TM import get_material_properties
 from LaserDeMag.main import main
 from pint import Quantity
-from LaserDeMag.io.file_handler import save_simulation_parameters, load_simulation_parameters
+from LaserDeMag.io.file_handler import save_simulation_parameters, load_simulation_parameters, save_simulation_report
 
 class LoadingDialog(QDialog):
     def __init__(self, title, message, image_path=None):
@@ -705,6 +705,7 @@ class MainWindow(QMainWindow):
         self.error_unknown_simulation = t['error_unknown_simulation']
         self.loading_message = t['loading_message']
         self.loading_title = t['loading_title']
+        self.save_report_title = t['save_report_title']
 
     def change_theme(self, theme: str):
         """Zmienia motyw na ciemny lub jasny na podstawie sygnału."""
@@ -937,6 +938,7 @@ class MainWindow(QMainWindow):
         QApplication.processEvents()
 
         try:
+            start_time = time.time()
             material_obj, prop = get_material_properties(
                 params['material'], params['Tc'], params['mu'], params['ge']
             )
@@ -946,6 +948,11 @@ class MainWindow(QMainWindow):
             self.plot_data = main(params)
             self.plot_canvas.set_all_plots(self.plot_data)
             self.update_plot()
+
+            duration = time.time() - start_time
+
+            save_simulation_report(params, self.material_name, self.material_props, self.plot_data, self, simulation_duration=duration)
+
         except FloatingPointError as e:
             QMessageBox.critical(self, self.critical_title,
                                  self.translations[self.current_language]['error_numeric'] + "\n" + str(e))

@@ -1,10 +1,10 @@
 """
 Data saving and reading support.
 """
-import json
+import json, datetime, os
 import xml.etree.ElementTree as ET
 import xml.dom.minidom
-from PyQt6.QtWidgets import QFileDialog
+from PyQt6.QtWidgets import QFileDialog, QMessageBox
 
 REQUIRED_USER_FIELDS = {
     "material", "T0", "Tc", "mu", "fluence",
@@ -115,3 +115,58 @@ def load_simulation_parameters(file_path,parent_widget):
 
     except FileNotFoundError:
         raise ValueError(parent_widget.error_file_not_found.format(path=file_path))
+
+
+def save_simulation_report(params, material_name, material_props, plot_data, parent=None, simulation_duration=None):
+    file_path, selected_filter = QFileDialog.getSaveFileName(
+        parent,
+        "Zapisz raport symulacji",
+        "",
+        "Pliki tekstowe (*.txt);;Wszystkie pliki (*)",
+        options=QFileDialog.Option.DontUseNativeDialog
+    )
+
+    if not file_path:
+        return  # Użytkownik anulował
+
+    if not os.path.splitext(file_path)[1]:
+        file_path += ".txt"
+
+    try:
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.write("Raport z symulacji LaserDeMag\n")
+            f.write(f"Data symulacji: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            if simulation_duration is not None:
+                f.write(f"Czas trwania symulacji: {simulation_duration:.2f} sekund\n")
+            f.write("\n--- Parametry symulacji ---\n")
+            for key, val in params.items():
+                f.write(f"{key}: {val}\n")
+
+            f.write(f"\n--- Materiał ---\n")
+            f.write(f"Nazwa: {material_name}\n")
+            for prop_key, prop_val in material_props.items():
+                f.write(f"{prop_key}: {prop_val}\n")
+
+            f.write("\n--- Wyniki symulacji (wybrane dane) ---\n")
+            if 'maps' in plot_data:
+                f.write("Mapy:\n")
+                for i, d in enumerate(plot_data['maps']):
+                    f.write(f"  Mapa {i + 1} - {d.get('title', '')}:\n")
+                    f.write(f"    x: {d.get('x', [])[:5]}... (total {len(d.get('x', []))})\n")
+                    f.write(f"    y: {d.get('y', [])[:5]}... (total {len(d.get('y', []))})\n")
+
+            if 'lines' in plot_data:
+                f.write("Wykresy liniowe:\n")
+                for i, d in enumerate(plot_data['lines']):
+                    f.write(f"  Linia {i + 1} - {d.get('title', '')}:\n")
+                    f.write(f"    x: {d.get('x', [])[:5]}... (total {len(d.get('x', []))})\n")
+                    f.write(f"    y: {d.get('y', [])[:5]}... (total {len(d.get('y', []))})\n")
+
+            f.write("\n--- Koniec raportu ---\n")
+
+    except Exception as e:
+        QMessageBox.critical(
+            parent,
+            "Błąd zapisu",
+            f"Błąd podczas zapisywania raportu:\n{str(e)}"
+        )
