@@ -7,15 +7,14 @@ def plot_results(S, delays, temp_map, material_name):
     select = S.get_all_positions_per_unique_layer()[material_name]
 
     data = {
-        "maps": [  # pcolormesh
+        "maps": [
             {
                 "x": distances,
-                "y": delay_ps,
-                "z": temp_map[:, :, i],
+                "y": temp_map[temp_map.shape[1] // 2, :, i],  # środek opóźnień
                 "label": label,
                 "xlabel": "Distance [nm]",
-                "ylabel": "Delay [ps]",
-                "title": f"Temperature Map {label}"
+                "ylabel": "Temperature [K]",
+                "title": f"Temperature {label}"
             }
             for i, label in enumerate(["Electrons", "Phonons", "Magnetization"])
         ],

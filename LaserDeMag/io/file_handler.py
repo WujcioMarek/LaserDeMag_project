@@ -11,6 +11,8 @@ REQUIRED_USER_FIELDS = {
     "pulse_duration", "laser_wavelength", "ge", "asf"
 }
 
+ALLOWED_MATERIALS = ["Co", "Fe", "Gd", "Ni"]
+
 def save_simulation_parameters(params, file_path, file_format, parameter_encoder, quantity_to_plain_func):
     """
     Zapisz dane symulacji do pliku w formacie JSON lub XML.
@@ -89,6 +91,22 @@ def load_simulation_parameters(file_path,parent_widget):
         if missing:
             error_message = parent_widget.missing_fields_error.format(fields=", ".join(missing))
             raise ValueError(error_message)
+
+        # Sprawdzenie czy wartości to liczby (zakładam, że pola numeryczne to poza "material")
+        for key in REQUIRED_USER_FIELDS:
+            if key == "material":
+                continue  # pomijamy materiał w tym sprawdzeniu
+            value = data[key]
+            if not isinstance(value, (int, float)):
+                raise ValueError(parent_widget.error_invalid_type.format(field=key))
+
+        # Sprawdzenie czy materiał jest prawidłowy
+        material = data.get("material")
+        if material not in ALLOWED_MATERIALS:
+            raise ValueError(parent_widget.error_invalid_material.format(
+                material=material,
+                allowed=", ".join(ALLOWED_MATERIALS)
+            ))
 
         return {key: data[key] for key in REQUIRED_USER_FIELDS}
 

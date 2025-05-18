@@ -4,7 +4,7 @@ from PyQt6.QtCore import QSize, Qt, QEvent, pyqtSignal, QPoint
 from PyQt6.QtGui import QPalette, QIcon, QColor, QFont, QPixmap
 from PyQt6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QMainWindow, QToolButton, QVBoxLayout, QWidget,
                              QPushButton, QGroupBox, QGridLayout, QLineEdit, QComboBox, QFrame, QMessageBox,
-                             QSizePolicy, QSplitter, QSpacerItem, QFileDialog)
+                             QSizePolicy, QSplitter, QSpacerItem, QFileDialog, QDialog)
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -12,6 +12,29 @@ from LaserDeMag.physics.model_3TM import get_material_properties
 from LaserDeMag.main import main
 from pint import Quantity
 from LaserDeMag.io.file_handler import save_simulation_parameters, load_simulation_parameters
+
+class LoadingDialog(QDialog):
+    def __init__(self, title, message, image_path=None):
+        super().__init__()
+        self.setWindowTitle(title)
+        self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.CustomizeWindowHint | Qt.WindowType.WindowTitleHint)
+        self.setModal(True)
+        layout = QVBoxLayout()
+
+        self.label = QLabel(message)
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(self.label)
+        layout.setContentsMargins(10, 10, 10, 10)
+        layout.addSpacing(10)
+
+        if image_path:
+            self.image_label = QLabel()
+            self.image_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            pixmap = QPixmap(image_path)
+            scaled_pixmap = pixmap.scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+            self.image_label.setPixmap(scaled_pixmap)
+            layout.addWidget(self.image_label)
+        self.setLayout(layout)
 
 class ParameterEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -46,6 +69,11 @@ class PlotCanvas(FigureCanvas):
         self.information_message = ""
         self.critical_message = ""
 
+    def clear(self):
+        self.plot_data = {}
+        self.fig.clf()
+        self.draw()
+
     def show_map_plot(self, map_data):
         self.current_plot_type = "map"
         self.current_plot_index = 0
@@ -54,13 +82,13 @@ class PlotCanvas(FigureCanvas):
         axs = self.fig.subplots(3, 1)
         for i, ax in enumerate(axs):
             d = map_data[i]
-            im = ax.pcolormesh(d["x"], d["y"], d["z"], shading="auto")
+            ax.plot(d["x"], d["y"], label=d.get("label", ""))
             ax.set_xlabel(d["xlabel"])
             ax.set_ylabel(d["ylabel"])
             ax.set_title(d["title"])
-            self.fig.colorbar(im, ax=ax)
-        self.fig.tight_layout()  # Automatyczne dostosowanie
-        self.fig.subplots_adjust(hspace=0.4)  # Dostosowanie odstępu (spróbuj różnych wartości)
+            ax.legend()
+        self.fig.tight_layout()
+        self.fig.subplots_adjust(hspace=0.4)
         self.draw()
 
     def show_line_plot(self, line_data):
@@ -103,24 +131,33 @@ class PlotCanvas(FigureCanvas):
             if not hasattr(self, "plot_data") or not self.plot_data:
                 QMessageBox.warning(self, self.warning_message["title"], self.warning_message["message"])
                 return
+            line_groups = []
+            lines = self.plot_data.get("lines", [])
+            if lines:
+                if len(lines) >= 3:
+                    line_groups.append(lines[0:2])  # pierwszy wykres: electrons + phonons
+                    line_groups.append([lines[2]])  # drugi wykres: magnetization
+                else:
+                    line_groups.append(lines)  # fallback: wszystko w jednym
 
             all_plots = [
                 *[(data, "map") for data in self.plot_data.get("maps", [])],
-                *[(data, "line") for data in self.plot_data.get("lines", [])]
+                *[(group, "line_grouped") for group in line_groups]
             ]
 
             for idx, (data, kind) in enumerate(all_plots):
                 fig, ax = plt.subplots()
                 if kind == "map":
-                    im = ax.pcolormesh(data["x"], data["y"], data["z"], shading="auto")
-                    plt.colorbar(im, ax=ax)
-                elif kind == "line":
-                    ax.plot(data["x"], data["y"], label=data["label"])
+                    ax.plot(data["x"], data["y"], label=data.get("label", ""))
                     ax.legend()
-
-                ax.set_title(data["title"])
-                ax.set_xlabel(data["xlabel"])
-                ax.set_ylabel(data["ylabel"])
+                elif kind == "line_grouped":
+                    fig, ax = plt.subplots()
+                    for line in data:
+                        ax.plot(line["x"], line["y"], label=line["label"])
+                    ax.set_title(data[0]["title"])
+                    ax.set_xlabel(data[0]["xlabel"])
+                    ax.set_ylabel(data[0]["ylabel"])
+                    ax.legend()
                 fig.tight_layout()
                 fig.savefig(os.path.join(directory, f"plot_{kind}_{idx}.png"))
                 plt.close(fig)
@@ -347,6 +384,7 @@ class MainWindow(QMainWindow):
         with open("../resources/translations/translations.json", "r", encoding="utf-8") as f:
             self.translations = json.load(f)
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+        self.initial_pos = None
 
         # Central widget and main layout
         central_widget = QWidget()
@@ -612,10 +650,23 @@ class MainWindow(QMainWindow):
                       self.ges, self.asf]:
             field.clear()
         self.material_type.setCurrentIndex(0)
+        if hasattr(self, 'plot_canvas'):
+            self.plot_canvas.clear()
 
     def update_language(self, lang):
         self.current_language = lang
         t = self.translations[lang]
+        self.field_labels = {
+            'init_temp_label': t['Initial temperature T0'],
+            'curie_temp_label': t['Curie temperature TC'],
+            'mag_moment_label': t['Magnetic moment μat'],
+            'power_label': t['Power of impulse (mJ/cm²)'],
+            'duration_label': t['Duration of the impulse (fs)'],
+            'wavelength_label': t['Laser wavelength (nm)'],
+            'ges_label': t['Electron-spin constant coupling ges'],
+            'asf_label': t['Spin-flip probability asf'],
+            'material_label': t['Type of material'],
+        }
         self.widgets['title'].setText(t['LaserDeMag'])
         self.widgets['description'].setText(t['Description'])
         self.widgets['material_box'].setTitle(t['Material'])
@@ -639,18 +690,21 @@ class MainWindow(QMainWindow):
         self.error_invalid_format = t['error_invalid_format']
         self.error_json_decode = t['error_json_decode']
         self.error_file_not_found = t['error_file_not_found']
-
-
-
+        self.error_invalid_type= t['error_invalid_type']
+        self.error_invalid_material= t['error_invalid_material']
+        self.error_material_not_selected = t['error_material_not_selected']
+        self.error_invalid_number = t['error_invalid_number']
+        self.error_required_field = t['error_required_field']
         self.information_title = t['information_title']
         self.critical_title = t['critical_title']
-
         self.save_success_json = t['save_success_json']
         self.save_error_json = t['save_error_json']
-
         self.save_success_xml = t['save_success_xml']
         self.save_error_xml = t['save_error_xml']
-
+        self.error_numerical_simulation = t['error_numerical_simulation']
+        self.error_unknown_simulation = t['error_unknown_simulation']
+        self.loading_message = t['loading_message']
+        self.loading_title = t['loading_title']
 
     def change_theme(self, theme: str):
         """Zmienia motyw na ciemny lub jasny na podstawie sygnału."""
@@ -676,6 +730,7 @@ class MainWindow(QMainWindow):
         self.up_arrow_btn.setIcon(QIcon("../resources/images/up_dark.png"))
         self.download_all_btn.setIcon(QIcon("../resources/images/download_all_dark.png"))
         self.load_from_file_btn.setIcon(QIcon("../resources/images/from_file_dark.png"))
+        self.image_path = "../resources/images/loading_dark.png"
 
         for le in self.centralWidget().findChildren(QLineEdit):
             le.setStyleSheet("""
@@ -765,6 +820,7 @@ class MainWindow(QMainWindow):
         self.up_arrow_btn.setIcon(QIcon("../resources/images/up_light.png"))
         self.download_all_btn.setIcon(QIcon("../resources/images/download_all_light.png"))
         self.load_from_file_btn.setIcon(QIcon("../resources/images/from_file_light.png"))
+        self.image_path = "../resources/images/loading_light.png"
 
         # Buttons
         self.widgets['clear_btn'].setStyleSheet("background-color: #ddd; color: black; border-radius: 5px;")
@@ -825,40 +881,88 @@ class MainWindow(QMainWindow):
         QApplication.setPalette(light_palette)
 
     def get_params_from_form(self):
-        material = self.material_type.currentText()
-        T0 = float(self.init_temp.text())
-        Tc = float(self.curie_temp.text())
-        mu = float(self.mag_moment.text())
-        fluence = float(self.power.text())
-        pulse_duration = float(self.duration.text()) / 1000  # fs → ps
-        laser_wavelength = float(self.wavelength.text())
-        ge = float(self.ges.text())
-        asf = float(self.asf.text())
+        try:
+            material = self.material_type.currentText().strip()
+            if self.material_type.currentIndex() == 0:
+                raise ValueError(self.error_material_not_selected)
 
-        return {
-            'material': material,
-            'T0': T0,
-            'Tc': Tc,
-            'mu': mu,
-            'fluence': fluence,
-            'pulse_duration': pulse_duration,
-            'laser_wavelength': laser_wavelength,
-            'ge': ge,
-            'asf': asf
-        }
+            def validate_float(value_str, field_key):
+                field_label = self.field_labels.get(field_key, field_key)
+                if not value_str.strip():
+                    raise ValueError(self.error_required_field.format(field=field_label))
+                try:
+                    return float(value_str)
+                except ValueError:
+                    raise ValueError(self.error_invalid_number.format(field=field_label))
+
+            # Sprawdzenie materiału
+            if self.material_type.currentIndex() == 0:
+                raise ValueError(self.error_material_not_selected)
+            material = self.material_type.currentText()
+
+            # Walidacja pól liczbowych
+            T0 = validate_float(self.init_temp.text(), "init_temp_label")
+            Tc = validate_float(self.curie_temp.text(), "curie_temp_label")
+            mu = validate_float(self.mag_moment.text(), "mag_moment_label")
+            fluence = validate_float(self.power.text(), "power_label")
+            pulse_duration = validate_float(self.duration.text(), "duration_label") / 1000  # fs → ps
+            laser_wavelength = validate_float(self.wavelength.text(), "wavelength_label")
+            ge = validate_float(self.ges.text(), "ges_label")
+            asf = validate_float(self.asf.text(), "asf_label")
+
+            return {
+                'material': material,
+                'T0': T0,
+                'Tc': Tc,
+                'mu': mu,
+                'fluence': fluence,
+                'pulse_duration': pulse_duration,
+                'laser_wavelength': laser_wavelength,
+                'ge': ge,
+                'asf': asf
+            }
+
+        except ValueError as e:
+            QMessageBox.critical(self, self.critical_title, str(e))
+            return None
 
     def start_simulation(self):
         self.current_plot_index = 0
         params = self.get_params_from_form()
+        if params is None:
+            return
 
-        material_obj, prop = get_material_properties(
-        params['material'], params['Tc'], params['mu'], params['ge'])
-        self.material_props = prop
-        self.material_name = material_obj.name
+        self.loading_dialog = LoadingDialog(self.loading_title, self.loading_message, self.image_path)
+        self.loading_dialog.show()
+        QApplication.processEvents()
 
-        self.plot_data = main(params)
+        try:
+            material_obj, prop = get_material_properties(
+                params['material'], params['Tc'], params['mu'], params['ge']
+            )
+            self.material_props = prop
+            self.material_name = material_obj.name
+
+            self.plot_data = main(params)
+            self.plot_canvas.set_all_plots(self.plot_data)
+            self.update_plot()
+        except FloatingPointError as e:
+            QMessageBox.critical(self, self.critical_title,
+                                 self.translations[self.current_language]['error_numeric'] + "\n" + str(e))
+        except Exception as e:
+            QMessageBox.critical(self, self.critical_title,
+                                 self.translations[self.current_language]['error_unknown_simulation'] + "\n" + str(e))
+        finally:
+            self.loading_dialog.close()
+    def on_simulation_finished(self, result):
+        self.plot_data = result
         self.plot_canvas.set_all_plots(self.plot_data)
         self.update_plot()
+        self.loading_dialog.close()
+
+    def on_simulation_error(self, e):
+        self.loading_dialog.close()
+        QMessageBox.critical(self, self.critical_title, str(e))
 
     def update_plot(self):
         self.plot_canvas.current_plot_index = self.current_plot_index  # zapewnia spójność z GUI

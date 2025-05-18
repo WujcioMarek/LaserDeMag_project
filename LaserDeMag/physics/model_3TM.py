@@ -1,6 +1,5 @@
-import sys
-
-import tqdm
+import sys, tqdm, warnings
+import numpy as np
 
 sys.modules['tqdm.notebook'] = tqdm
 import udkm1Dsim as ud
