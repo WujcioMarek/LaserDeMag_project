@@ -892,14 +892,12 @@ class MainWindow(QMainWindow):
                 if not value_str.strip():
                     raise ValueError(self.error_required_field.format(field=field_label))
                 try:
-                    return float(value_str)
+                    val = float(value_str)
                 except ValueError:
                     raise ValueError(self.error_invalid_number.format(field=field_label))
-
-            # Sprawdzenie materiału
-            if self.material_type.currentIndex() == 0:
-                raise ValueError(self.error_material_not_selected)
-            material = self.material_type.currentText()
+                if val <= 0:
+                    raise ValueError(self.error_invalid_number.format(field=field_label))
+                return val
 
             # Walidacja pól liczbowych
             T0 = validate_float(self.init_temp.text(), "init_temp_label")
