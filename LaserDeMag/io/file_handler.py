@@ -1,5 +1,8 @@
 """
-Data saving and reading support.
+Obsługa zapisu i odczytu danych symulacji.
+
+---
+Simulation data saving and loading utilities.
 """
 import json, datetime, os
 import xml.etree.ElementTree as ET
@@ -15,18 +18,36 @@ ALLOWED_MATERIALS = ["Co", "Fe", "Gd", "Ni"]
 
 def save_simulation_parameters(params, file_path, file_format, parameter_encoder, quantity_to_plain_func):
     """
-    Zapisz dane symulacji do pliku w formacie JSON lub XML.
+    Zapisuje dane symulacji w formacie JSON lub XML.
 
     Args:
-        params (dict): Dane do zapisania.
-        file_path (str): Ścieżka do pliku (bez rozszerzenia).
-        file_format (str): "json" lub "xml".
-        parameter_encoder: Custom JSON encoder (np. ParameterEncoder).
-        quantity_to_plain_func: Funkcja do konwersji jednostek (dla XML).
+        params (dict): Parametry symulacji do zapisania.
+        file_path (str): Ścieżka pliku docelowego (bez rozszerzenia).
+        file_format (str): Format zapisu ("json" lub "xml").
+        parameter_encoder (type): Niestandardowy encoder JSON.
+        quantity_to_plain_func (callable): Funkcja konwertująca jednostki na wartości tekstowe.
+
     Returns:
-        str: Ścieżka zapisanego pliku.
+        str: Pełna ścieżka zapisanego pliku.
+
     Raises:
-        Exception: Jeśli zapis się nie powiedzie.
+        Exception: Gdy zapis się nie powiedzie.
+
+    ---
+    Saves simulation parameters to JSON or XML format.
+
+    Args:
+        params (dict): Parameters to be saved.
+        file_path (str): Output file path (without extension).
+        file_format (str): File format ("json" or "xml").
+        parameter_encoder (type): Custom JSON encoder class.
+        quantity_to_plain_func (callable): Function to convert quantities to plain values.
+
+    Returns:
+        str: Full path to the saved file.
+
+    Raises:
+        Exception: If saving fails.
     """
     if file_format == "json":
         if not file_path.lower().endswith(".json"):
@@ -68,17 +89,31 @@ def save_simulation_parameters(params, file_path, file_format, parameter_encoder
 
 def load_simulation_parameters(file_path,parent_widget):
     """
-    Wczytuje dane symulacji z pliku JSON i zwraca je jako słownik.
+       Wczytuje dane symulacji z pliku JSON.
 
-    Args:
-        file_path (str): Ścieżka do pliku .json
+       Args:
+           file_path (str): Ścieżka do pliku .json
+           parent_widget (QWidget): Rodzic do wyświetlenia komunikatów błędów.
 
-    Returns:
-        dict: Dane do uzupełnienia formularza
+       Returns:
+           dict: Dane do wypełnienia formularza symulacji.
 
-    Raises:
-        FileNotFoundError, json.JSONDecodeError, ValueError
-    """
+       Raises:
+           ValueError: Gdy format pliku lub dane są niepoprawne.
+
+       ---
+       Loads simulation parameters from a JSON file.
+
+       Args:
+           file_path (str): Path to the .json file.
+           parent_widget (QWidget): Parent widget for displaying error messages.
+
+       Returns:
+           dict: Parameters for simulation form filling.
+
+       Raises:
+           ValueError: If file or data is invalid.
+       """
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
@@ -118,6 +153,34 @@ def load_simulation_parameters(file_path,parent_widget):
 
 
 def save_simulation_report(params, material_name, material_props, plot_data, parent=None, simulation_duration=None):
+    """
+    Tworzy i zapisuje raport z przebiegu symulacji do pliku tekstowego.
+
+    Args:
+        params (dict): Parametry wejściowe symulacji.
+        material_name (str): Nazwa materiału.
+        material_props (dict): Właściwości materiału.
+        plot_data (dict): Dane do wykresów (linie, mapy).
+        parent (QWidget, optional): Rodzic do komunikatów GUI.
+        simulation_duration (float, optional): Czas trwania symulacji w sekundach.
+
+    Returns:
+        None
+
+    ---
+    Generates and saves a simulation report to a text file.
+
+    Args:
+        params (dict): Input parameters of the simulation.
+        material_name (str): Name of the material.
+        material_props (dict): Material properties.
+        plot_data (dict): Plot data (lines and maps).
+        parent (QWidget, optional): Parent widget for error messages.
+        simulation_duration (float, optional): Simulation duration in seconds.
+
+    Returns:
+        None
+    """
     file_path, selected_filter = QFileDialog.getSaveFileName(
         parent,
         "Zapisz raport symulacji",

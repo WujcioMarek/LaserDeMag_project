@@ -1,0 +1,3767 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>LaserDeMag.ui.gui API documentation</title>
+<meta name="description" content="Moduł GUI aplikacji symulacyjnej …">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>LaserDeMag.ui.gui</code></h1>
+</header>
+<section id="section-intro">
+<p>Moduł GUI aplikacji symulacyjnej.</p>
+<p>Zawiera definicję głównego okna aplikacji z interfejsem użytkownika do
+wprowadzania parametrów symulacji, uruchamiania symulacji, wyświetlania
+wyników na wykresach oraz zarządzania motywem kolorystycznym (ciemny/jasny).</p>
+<p>Funkcjonalności obejmują:
+- Walidację i pobieranie parametrów z formularza,
+- Uruchamianie symulacji z wyświetleniem paska ładowania,
+- Zarządzanie wykresami (podgląd, zapisywanie, zoom),
+- Obsługę zapisu i ładowania danych symulacji w formatach JSON/XML,
+- Przełączanie motywów UI oraz dynamiczne dostosowywanie stylów.</p>
+<p>Moduł wykorzystuje PyQt6 do tworzenia interfejsu oraz integruje
+logikę symulacji i zapisu danych.</p>
+<hr>
+<p>GUI module for the simulation application.</p>
+<p>Contains the main application window class with the user interface for
+inputting simulation parameters, running simulations, displaying results
+via plots, and managing color themes (dark/light).</p>
+<p>Features include:
+- Validation and retrieval of form parameters,
+- Running simulations with a loading dialog,
+- Plot management (viewing, saving, zooming),
+- Saving and loading simulation data in JSON/XML formats,
+- Switching UI themes and dynamically applying styles.</p>
+<p>This module uses PyQt6 for the interface and integrates simulation logic
+and data handling.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="LaserDeMag.ui.gui.CustomTitleBar"><code class="flex name class">
+<span>class <span class="ident">CustomTitleBar</span></span>
+<span>(</span><span>parent)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CustomTitleBar(QWidget):
+    &#34;&#34;&#34;
+    Klasa CustomTitleBar implementuje niestandardowy pasek tytułu okna z przyciskami
+    do zmiany motywu, zmiany języka, minimalizacji, maksymalizacji i zamknięcia okna.
+
+    Funkcje:
+    - Obsługa kliknięć przycisków tematu (ciemny/jasny),
+    - Przełączanie języka interfejsu (polski/angielski),
+    - Obsługa zdarzeń podwójnego kliknięcia (maksymalizacja/przywracanie okna),
+    - Aktualizacja widoczności przycisków w zależności od stanu okna.
+
+    Signals:
+    - theme_changed(str): Emitowany przy zmianie motywu (&#39;light&#39; lub &#39;dark&#39;),
+    - info_clicked(): Emitowany po kliknięciu przycisku informacji.
+
+    ---
+
+    CustomTitleBar class implements a custom window title bar with buttons
+    for theme switching, language switching, minimizing, maximizing, and closing the window.
+
+    Features:
+    - Handling theme toggle button clicks (dark/light),
+    - Switching UI language (Polish/English),
+    - Handling double-click events for maximizing/restoring the window,
+    - Updating button visibility depending on the window state.
+
+    Signals:
+    - theme_changed(str): Emitted when the theme changes (&#39;light&#39; or &#39;dark&#39;),
+    - info_clicked(): Emitted when the info button is clicked.
+    &#34;&#34;&#34;
+    theme_changed = pyqtSignal(str)  # Sygnał do zmiany motywu
+    info_clicked = pyqtSignal()
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.setAutoFillBackground(True)
+        self.initial_pos = None
+        title_bar_layout = QHBoxLayout(self)
+        title_bar_layout.setContentsMargins(5, 0, 5, 0)
+        title_bar_layout.setSpacing(2)
+
+        self.title = QLabel(f&#34;{self.__class__.__name__}&#34;, self)
+        self.title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        if title := parent.windowTitle():
+            self.title.setText(title)
+        title_bar_layout.addWidget(self.title)
+
+        self.info_button = QPushButton()
+        self.info_button.setIcon(QIcon(&#34;../resources/images/info_light.png&#34;))  # Upewnij się, że masz plik info.png
+        self.info_button.setIconSize(QSize(32, 32))
+        self.info_button.setStyleSheet(&#34;border: none;&#34;)
+        self.info_button.clicked.connect(self.info_clicked.emit)
+
+        # Theme switch button
+        self.theme_switch_btn = QToolButton(self)
+        self.theme_switch_btn.setIcon(QIcon(&#39;../resources/images/light_ui.png&#39;))
+        self.theme_switch_btn.clicked.connect(self.toggle_theme)
+
+        # ENG button
+        self.english_btn = QToolButton(self)
+        self.english_btn.setIcon(QIcon(&#39;../resources/images/england.png&#39;))
+        self.english_btn.clicked.connect(lambda: self.window().update_language(&#34;English&#34;))
+
+        # PL button
+        self.polish_btn = QToolButton(self)
+        self.polish_btn.setIcon(QIcon(&#39;../resources/images/poland.png&#39;))
+        self.polish_btn.clicked.connect(lambda: self.window().update_language(&#34;Polski&#34;))
+
+        # Min button
+        self.minimize_btn = QToolButton(self)
+        self.minimize_btn.setIcon(QIcon(&#39;../resources/images/minimize.png&#39;))
+        self.minimize_btn.clicked.connect(self.window().showMinimized)
+
+        # Max button
+        self.maximize_btn = QToolButton(self)
+        self.maximize_btn.setIcon(QIcon(&#39;../resources/images/maximize.png&#39;))
+        self.maximize_btn.clicked.connect(self.window().showMaximized)
+
+        # Close button
+        self.close_btn = QToolButton(self)
+        self.close_btn.setIcon(QIcon(&#39;../resources/images/close.png&#39;))
+        self.close_btn.clicked.connect(self.window().close)
+
+        # Normal button
+        self.normal_button = QToolButton(self)
+        self.normal_button.setIcon(QIcon(&#39;../resources/images/normal.png&#39;))
+        self.normal_button.clicked.connect(self.window().showNormal)
+        self.normal_button.setVisible(False)
+
+        # Add buttons
+        buttons = [
+            self.info_button,
+            self.theme_switch_btn,
+            self.polish_btn,
+            self.english_btn,
+            self.minimize_btn,
+            self.normal_button,
+            self.maximize_btn,
+            self.close_btn,
+        ]
+        for button in buttons:
+            button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+            button.setFixedSize(QSize(30, 30))
+            button.setIconSize(QSize(30, 30))
+            button.setStyleSheet(&#34;border: none; background-color: transparent; border-radius: 15px;&#34;)
+            title_bar_layout.addWidget(button)
+
+
+
+    def mouseDoubleClickEvent(self, event):
+        &#34;&#34;&#34;
+        Obsługuje zdarzenie podwójnego kliknięcia myszy na oknie.
+        Jeśli okno jest zmaksymalizowane, przywraca je do normalnego rozmiaru,
+        w przeciwnym razie maksymalizuje okno.
+
+        Handles the mouse double-click event on the window.
+        If the window is maximized, restores it to normal size,
+        otherwise maximizes the window.
+
+        Args:
+            event (QMouseEvent): Zdarzenie podwójnego kliknięcia myszy / Mouse double-click event.
+
+        Returns:
+            None
+        &#34;&#34;&#34;
+        win = self.window()
+        if win.isMaximized():
+            win.showNormal()
+        else:
+            win.showMaximized()
+        event.accept()
+
+    def toggle_theme(self):
+        &#34;&#34;&#34;
+        Przełącza motyw aplikacji między jasnym a ciemnym.
+        Aktualizuje ikonę przycisku i styl tytułu w zależności od motywu.
+
+        Toggles the application theme between light and dark.
+        Updates the button icon and title style according to the theme.
+
+        Args:
+            None
+
+        Returns:
+            None
+        &#34;&#34;&#34;
+        pal = QApplication.palette()
+        bg = pal.color(QPalette.ColorRole.Window).name()
+
+        # Check the current theme and switch
+        if pal.color(QPalette.ColorRole.Window).lightness() &gt; 127:
+            self.theme_changed.emit(&#39;dark&#39;)
+            self.theme_switch_btn.setIcon(QIcon(&#39;../resources/images/dark_ui.png&#39;))
+            self.title.setStyleSheet(
+                f&#34;&#34;&#34;font-weight: bold;
+                   border: 2px solid {bg};
+                   border-radius: 12px;
+                   margin: 2px;
+                   color: {bg};
+                   background-color: transparent;
+                &#34;&#34;&#34;
+            )
+            self.setStyleSheet(&#34;background-color: #336699;&#34;)
+            self.info_button.setIcon(QIcon(&#34;../resources/images/info_dark.png&#34;))
+
+
+        else:
+            self.theme_changed.emit(&#39;light&#39;)
+            self.theme_switch_btn.setIcon(QIcon(&#39;../resources/images/light_ui.png&#39;))
+            self.title.setStyleSheet(
+                f&#34;&#34;&#34;font-weight: bold;
+                   border: 2px solid {bg};
+                   border-radius: 12px;
+                   margin: 2px;
+                   color: {bg};
+                   background-color: transparent;
+                &#34;&#34;&#34;
+            )
+            self.info_button.setIcon(QIcon(&#34;../resources/images/info_light.png&#34;))
+
+    def window_state_changed(self, state):
+        &#34;&#34;&#34;
+        Aktualizuje widoczność przycisków maksymalizacji i przywrócenia
+        w zależności od aktualnego stanu okna.
+
+        Updates the visibility of maximize and restore buttons
+        depending on the current window state.
+
+        Args:
+            state (Qt.WindowState): Aktualny stan okna / Current window state.
+
+        Returns:
+            None
+        &#34;&#34;&#34;
+        if state == Qt.WindowState.WindowMaximized:
+            self.normal_button.setVisible(True)
+            self.maximize_btn.setVisible(False)
+        else:
+            self.normal_button.setVisible(False)
+            self.maximize_btn.setVisible(True)</code></pre>
+</details>
+<div class="desc"><p>Klasa CustomTitleBar implementuje niestandardowy pasek tytułu okna z przyciskami
+do zmiany motywu, zmiany języka, minimalizacji, maksymalizacji i zamknięcia okna.</p>
+<p>Funkcje:
+- Obsługa kliknięć przycisków tematu (ciemny/jasny),
+- Przełączanie języka interfejsu (polski/angielski),
+- Obsługa zdarzeń podwójnego kliknięcia (maksymalizacja/przywracanie okna),
+- Aktualizacja widoczności przycisków w zależności od stanu okna.</p>
+<p>Signals:
+- theme_changed(str): Emitowany przy zmianie motywu ('light' lub 'dark'),
+- info_clicked(): Emitowany po kliknięciu przycisku informacji.</p>
+<hr>
+<p>CustomTitleBar class implements a custom window title bar with buttons
+for theme switching, language switching, minimizing, maximizing, and closing the window.</p>
+<p>Features:
+- Handling theme toggle button clicks (dark/light),
+- Switching UI language (Polish/English),
+- Handling double-click events for maximizing/restoring the window,
+- Updating button visibility depending on the window state.</p>
+<p>Signals:
+- theme_changed(str): Emitted when the theme changes ('light' or 'dark'),
+- info_clicked(): Emitted when the info button is clicked.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>PyQt6.QtWidgets.QWidget</li>
+<li>PyQt6.QtCore.QObject</li>
+<li>PyQt6.sip.wrapper</li>
+<li>PyQt6.QtGui.QPaintDevice</li>
+<li>PyQt6.sip.simplewrapper</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="LaserDeMag.ui.gui.CustomTitleBar.info_clicked"><code class="name flex">
+<span>def <span class="ident">info_clicked</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.CustomTitleBar.mouseDoubleClickEvent"><code class="name flex">
+<span>def <span class="ident">mouseDoubleClickEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mouseDoubleClickEvent(self, event):
+    &#34;&#34;&#34;
+    Obsługuje zdarzenie podwójnego kliknięcia myszy na oknie.
+    Jeśli okno jest zmaksymalizowane, przywraca je do normalnego rozmiaru,
+    w przeciwnym razie maksymalizuje okno.
+
+    Handles the mouse double-click event on the window.
+    If the window is maximized, restores it to normal size,
+    otherwise maximizes the window.
+
+    Args:
+        event (QMouseEvent): Zdarzenie podwójnego kliknięcia myszy / Mouse double-click event.
+
+    Returns:
+        None
+    &#34;&#34;&#34;
+    win = self.window()
+    if win.isMaximized():
+        win.showNormal()
+    else:
+        win.showMaximized()
+    event.accept()</code></pre>
+</details>
+<div class="desc"><p>Obsługuje zdarzenie podwójnego kliknięcia myszy na oknie.
+Jeśli okno jest zmaksymalizowane, przywraca je do normalnego rozmiaru,
+w przeciwnym razie maksymalizuje okno.</p>
+<p>Handles the mouse double-click event on the window.
+If the window is maximized, restores it to normal size,
+otherwise maximizes the window.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>event</code></strong> :&ensp;<code>QMouseEvent</code></dt>
+<dd>Zdarzenie podwójnego kliknięcia myszy / Mouse double-click event.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>None</p></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.CustomTitleBar.theme_changed"><code class="name flex">
+<span>def <span class="ident">theme_changed</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.CustomTitleBar.toggle_theme"><code class="name flex">
+<span>def <span class="ident">toggle_theme</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def toggle_theme(self):
+    &#34;&#34;&#34;
+    Przełącza motyw aplikacji między jasnym a ciemnym.
+    Aktualizuje ikonę przycisku i styl tytułu w zależności od motywu.
+
+    Toggles the application theme between light and dark.
+    Updates the button icon and title style according to the theme.
+
+    Args:
+        None
+
+    Returns:
+        None
+    &#34;&#34;&#34;
+    pal = QApplication.palette()
+    bg = pal.color(QPalette.ColorRole.Window).name()
+
+    # Check the current theme and switch
+    if pal.color(QPalette.ColorRole.Window).lightness() &gt; 127:
+        self.theme_changed.emit(&#39;dark&#39;)
+        self.theme_switch_btn.setIcon(QIcon(&#39;../resources/images/dark_ui.png&#39;))
+        self.title.setStyleSheet(
+            f&#34;&#34;&#34;font-weight: bold;
+               border: 2px solid {bg};
+               border-radius: 12px;
+               margin: 2px;
+               color: {bg};
+               background-color: transparent;
+            &#34;&#34;&#34;
+        )
+        self.setStyleSheet(&#34;background-color: #336699;&#34;)
+        self.info_button.setIcon(QIcon(&#34;../resources/images/info_dark.png&#34;))
+
+
+    else:
+        self.theme_changed.emit(&#39;light&#39;)
+        self.theme_switch_btn.setIcon(QIcon(&#39;../resources/images/light_ui.png&#39;))
+        self.title.setStyleSheet(
+            f&#34;&#34;&#34;font-weight: bold;
+               border: 2px solid {bg};
+               border-radius: 12px;
+               margin: 2px;
+               color: {bg};
+               background-color: transparent;
+            &#34;&#34;&#34;
+        )
+        self.info_button.setIcon(QIcon(&#34;../resources/images/info_light.png&#34;))</code></pre>
+</details>
+<div class="desc"><p>Przełącza motyw aplikacji między jasnym a ciemnym.
+Aktualizuje ikonę przycisku i styl tytułu w zależności od motywu.</p>
+<p>Toggles the application theme between light and dark.
+Updates the button icon and title style according to the theme.</p>
+<h2 id="args">Args</h2>
+<p>None</p>
+<h2 id="returns">Returns</h2>
+<p>None</p></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.CustomTitleBar.window_state_changed"><code class="name flex">
+<span>def <span class="ident">window_state_changed</span></span>(<span>self, state)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def window_state_changed(self, state):
+    &#34;&#34;&#34;
+    Aktualizuje widoczność przycisków maksymalizacji i przywrócenia
+    w zależności od aktualnego stanu okna.
+
+    Updates the visibility of maximize and restore buttons
+    depending on the current window state.
+
+    Args:
+        state (Qt.WindowState): Aktualny stan okna / Current window state.
+
+    Returns:
+        None
+    &#34;&#34;&#34;
+    if state == Qt.WindowState.WindowMaximized:
+        self.normal_button.setVisible(True)
+        self.maximize_btn.setVisible(False)
+    else:
+        self.normal_button.setVisible(False)
+        self.maximize_btn.setVisible(True)</code></pre>
+</details>
+<div class="desc"><p>Aktualizuje widoczność przycisków maksymalizacji i przywrócenia
+w zależności od aktualnego stanu okna.</p>
+<p>Updates the visibility of maximize and restore buttons
+depending on the current window state.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>state</code></strong> :&ensp;<code>Qt.WindowState</code></dt>
+<dd>Aktualny stan okna / Current window state.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>None</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="LaserDeMag.ui.gui.LoadingDialog"><code class="flex name class">
+<span>class <span class="ident">LoadingDialog</span></span>
+<span>(</span><span>title, message, image_path=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LoadingDialog(QDialog):
+    &#34;&#34;&#34;
+    Okno dialogowe wyświetlające komunikat ładowania z opcjonalnym obrazkiem.
+
+    Args:
+        title (str): Tytuł okna dialogowego.
+        message (str): Komunikat wyświetlany w oknie.
+        image_path (str, optional): Ścieżka do obrazka do wyświetlenia. Domyślnie None.
+
+    ---
+    Loading dialog window displaying a message with optional image.
+
+    Args:
+        title (str): Dialog window title.
+        message (str): Message shown in the dialog.
+        image_path (str, optional): Path to an image to display. Default is None.
+    &#34;&#34;&#34;
+    def __init__(self, title, message, image_path=None):
+        super().__init__()
+        self.setWindowTitle(title)
+        self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.CustomizeWindowHint | Qt.WindowType.WindowTitleHint)
+        self.setModal(True)
+        layout = QVBoxLayout()
+
+        self.label = QLabel(message)
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(self.label)
+        layout.setContentsMargins(10, 10, 10, 10)
+        layout.addSpacing(10)
+
+        if image_path:
+            self.image_label = QLabel()
+            self.image_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            pixmap = QPixmap(image_path)
+            scaled_pixmap = pixmap.scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+            self.image_label.setPixmap(scaled_pixmap)
+            layout.addWidget(self.image_label)
+        self.setLayout(layout)</code></pre>
+</details>
+<div class="desc"><p>Okno dialogowe wyświetlające komunikat ładowania z opcjonalnym obrazkiem.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>title</code></strong> :&ensp;<code>str</code></dt>
+<dd>Tytuł okna dialogowego.</dd>
+<dt><strong><code>message</code></strong> :&ensp;<code>str</code></dt>
+<dd>Komunikat wyświetlany w oknie.</dd>
+<dt><strong><code>image_path</code></strong> :&ensp;<code>str</code>, optional</dt>
+<dd>Ścieżka do obrazka do wyświetlenia. Domyślnie None.</dd>
+</dl>
+<hr>
+<p>Loading dialog window displaying a message with optional image.</p>
+<h2 id="args_1">Args</h2>
+<dl>
+<dt><strong><code>title</code></strong> :&ensp;<code>str</code></dt>
+<dd>Dialog window title.</dd>
+<dt><strong><code>message</code></strong> :&ensp;<code>str</code></dt>
+<dd>Message shown in the dialog.</dd>
+<dt><strong><code>image_path</code></strong> :&ensp;<code>str</code>, optional</dt>
+<dd>Path to an image to display. Default is None.</dd>
+</dl></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>PyQt6.QtWidgets.QDialog</li>
+<li>PyQt6.QtWidgets.QWidget</li>
+<li>PyQt6.QtCore.QObject</li>
+<li>PyQt6.sip.wrapper</li>
+<li>PyQt6.QtGui.QPaintDevice</li>
+<li>PyQt6.sip.simplewrapper</li>
+</ul>
+</dd>
+<dt id="LaserDeMag.ui.gui.MainWindow"><code class="flex name class">
+<span>class <span class="ident">MainWindow</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MainWindow(QMainWindow):
+    &#34;&#34;&#34;
+    Główne okno aplikacji LaserDeMag.
+
+    Okno zawiera niestandardowy pasek tytułu, panel kontrolny z formularzem
+    do wprowadzania parametrów symulacji oraz obszar wykresów wyników.
+    Zapewnia obsługę zmiany motywu, języka, wczytywania danych z pliku,
+    czyszczenia pól, uruchamiania symulacji oraz sterowania wykresami
+    (przełączanie, pobieranie, powiększanie).
+
+    Elementy UI:
+    - Pasek tytułu (CustomTitleBar) z przyciskami do sterowania oknem i zmianą motywu/języka,
+    - Panel formularza z grupami pól: Materiał, Laser, Inne,
+    - Przyciski akcji: wczytaj z pliku, wyczyść, rozpocznij symulację,
+    - Obszar wykresu (PlotCanvas) wraz z przyciskami do zmiany wykresów i pobierania danych.
+
+    ---
+
+    Main application window for LaserDeMag.
+
+    The window contains a custom title bar, a control panel with a form
+    for simulation parameters input, and a plotting area for results.
+    It supports theme switching, language update, loading data from file,
+    clearing input fields, starting simulation, and plot controls
+    (switching plots, downloading plots/data, zooming).
+
+    UI Elements:
+    - Custom title bar (CustomTitleBar) with window control and theme/language buttons,
+    - Form panel with grouped input fields: Material, Laser, Others,
+    - Action buttons: load from file, clear fields, start simulation,
+    - Plot area (PlotCanvas) with buttons for switching plots and downloading data.
+    &#34;&#34;&#34;
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle(&#34;LaserDeMag App&#34;)
+        self.resize(1200, 900)
+        with open(&#34;../resources/translations/translations.json&#34;, &#34;r&#34;, encoding=&#34;utf-8&#34;) as f:
+            self.translations = json.load(f)
+        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+        self.initial_pos = None
+
+        # Central widget and main layout
+        central_widget = QWidget()
+        main_layout = QHBoxLayout()  # Use HBox layout to arrange the form and plot side by side
+
+        self.title_bar = CustomTitleBar(self)
+        self.title_bar.info_clicked.connect(self.show_info_message)
+        self.title_bar.setFixedHeight(40)  # Set a fixed height for the title bar
+        # Control panel for form fields
+        control_panel = QVBoxLayout()
+        self.widgets = {}
+
+        # Title and description for the form
+        header_layout = QHBoxLayout()
+        self.logo_label = QLabel()
+        self.logo_pixmap = QPixmap(&#34;../resources/images/logo_light.png&#34;).scaled(90, 90, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+        self.logo_label.setPixmap(self.logo_pixmap)
+        #title_label = QLabel(&#34;LaserDeMag&#34;)
+        self.widgets[&#39;title&#39;] = QLabel(&#34;LaserDeMag&#34;)
+        self.widgets[&#39;title&#39;].setFont(QFont(&#34;Arial&#34;, 16, QFont.Weight.Bold))
+
+        # Dodanie elementów do headera
+        header_layout.addWidget(self.logo_label)
+        header_layout.addSpacing(10)
+        header_layout.addWidget(self.widgets[&#39;title&#39;])
+        header_layout.setAlignment(self.widgets[&#39;title&#39;], Qt.AlignmentFlag.AlignVCenter)
+        header_layout.addStretch()
+
+        # Opis
+        self.widgets[&#39;description&#39;] = QLabel(&#34;This is a simulation application.&#34;)
+        self.widgets[&#39;description&#39;].adjustSize()
+        self.widgets[&#39;description&#39;].setWordWrap(True)
+        self.widgets[&#39;description&#39;].setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
+        self.widgets[&#39;description&#39;].setStyleSheet(&#34;color: gray; font-size: 12px; margin-top: -5px;&#34;)
+
+        # --- Dodanie do panelu ---
+        control_panel.addLayout(header_layout)
+        control_panel.addWidget(self.widgets[&#39;description&#39;])
+
+        # Material Box
+        material_box = QGroupBox(&#34;Material&#34;)
+        material_layout = QGridLayout()
+        self.material_type = QComboBox()
+        material_layout.addWidget(QLabel(&#34;Select Material Type:&#34;), 0, 0)
+        material_layout.addWidget(self.material_type, 0, 1)
+        self.widgets[&#39;material_label&#39;] = material_layout.itemAtPosition(0, 0).widget()
+
+        self.init_temp = QLineEdit()
+        material_layout.addWidget(QLabel(&#34;Initial Temperature:&#34;), 1, 0)
+        material_layout.addWidget(self.init_temp, 1, 1)
+        self.widgets[&#39;init_temp_label&#39;] = material_layout.itemAtPosition(1, 0).widget()
+
+        self.curie_temp = QLineEdit()
+        material_layout.addWidget(QLabel(&#34;Curie Temperature:&#34;), 2, 0)
+        material_layout.addWidget(self.curie_temp, 2, 1)
+        self.widgets[&#39;curie_temp_label&#39;] = material_layout.itemAtPosition(2, 0).widget()
+
+        self.mag_moment = QLineEdit()
+        material_layout.addWidget(QLabel(&#34;Magnetic Moment:&#34;), 3, 0)
+        material_layout.addWidget(self.mag_moment, 3, 1)
+        self.widgets[&#39;mag_moment_label&#39;] = material_layout.itemAtPosition(3, 0).widget()
+        material_box.setLayout(material_layout)
+
+        # Laser Box
+        laser_box = QGroupBox(&#34;Laser&#34;)
+        laser_layout = QGridLayout()
+        self.power = QLineEdit()
+        laser_layout.addWidget(QLabel(&#34;Power (mJ/cm²):&#34;), 0, 0)
+        laser_layout.addWidget(self.power, 0, 1)
+        self.widgets[&#39;power_label&#39;] = laser_layout.itemAtPosition(0, 0).widget()
+
+        self.duration = QLineEdit()
+        laser_layout.addWidget(QLabel(&#34;Duration (fs):&#34;), 1, 0)
+        laser_layout.addWidget(self.duration, 1, 1)
+        self.widgets[&#39;duration_label&#39;] = laser_layout.itemAtPosition(1, 0).widget()
+
+        self.wavelength = QLineEdit()
+        laser_layout.addWidget(QLabel(&#34;Wavelength (nm):&#34;), 2, 0)
+        laser_layout.addWidget(self.wavelength, 2, 1)
+        self.widgets[&#39;wavelength_label&#39;] = laser_layout.itemAtPosition(2, 0).widget()
+        laser_box.setLayout(laser_layout)
+
+        # Others Box
+        others_box = QGroupBox(&#34;Others&#34;)
+        others_layout = QGridLayout()
+        self.ges = QLineEdit()
+        others_layout.addWidget(QLabel(&#34;Electron-spin constant:&#34;), 0, 0)
+        others_layout.addWidget(self.ges, 0, 1)
+        self.widgets[&#39;ges_label&#39;] = others_layout.itemAtPosition(0, 0).widget()
+
+        self.asf = QLineEdit()
+        others_layout.addWidget(QLabel(&#34;Spin-flip probability:&#34;), 1, 0)
+        others_layout.addWidget(self.asf, 1, 1)
+        self.widgets[&#39;asf_label&#39;] = others_layout.itemAtPosition(1, 0).widget()
+        others_box.setLayout(others_layout)
+
+        # Add to widgets dictionary for future reference
+        self.widgets[&#39;material_box&#39;] = material_box
+        self.widgets[&#39;laser_box&#39;] = laser_box
+        self.widgets[&#39;others_box&#39;] = others_box
+
+        # Buttons for actions
+        self.load_from_file_btn = QToolButton()
+        self.load_from_file_btn.setIcon(QIcon(&#34;../resources/images/from_file_light.png&#34;))
+        self.widgets[&#39;clear_btn&#39;] = QPushButton(&#34;Clear Fields&#34;)
+        self.widgets[&#39;start_btn&#39;] = QPushButton(&#34;Start Simulation&#34;)
+        btn_layout = QHBoxLayout()
+        btn_layout.addWidget(self.load_from_file_btn)
+        btn_layout.addWidget(self.widgets[&#39;clear_btn&#39;])
+        btn_layout.addWidget(self.widgets[&#39;start_btn&#39;])
+
+        control_panel.addWidget(material_box)
+        control_panel.addWidget(laser_box)
+        control_panel.addWidget(others_box)
+        control_panel.addLayout(btn_layout)
+
+        # Plot Layout (on the right side of the form)
+        self.plot_frame = QFrame()
+        self.plot_frame.setFrameShape(QFrame.Shape.StyledPanel)
+        plot_layout = QVBoxLayout(self.plot_frame)
+        self.plot_canvas = PlotCanvas(self.plot_frame)
+        plot_layout.addWidget(self.plot_canvas)
+
+
+        right_widget = QWidget()
+        right_layout = QVBoxLayout()
+        buttons_panel = QVBoxLayout()
+        switch_plot_layout = QVBoxLayout()
+        self.up_arrow_btn = QToolButton()
+        self.up_arrow_btn.setIcon(QIcon(&#34;../resources/images/up_light.png&#34;))
+        self.down_arrow_btn = QToolButton()
+        self.down_arrow_btn.setIcon(QIcon(&#34;../resources/images/down_light.png&#34;))
+        switch_plot_layout.addWidget(self.up_arrow_btn)
+        switch_plot_layout.addWidget(self.down_arrow_btn)
+
+        # Sekcja z przyciskami do pobierania danych
+        download_layout = QVBoxLayout()
+        self.download_current_btn = QToolButton()
+        self.download_current_btn.setIcon(QIcon(&#34;../resources/images/download_photo_light.png&#34;))  # Ikona pobierania wykresu
+        self.download_current_btn.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.download_current_btn.setFixedSize(QSize(30, 30))
+        self.download_current_btn.setIconSize(QSize(30, 30))
+        self.download_current_btn.setStyleSheet(&#34;border: none; background-color: transparent; border-radius: 15px;&#34;)
+        self.download_all_btn = QToolButton()
+        self.download_all_btn.setIcon(QIcon(&#34;../resources/images/download_all_light.png&#34;))  # Ikona pobierania wszystkich wykresów
+        self.download_data_btn = QToolButton()
+        self.download_data_btn.setIcon(QIcon(&#34;../resources/images/download_data_light.png&#34;))  # Ikona pobierania danych
+        self.zoom_btn = QToolButton()
+        self.zoom_btn.setIcon(QIcon(&#34;../resources/images/maxGraph_light.png&#34;))  # Ikona powiększania wykresu
+
+        download_layout.addWidget(self.download_current_btn)
+        download_layout.addWidget(self.download_all_btn)
+        download_layout.addWidget(self.download_data_btn)
+        download_layout.addWidget(self.zoom_btn)
+
+        buttons_panel.addLayout(switch_plot_layout)
+        buttons_panel.addItem(QSpacerItem(20, 20, QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Expanding))
+        buttons_panel.addLayout(download_layout)
+        right_layout.addLayout(buttons_panel)
+        right_widget.setLayout(right_layout)
+
+        control_panel_widget = QWidget()
+        control_panel_widget.setLayout(control_panel)
+        control_panel_widget.setFixedWidth(320)
+
+        splitter = QSplitter(Qt.Orientation.Horizontal)
+        splitter.addWidget(control_panel_widget)  # Left side: control panel with form elements
+        splitter.addWidget(self.plot_frame)  # Right side: plot area
+        splitter.addWidget(right_widget)
+        splitter.setStretchFactor(0, 1)  # Left part should not stretch
+        splitter.setStretchFactor(1, 2)  # Right part (plot) should take more space
+        splitter.setStretchFactor(2, 1)  # Right part (plot) should take more space
+
+        main_layout.addWidget(splitter)
+        central_widget.setLayout(main_layout)
+
+
+        # Creating a main layout and adding the title bar at the top
+        title_bar_layout = QVBoxLayout()
+        title_bar_layout.addWidget(self.title_bar)  # Add the title bar
+        title_bar_layout.addWidget(central_widget)  # Add
+
+        # Set the main layout of the window
+        main_container = QWidget()
+        main_container.setLayout(title_bar_layout)
+        self.setCentralWidget(main_container)
+
+        self.title_bar.theme_changed.connect(self.change_theme)
+
+        self.update_language(&#34;English&#34;)
+
+        # Connect buttons to functions
+        self.load_from_file_btn.clicked.connect(self.load_user_data)
+        self.widgets[&#39;clear_btn&#39;].clicked.connect(self.clear_fields)
+        self.widgets[&#39;start_btn&#39;].clicked.connect(self.start_simulation)
+
+        self.up_arrow_btn.clicked.connect(self.switch_plot_up)
+        self.down_arrow_btn.clicked.connect(self.switch_plot_down)
+        self.download_current_btn.clicked.connect(self.download_current_plot)
+        self.download_all_btn.clicked.connect(self.download_all_plots)
+        self.download_data_btn.clicked.connect(self.download_data)
+        self.zoom_btn.clicked.connect(self.zoom_plot)
+
+    def show_info_message(self):
+        &#34;&#34;&#34;
+        Wyświetla okno dialogowe z informacjami o aplikacji.
+        Displays an information dialog about the application.
+
+        Treść i tytuł pobierane są z tłumaczeń dla aktualnego języka.
+        The content and title are loaded from translations for the current language.
+        &#34;&#34;&#34;
+        t = self.translations[self.current_language]
+        msg = QMessageBox(self)
+        msg.setWindowTitle(t[&#34;info_title&#34;])
+        msg.setTextFormat(Qt.TextFormat.RichText)
+        msg.setText(f&#34;&lt;div style=&#39;min-width: 600px; max-width: 800px; text-align: justify;&#39;&gt;{t[&#39;info_message&#39;]}&lt;/div&gt;&#34;)
+        msg.exec()
+
+    def changeEvent(self, event):
+        &#34;&#34;&#34;
+        Obsługuje zdarzenia zmiany stanu okna, np. maksymalizacji.
+        Handles window state change events, e.g., maximization.
+
+        Przekazuje zdarzenie do paska tytułu, aby zaktualizować przyciski.
+        Forwards the event to the title bar to update buttons accordingly.
+        &#34;&#34;&#34;
+        if event.type() == QEvent.Type.WindowStateChange:
+            self.title_bar.window_state_changed(self.windowState())
+        super().changeEvent(event)
+        event.accept()
+
+    def window_state_changed(self, state):
+        &#34;&#34;&#34;
+        Aktualizuje widoczność przycisków maksymalizacji i przywracania okna
+        w zależności od obecnego stanu okna (zmaksymalizowane/normalne).
+
+        Updates the visibility of maximize and restore buttons depending on the window state (maximized/normal).
+        &#34;&#34;&#34;
+        self.normal_button.setVisible(state == Qt.WindowState.WindowMaximized)
+        self.maximize_btn.setVisible(state != Qt.WindowState.WindowMaximized)
+
+    def mousePressEvent(self, event):
+        &#34;&#34;&#34;
+        Obsługuje naciśnięcie przycisku myszy.
+
+        Jeśli lewy przycisk i okno jest zmaksymalizowane, przywraca do rozmiaru normalnego
+        i zapisuje pozycję kliknięcia, by umożliwić płynne przeciąganie.
+
+        Handles mouse press events.
+
+        If left button is pressed and window is maximized, restores to normal size
+        and records click position to enable smooth dragging.
+        &#34;&#34;&#34;
+        if event.button() == Qt.MouseButton.LeftButton:
+            # jeśli było zmaksymalizowane, to przywróć przed ruszeniem
+            if self.isMaximized():
+                # pamiętaj współrzędne kliknięcia względem całego ekranu
+                global_pos = event.globalPosition().toPoint()
+                # przywróć okno do stanu normalnego
+                self.showNormal()
+                # po przywróceniu oblicz nową initial_pos tak,
+                # aby mysz „złapała” okno w tym samym punkcie
+                geo = self.geometry()
+                # np. ustaw initial_pos tak, żeby relatywna pozycja się zachowała
+                click_x = global_pos.x() - geo.x()
+                click_y = global_pos.y() - geo.y()
+                self.initial_pos = QPoint(click_x, click_y)
+            else:
+                self.initial_pos = event.position().toPoint()
+
+        super().mousePressEvent(event)
+        event.accept()
+
+    def mouseMoveEvent(self, event):
+        &#34;&#34;&#34;
+        Obsługuje przesuwanie myszy podczas przeciągania okna.
+
+        Przesuwa okno zgodnie z ruchem myszy, jeśli wcześniej zapisana została pozycja startowa.
+
+        Handles mouse move events during window dragging.
+
+        Moves the window according to mouse movement if initial click position was saved.
+        &#34;&#34;&#34;
+        if self.initial_pos is not None:
+            delta = event.position().toPoint() - self.initial_pos
+            self.window().move(
+                self.window().x() + delta.x(),
+                self.window().y() + delta.y(),
+            )
+        super().mouseMoveEvent(event)
+        event.accept()
+
+    def mouseReleaseEvent(self, event):
+        &#34;&#34;&#34;
+        Obsługuje zwolnienie przycisku myszy.
+
+        Jeśli okno nie jest zmaksymalizowane, a jego górna krawędź dotyka górnej krawędzi ekranu,
+        automatycznie maksymalizuje okno.
+
+        Handles mouse release events.
+
+        If the window is not maximized and its top edge touches the top of the screen,
+        automatically maximizes the window.
+        &#34;&#34;&#34;
+        super().mouseReleaseEvent(event)
+        if not self.isMaximized() and self.y() &lt;= 0:
+            self.showMaximized()
+        self.initial_pos = None
+        event.accept()
+
+    def clear_fields(self):
+        &#34;&#34;&#34;
+        Czyści wszystkie pola formularza i resetuje wybór materiału.
+
+        Czyści również obszar wykresu, jeśli istnieje.
+
+        Clears all form fields and resets material selection.
+
+        Also clears the plot area if it exists.
+        &#34;&#34;&#34;
+        for field in [self.init_temp, self.curie_temp, self.mag_moment,
+                      self.power, self.duration, self.wavelength,
+                      self.ges, self.asf]:
+            field.clear()
+        self.material_type.setCurrentIndex(0)
+        if hasattr(self, &#39;plot_canvas&#39;):
+            self.plot_canvas.clear()
+
+    def update_language(self, lang):
+        &#34;&#34;&#34;
+        Aktualizuje interfejs użytkownika na wybrany język.
+
+        Ustawia teksty etykiet, tytuły grup, przycisków i komunikatów błędów
+        na podstawie słownika tłumaczeń.
+
+        Args:
+            lang (str): Kod wybranego języka (np. &#34;English&#34;, &#34;Polski&#34;).
+
+        Updates the user interface to the selected language.
+
+        Sets label texts, group titles, buttons, and error messages
+        based on the translation dictionary.
+
+        Args:
+            lang (str): Selected language code (e.g., &#34;English&#34;, &#34;Polski&#34;).
+        &#34;&#34;&#34;
+        self.current_language = lang
+        t = self.translations[lang]
+        self.field_labels = {
+            &#39;init_temp_label&#39;: t[&#39;Initial temperature T0&#39;],
+            &#39;curie_temp_label&#39;: t[&#39;Curie temperature TC&#39;],
+            &#39;mag_moment_label&#39;: t[&#39;Magnetic moment μat&#39;],
+            &#39;power_label&#39;: t[&#39;Power of impulse (mJ/cm²)&#39;],
+            &#39;duration_label&#39;: t[&#39;Duration of the impulse (fs)&#39;],
+            &#39;wavelength_label&#39;: t[&#39;Laser wavelength (nm)&#39;],
+            &#39;ges_label&#39;: t[&#39;Electron-spin constant coupling ges&#39;],
+            &#39;asf_label&#39;: t[&#39;Spin-flip probability asf&#39;],
+            &#39;material_label&#39;: t[&#39;Type of material&#39;],
+        }
+        self.widgets[&#39;title&#39;].setText(t[&#39;LaserDeMag&#39;])
+        self.widgets[&#39;description&#39;].setText(t[&#39;Description&#39;])
+        self.widgets[&#39;material_box&#39;].setTitle(t[&#39;Material&#39;])
+        self.widgets[&#39;material_label&#39;].setText(t[&#39;Type of material&#39;])
+        self.material_type.clear()
+        self.material_type.addItems([t[&#39;Select the type&#39;], &#34;Fe&#34;, &#34;Ni&#34;, &#34;Co&#34;, &#34;Gd&#34;])
+        self.widgets[&#39;init_temp_label&#39;].setText(t[&#39;Initial temperature T0&#39;])
+        self.widgets[&#39;curie_temp_label&#39;].setText(t[&#39;Curie temperature TC&#39;])
+        self.widgets[&#39;mag_moment_label&#39;].setText(t[&#39;Magnetic moment μat&#39;])
+        self.widgets[&#39;laser_box&#39;].setTitle(t[&#39;Laser&#39;])
+        self.widgets[&#39;power_label&#39;].setText(t[&#39;Power of impulse (mJ/cm²)&#39;])
+        self.widgets[&#39;duration_label&#39;].setText(t[&#39;Duration of the impulse (fs)&#39;])
+        self.widgets[&#39;wavelength_label&#39;].setText(t[&#39;Laser wavelength (nm)&#39;])
+        self.widgets[&#39;others_box&#39;].setTitle(t[&#39;Others&#39;])
+        self.widgets[&#39;ges_label&#39;].setText(t[&#39;Electron-spin constant coupling ges&#39;])
+        self.widgets[&#39;asf_label&#39;].setText(t[&#39;Spin-flip probability asf&#39;])
+        self.widgets[&#39;clear_btn&#39;].setText(t[&#39;Clear fields&#39;])
+        self.widgets[&#39;start_btn&#39;].setText(t[&#39;Start the simulation&#39;])
+        self.plot_canvas.update_messages(t)
+        self.missing_fields_error = t[&#39;missing_fields_error&#39;]
+        self.error_invalid_format = t[&#39;error_invalid_format&#39;]
+        self.error_json_decode = t[&#39;error_json_decode&#39;]
+        self.error_file_not_found = t[&#39;error_file_not_found&#39;]
+        self.error_invalid_type= t[&#39;error_invalid_type&#39;]
+        self.error_invalid_material= t[&#39;error_invalid_material&#39;]
+        self.error_material_not_selected = t[&#39;error_material_not_selected&#39;]
+        self.error_invalid_number = t[&#39;error_invalid_number&#39;]
+        self.error_required_field = t[&#39;error_required_field&#39;]
+        self.information_title = t[&#39;information_title&#39;]
+        self.critical_title = t[&#39;critical_title&#39;]
+        self.save_success_json = t[&#39;save_success_json&#39;]
+        self.save_error_json = t[&#39;save_error_json&#39;]
+        self.save_success_xml = t[&#39;save_success_xml&#39;]
+        self.save_error_xml = t[&#39;save_error_xml&#39;]
+        self.error_numerical_simulation = t[&#39;error_numerical_simulation&#39;]
+        self.error_unknown_simulation = t[&#39;error_unknown_simulation&#39;]
+        self.loading_message = t[&#39;loading_message&#39;]
+        self.loading_title = t[&#39;loading_title&#39;]
+        self.save_report_title = t[&#39;save_report_title&#39;]
+
+    def change_theme(self, theme: str):
+        &#34;&#34;&#34;
+        Zmienia motyw graficzny aplikacji na ciemny lub jasny.
+
+        Args:
+            theme (str): Nazwa motywu, np. &#39;dark&#39; lub &#39;light&#39;.
+
+        Changes the application&#39;s graphical theme to dark or light.
+
+        Args:
+            theme (str): Theme name, e.g., &#39;dark&#39; or &#39;light&#39;.
+        &#34;&#34;&#34;
+        if theme == &#39;dark&#39;:
+            self.set_dark_ui()
+        elif theme == &#39;light&#39;:
+            self.set_light_ui()
+
+    def set_dark_ui(self):
+        &#34;&#34;&#34;
+        Ustawia ciemny motyw interfejsu użytkownika,
+        zmieniając kolory tekstów, ikon oraz paletę kolorów aplikacji.
+
+        Sets the dark UI theme by changing text colors, icons,
+        and the application color palette.
+        &#34;&#34;&#34;
+        self.widgets[&#39;material_box&#39;].setStyleSheet(&#34;color: white;&#34;)
+        self.widgets[&#39;laser_box&#39;].setStyleSheet(&#34;color: white;&#34;)
+        self.widgets[&#39;others_box&#39;].setStyleSheet(&#34;color: white;&#34;)
+        self.widgets[&#39;description&#39;].setStyleSheet(&#34;color: white;&#34;)
+        self.widgets[&#39;title&#39;].setStyleSheet(&#34;color: white;&#34;)
+        new_logo = QPixmap(&#34;../resources/images/logo_dark.png&#34;).scaled(90, 90, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+        self.logo_label.setPixmap(new_logo)
+        self.download_current_btn.setIcon(QIcon(&#34;../resources/images/download_photo_dark.png&#34;))
+        self.download_data_btn.setIcon(QIcon(&#34;../resources/images/download_data_dark.png&#34;))
+        self.zoom_btn.setIcon(QIcon(&#34;../resources/images/maxGraph_dark.png&#34;))
+        self.down_arrow_btn.setIcon(QIcon(&#34;../resources/images/down_dark.png&#34;))
+        self.up_arrow_btn.setIcon(QIcon(&#34;../resources/images/up_dark.png&#34;))
+        self.download_all_btn.setIcon(QIcon(&#34;../resources/images/download_all_dark.png&#34;))
+        self.load_from_file_btn.setIcon(QIcon(&#34;../resources/images/from_file_dark.png&#34;))
+        self.image_path = &#34;../resources/images/loading_dark.png&#34;
+
+        for le in self.centralWidget().findChildren(QLineEdit):
+            le.setStyleSheet(&#34;&#34;&#34;
+                QLineEdit {
+                    background-color: white;
+                    color: black;
+                    border: 1px solid gray;
+                    border-radius: 4px;
+                    padding: 2px 4px;
+                }
+            &#34;&#34;&#34;)
+
+        for cb in self.findChildren(QComboBox):
+            cb.setStyleSheet(&#34;&#34;&#34;
+                        QComboBox {
+                            background-color: #2a2a2a;
+                            color: white;
+                            border: 1px solid #555;
+                        }
+                        QComboBox QAbstractItemView {
+                            background-color: #3a3a3a;
+                            color: white;
+                            selection-background-color: #555;
+                            selection-color: black;
+                        }
+                    &#34;&#34;&#34;)
+        QApplication.instance().setStyleSheet(&#34;&#34;&#34;
+            QMessageBox {
+                background-color: black;
+                color: white;
+            }
+            QMessageBox QLabel {
+                color: white;
+                font-size: 14px;
+            }
+            QMessageBox QPushButton {
+                min-width: 80px;
+                padding: 5px;
+                background-color: black;
+                border:1px solid white;
+            }
+        &#34;&#34;&#34;)
+
+        for button in self.findChildren(QToolButton):
+            button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+            button.setFixedSize(QSize(30, 30))
+            button.setIconSize(QSize(30, 30))
+            button.setStyleSheet(&#34;&#34;&#34;
+                       border: none;
+                       background-color: transparent;
+                       border-radius: 15px;
+        &#34;&#34;&#34;)
+
+        # Buttons
+        self.widgets[&#39;clear_btn&#39;].setStyleSheet(&#34;background-color: #444; color: white; border-radius: 5px;&#34;)
+        self.widgets[&#39;start_btn&#39;].setStyleSheet(&#34;background-color: #444; color: white; border-radius: 5px;&#34;)
+
+        dark_palette = QPalette()
+
+        dark_palette.setColor(QPalette.ColorRole.Window, QColor(53, 53, 53))
+        dark_palette.setColor(QPalette.ColorRole.WindowText, QColor(255, 255, 255))
+        dark_palette.setColor(QPalette.ColorRole.Base, QColor(42, 42, 42))
+        dark_palette.setColor(QPalette.ColorRole.AlternateBase, QColor(66, 66, 66))
+        dark_palette.setColor(QPalette.ColorRole.ToolTipBase, QColor(255, 255, 255))
+        dark_palette.setColor(QPalette.ColorRole.ToolTipText, QColor(255, 255, 255))
+        dark_palette.setColor(QPalette.ColorRole.Text, QColor(255, 255, 255))
+        dark_palette.setColor(QPalette.ColorRole.Button, QColor(53, 53, 53))
+        dark_palette.setColor(QPalette.ColorRole.ButtonText, QColor(255, 255, 255))
+        dark_palette.setColor(QPalette.ColorRole.BrightText, QColor(255, 0, 0))
+
+        QApplication.setPalette(dark_palette)
+
+    def set_light_ui(self):
+        &#34;&#34;&#34;
+        Ustawia jasny motyw interfejsu użytkownika,
+        zmieniając kolory tekstów, ikon oraz paletę kolorów aplikacji.
+
+        Sets the light UI theme by changing text colors, icons,
+        and the application color palette.
+        &#34;&#34;&#34;
+        self.widgets[&#39;material_box&#39;].setStyleSheet(&#34;color: black;&#34;)
+        self.widgets[&#39;laser_box&#39;].setStyleSheet(&#34;color: black;&#34;)
+        self.widgets[&#39;others_box&#39;].setStyleSheet(&#34;color: black;&#34;)
+        self.widgets[&#39;description&#39;].setStyleSheet(&#34;color: black;&#34;)
+        self.widgets[&#39;title&#39;].setStyleSheet(&#34;color: black;&#34;)
+        new_logo = QPixmap(&#34;../resources/images/logo_light.png&#34;).scaled(90, 90, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+        self.logo_label.setPixmap(new_logo)
+        self.download_current_btn.setIcon(QIcon(&#34;../resources/images/download_photo_light.png&#34;))
+        self.download_data_btn.setIcon(QIcon(&#34;../resources/images/download_data_light.png&#34;))
+        self.zoom_btn.setIcon(QIcon(&#34;../resources/images/maxGraph_light.png&#34;))
+        self.down_arrow_btn.setIcon(QIcon(&#34;../resources/images/down_light.png&#34;))
+        self.up_arrow_btn.setIcon(QIcon(&#34;../resources/images/up_light.png&#34;))
+        self.download_all_btn.setIcon(QIcon(&#34;../resources/images/download_all_light.png&#34;))
+        self.load_from_file_btn.setIcon(QIcon(&#34;../resources/images/from_file_light.png&#34;))
+        self.image_path = &#34;../resources/images/loading_light.png&#34;
+
+        self.widgets[&#39;clear_btn&#39;].setStyleSheet(&#34;background-color: #ddd; color: black; border-radius: 5px;&#34;)
+        self.widgets[&#39;start_btn&#39;].setStyleSheet(&#34;background-color: #ddd; color: black; border-radius: 5px;&#34;)
+
+        for cb in self.findChildren(QComboBox):
+            cb.setStyleSheet(&#34;&#34;&#34;
+                        QComboBox {
+                            background-color: white;
+                            color: black;
+                            border: 1px solid gray;
+                        }
+                        QComboBox QAbstractItemView {
+                            background-color: white;
+                            color: black;
+                            selection-background-color: #cce;
+                            selection-color: black;
+                        }
+                    &#34;&#34;&#34;)
+        QApplication.instance().setStyleSheet(&#34;&#34;&#34;
+            QMessageBox {
+                background-color: white;
+                color: black;
+            }
+            QMessageBox QLabel {
+                color: black;
+                font-size: 14px;
+            }
+            QMessageBox QPushButton {
+                min-width: 80px;
+                padding: 5px;
+            }
+        &#34;&#34;&#34;)
+
+        for button in self.findChildren(QToolButton):
+            button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+            button.setFixedSize(QSize(30, 30))
+            button.setIconSize(QSize(30, 30))
+            button.setStyleSheet(&#34;&#34;&#34;
+                       border: none;
+                       background-color: transparent;
+                       border-radius: 15px;
+        &#34;&#34;&#34;)
+
+        light_palette = QPalette()
+
+        light_palette.setColor(QPalette.ColorRole.Window, QColor(240, 240, 240))
+        light_palette.setColor(QPalette.ColorRole.WindowText, QColor(0, 0, 0))
+        light_palette.setColor(QPalette.ColorRole.Base, QColor(255, 255, 255))
+        light_palette.setColor(QPalette.ColorRole.AlternateBase, QColor(220, 220, 220))
+        light_palette.setColor(QPalette.ColorRole.ToolTipBase, QColor(255, 255, 255))
+        light_palette.setColor(QPalette.ColorRole.ToolTipText, QColor(0, 0, 0))
+        light_palette.setColor(QPalette.ColorRole.Text, QColor(0, 0, 0))
+        light_palette.setColor(QPalette.ColorRole.Button, QColor(240, 240, 240))
+        light_palette.setColor(QPalette.ColorRole.ButtonText, QColor(0, 0, 0))
+        light_palette.setColor(QPalette.ColorRole.BrightText, QColor(255, 0, 0))
+
+        QApplication.setPalette(light_palette)
+
+    def get_params_from_form(self):
+        &#34;&#34;&#34;
+        Pobiera i waliduje parametry z formularza GUI.
+
+        Retrieves and validates parameters from the GUI form.
+        &#34;&#34;&#34;
+        try:
+            material = self.material_type.currentText().strip()
+            if self.material_type.currentIndex() == 0:
+                raise ValueError(self.error_material_not_selected)
+
+            def validate_float(value_str, field_key):
+                field_label = self.field_labels.get(field_key, field_key)
+                if not value_str.strip():
+                    raise ValueError(self.error_required_field.format(field=field_label))
+                try:
+                    val = float(value_str)
+                except ValueError:
+                    raise ValueError(self.error_invalid_number.format(field=field_label))
+                if val &lt;= 0:
+                    raise ValueError(self.error_invalid_number.format(field=field_label))
+                return val
+
+            # Walidacja pól liczbowych
+            T0 = validate_float(self.init_temp.text(), &#34;init_temp_label&#34;)
+            Tc = validate_float(self.curie_temp.text(), &#34;curie_temp_label&#34;)
+            mu = validate_float(self.mag_moment.text(), &#34;mag_moment_label&#34;)
+            fluence = validate_float(self.power.text(), &#34;power_label&#34;)
+            pulse_duration = validate_float(self.duration.text(), &#34;duration_label&#34;) / 1000  # fs → ps
+            laser_wavelength = validate_float(self.wavelength.text(), &#34;wavelength_label&#34;)
+            ge = validate_float(self.ges.text(), &#34;ges_label&#34;)
+            asf = validate_float(self.asf.text(), &#34;asf_label&#34;)
+
+            return {
+                &#39;material&#39;: material,
+                &#39;T0&#39;: T0,
+                &#39;Tc&#39;: Tc,
+                &#39;mu&#39;: mu,
+                &#39;fluence&#39;: fluence,
+                &#39;pulse_duration&#39;: pulse_duration,
+                &#39;laser_wavelength&#39;: laser_wavelength,
+                &#39;ge&#39;: ge,
+                &#39;asf&#39;: asf
+            }
+
+        except ValueError as e:
+            QMessageBox.critical(self, self.critical_title, str(e))
+            return None
+
+    def start_simulation(self):
+        &#34;&#34;&#34;
+        Uruchamia symulację na podstawie parametrów z formularza,
+        pokazuje dialog ładowania i obsługuje wyniki oraz błędy.
+
+        Starts the simulation based on form parameters,
+        shows loading dialog, and handles results and errors.
+        &#34;&#34;&#34;
+        self.current_plot_index = 0
+        params = self.get_params_from_form()
+        if params is None:
+            return
+
+        self.loading_dialog = LoadingDialog(self.loading_title, self.loading_message, self.image_path)
+        self.loading_dialog.show()
+        QApplication.processEvents()
+
+        try:
+            start_time = time.time()
+            material_obj, prop = get_material_properties(
+                params[&#39;material&#39;], params[&#39;Tc&#39;], params[&#39;mu&#39;], params[&#39;ge&#39;]
+            )
+            self.material_props = prop
+            self.material_name = material_obj.name
+
+            self.plot_data = main(params)
+            self.plot_canvas.set_all_plots(self.plot_data)
+            self.update_plot()
+
+            duration = time.time() - start_time
+
+            save_simulation_report(params, self.material_name, self.material_props, self.plot_data, self, simulation_duration=duration)
+
+        except FloatingPointError as e:
+            QMessageBox.critical(self, self.critical_title,
+                                 self.translations[self.current_language][&#39;error_numeric&#39;] + &#34;\n&#34; + str(e))
+        except Exception as e:
+            QMessageBox.critical(self, self.critical_title,
+                                 self.translations[self.current_language][&#39;error_unknown_simulation&#39;] + &#34;\n&#34; + str(e))
+        finally:
+            self.loading_dialog.close()
+    def on_simulation_finished(self, result):
+        &#34;&#34;&#34;
+        Obsługuje zakończenie symulacji, aktualizuje wykres i zamyka dialog ładowania.
+
+        Handles simulation finish, updates plot, and closes loading dialog.
+        &#34;&#34;&#34;
+        self.plot_data = result
+        self.plot_canvas.set_all_plots(self.plot_data)
+        self.update_plot()
+        self.loading_dialog.close()
+
+    def on_simulation_error(self, e):
+        &#34;&#34;&#34;
+        Obsługuje błędy symulacji, zamyka dialog ładowania i wyświetla komunikat krytyczny.
+
+        Handles simulation errors, closes loading dialog, and shows critical message.
+        &#34;&#34;&#34;
+        self.loading_dialog.close()
+        QMessageBox.critical(self, self.critical_title, str(e))
+
+    def update_plot(self):
+        &#34;&#34;&#34;
+        Aktualizuje wykres w GUI w zależności od aktualnego indeksu wykresu.
+
+        Updates the GUI plot depending on the current plot index.
+        &#34;&#34;&#34;
+        self.plot_canvas.current_plot_index = self.current_plot_index  # zapewnia spójność z GUI
+        if self.current_plot_index == 0:
+            self.plot_canvas.show_map_plot(self.plot_data[&#34;maps&#34;])
+        else:
+            self.plot_canvas.show_line_plot(self.plot_data[&#34;lines&#34;])
+
+    def switch_plot_up(self):
+        &#34;&#34;&#34;
+        Przełącza wykres na następny typ i aktualizuje wyświetlenie.
+
+        Switches plot to the next type and updates display.
+        &#34;&#34;&#34;
+        self.current_plot_index = (self.current_plot_index + 1) % 2
+        self.update_plot()
+
+    def switch_plot_down(self):
+        &#34;&#34;&#34;
+        Przełącza wykres na poprzedni typ i aktualizuje wyświetlenie.
+
+        Switches plot to the previous type and updates display.
+        &#34;&#34;&#34;
+        self.current_plot_index = (self.current_plot_index - 1) % 2
+        self.update_plot()
+
+    def download_current_plot(self):
+        &#34;&#34;&#34;
+        Otwiera dialog zapisu i zapisuje aktualnie wyświetlany wykres do pliku.
+
+        Opens save dialog and saves the currently displayed plot to a file.
+        &#34;&#34;&#34;
+        file_path, _ = QFileDialog.getSaveFileName(
+            self,
+            &#34;Zapisz wykres&#34;,
+            &#34;&#34;,
+            &#34;Plik PNG (*.png);;Plik PDF (*.pdf);;Plik SVG (*.svg)&#34;,
+            options=QFileDialog.Option.DontUseNativeDialog
+        )
+        if file_path:
+            self.plot_canvas.save_current_plot(file_path)
+
+    def download_all_plots(self):
+        &#34;&#34;&#34;
+        Otwiera dialog wyboru folderu i zapisuje wszystkie wykresy do wybranego katalogu.
+
+        Opens directory selection dialog and saves all plots to the chosen folder.
+        &#34;&#34;&#34;
+        directory = QFileDialog.getExistingDirectory(
+            self,
+            &#34;Wybierz folder do zapisania wszystkich wykresów&#34;,
+            options=QFileDialog.Option.ShowDirsOnly | QFileDialog.Option.DontUseNativeDialog
+        )
+        if directory:
+            self.plot_canvas.save_all_plots(directory)
+
+    def download_data(self):
+        &#34;&#34;&#34;
+        Pyta użytkownika o format (JSON lub XML), następnie zapisuje dane symulacji.
+
+        Asks user for format (JSON or XML), then saves simulation data.
+        &#34;&#34;&#34;
+        params = self.collect_simulation_parameters()
+        t = self.translations[self.current_language]
+
+        file_path, selected_filter = QFileDialog.getSaveFileName(
+            self,
+            t[&#39;save_dialog_title&#39;],
+            &#34;&#34;,
+            f&#34;{t[&#39;save_filter_json&#39;]};;{t[&#39;save_filter_xml&#39;]}&#34;,
+            options=QFileDialog.Option.DontUseNativeDialog
+        )
+        if not file_path:
+            return
+
+        def quantity_to_plain(obj):
+            if hasattr(obj, &#39;magnitude&#39;) and hasattr(obj, &#39;units&#39;):
+                return f&#34;{obj.magnitude} {obj.units}&#34;
+            if isinstance(obj, list):
+                return [quantity_to_plain(x) for x in obj]
+            if isinstance(obj, dict):
+                return {k: quantity_to_plain(v) for k, v in obj.items()}
+            return obj
+
+        # Wybierz format
+        file_format = &#34;json&#34; if selected_filter.startswith(&#34;JSON&#34;) else &#34;xml&#34;
+
+        try:
+            saved_path = save_simulation_parameters(
+                params=params,
+                file_path=file_path,
+                file_format=file_format,
+                parameter_encoder=ParameterEncoder,
+                quantity_to_plain_func=quantity_to_plain
+            )
+            success_msg = t[&#39;save_success_json&#39;] if file_format == &#34;json&#34; else t[&#39;save_success_xml&#39;]
+            QMessageBox.information(self, t[&#39;information_title&#39;], success_msg.format(path=saved_path))
+
+        except Exception as e:
+            error_msg = t[&#39;save_error_json&#39;] if file_format == &#34;json&#34; else t[&#39;save_error_xml&#39;]
+            QMessageBox.critical(self, t[&#39;critical_title&#39;], error_msg.format(err=str(e)))
+
+    def zoom_plot(self):
+        &#34;&#34;&#34;
+        Otwiera aktualny wykres w trybie pełnoekranowym.
+
+        Opens the current plot in fullscreen mode.
+        &#34;&#34;&#34;
+        self.plot_canvas.open_current_plot_fullscreen()
+
+    def collect_simulation_parameters(self):
+        &#34;&#34;&#34;
+        Zbiera wszystkie parametry symulacji, łącznie z danymi formularza i właściwościami materiału.
+
+        Collects all simulation parameters, including form inputs and material properties.
+        &#34;&#34;&#34;
+        params = {
+            &#39;user&#39;: self.get_params_from_form(),
+            &#39;material&#39;: {
+                &#39;name&#39;: getattr(self, &#39;material_name&#39;, None),
+                **getattr(self, &#39;material_props&#39;, {})
+            },
+        }
+        return params
+
+    def load_user_data(self):
+        &#34;&#34;&#34;
+        Otwiera dialog wyboru pliku i ładuje dane użytkownika z pliku JSON,
+        następnie wypełnia formularz danymi.
+
+        Opens file selection dialog and loads user data from a JSON file,
+        then populates the form with the loaded data.
+        &#34;&#34;&#34;
+        t = self.translations[self.current_language]
+
+        file_path, _ = QFileDialog.getOpenFileName(
+            self,
+            t[&#39;open_dialog_title&#39;],
+            &#34;&#34;,
+            t[&#39;open_filter_json&#39;],
+            options=QFileDialog.Option.DontUseNativeDialog
+        )
+        if not file_path:
+            return
+
+        try:
+            user_data = load_simulation_parameters(file_path,self)
+
+            # Przekaż dane do formularza
+            self.populate_user_form(user_data)
+
+            QMessageBox.information(
+                self,
+                t[&#39;information_title&#39;],
+                t[&#39;load_success_json&#39;].format(path=file_path)
+            )
+        except Exception as e:
+            QMessageBox.critical(
+                self,
+                self.critical_title,
+                str(e)
+            )
+
+    def populate_user_form(self, data: dict):
+        &#34;&#34;&#34;
+        Wypełnia formularz GUI na podstawie danych z pliku.
+
+        Fills the GUI form fields based on the loaded data.
+
+        Args:
+            data (dict): Dictionary with parameters to set in the form.
+        &#34;&#34;&#34;
+        self.material_type.setCurrentText(data[&#34;material&#34;])
+        self.init_temp.setText(str(data[&#34;T0&#34;]))
+        self.curie_temp.setText(str(data[&#34;Tc&#34;]))
+        self.mag_moment.setText(str(data[&#34;mu&#34;]))
+        self.power.setText(str(data[&#34;fluence&#34;]))
+        self.duration.setText(str(data[&#34;pulse_duration&#34;] / 1000))  # fs → ps
+        self.wavelength.setText(str(data[&#34;laser_wavelength&#34;]))
+        self.ges.setText(str(data[&#34;ge&#34;]))
+        self.asf.setText(str(data[&#34;asf&#34;]))</code></pre>
+</details>
+<div class="desc"><p>Główne okno aplikacji LaserDeMag.</p>
+<p>Okno zawiera niestandardowy pasek tytułu, panel kontrolny z formularzem
+do wprowadzania parametrów symulacji oraz obszar wykresów wyników.
+Zapewnia obsługę zmiany motywu, języka, wczytywania danych z pliku,
+czyszczenia pól, uruchamiania symulacji oraz sterowania wykresami
+(przełączanie, pobieranie, powiększanie).</p>
+<p>Elementy UI:
+- Pasek tytułu (CustomTitleBar) z przyciskami do sterowania oknem i zmianą motywu/języka,
+- Panel formularza z grupami pól: Materiał, Laser, Inne,
+- Przyciski akcji: wczytaj z pliku, wyczyść, rozpocznij symulację,
+- Obszar wykresu (PlotCanvas) wraz z przyciskami do zmiany wykresów i pobierania danych.</p>
+<hr>
+<p>Main application window for LaserDeMag.</p>
+<p>The window contains a custom title bar, a control panel with a form
+for simulation parameters input, and a plotting area for results.
+It supports theme switching, language update, loading data from file,
+clearing input fields, starting simulation, and plot controls
+(switching plots, downloading plots/data, zooming).</p>
+<p>UI Elements:
+- Custom title bar (CustomTitleBar) with window control and theme/language buttons,
+- Form panel with grouped input fields: Material, Laser, Others,
+- Action buttons: load from file, clear fields, start simulation,
+- Plot area (PlotCanvas) with buttons for switching plots and downloading data.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>PyQt6.QtWidgets.QMainWindow</li>
+<li>PyQt6.QtWidgets.QWidget</li>
+<li>PyQt6.QtCore.QObject</li>
+<li>PyQt6.sip.wrapper</li>
+<li>PyQt6.QtGui.QPaintDevice</li>
+<li>PyQt6.sip.simplewrapper</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="LaserDeMag.ui.gui.MainWindow.changeEvent"><code class="name flex">
+<span>def <span class="ident">changeEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def changeEvent(self, event):
+    &#34;&#34;&#34;
+    Obsługuje zdarzenia zmiany stanu okna, np. maksymalizacji.
+    Handles window state change events, e.g., maximization.
+
+    Przekazuje zdarzenie do paska tytułu, aby zaktualizować przyciski.
+    Forwards the event to the title bar to update buttons accordingly.
+    &#34;&#34;&#34;
+    if event.type() == QEvent.Type.WindowStateChange:
+        self.title_bar.window_state_changed(self.windowState())
+    super().changeEvent(event)
+    event.accept()</code></pre>
+</details>
+<div class="desc"><p>Obsługuje zdarzenia zmiany stanu okna, np. maksymalizacji.
+Handles window state change events, e.g., maximization.</p>
+<p>Przekazuje zdarzenie do paska tytułu, aby zaktualizować przyciski.
+Forwards the event to the title bar to update buttons accordingly.</p></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.MainWindow.change_theme"><code class="name flex">
+<span>def <span class="ident">change_theme</span></span>(<span>self, theme: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def change_theme(self, theme: str):
+    &#34;&#34;&#34;
+    Zmienia motyw graficzny aplikacji na ciemny lub jasny.
+
+    Args:
+        theme (str): Nazwa motywu, np. &#39;dark&#39; lub &#39;light&#39;.
+
+    Changes the application&#39;s graphical theme to dark or light.
+
+    Args:
+        theme (str): Theme name, e.g., &#39;dark&#39; or &#39;light&#39;.
+    &#34;&#34;&#34;
+    if theme == &#39;dark&#39;:
+        self.set_dark_ui()
+    elif theme == &#39;light&#39;:
+        self.set_light_ui()</code></pre>
+</details>
+<div class="desc"><p>Zmienia motyw graficzny aplikacji na ciemny lub jasny.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>theme</code></strong> :&ensp;<code>str</code></dt>
+<dd>Nazwa motywu, np. 'dark' lub 'light'.</dd>
+</dl>
+<p>Changes the application's graphical theme to dark or light.</p>
+<h2 id="args_1">Args</h2>
+<dl>
+<dt><strong><code>theme</code></strong> :&ensp;<code>str</code></dt>
+<dd>Theme name, e.g., 'dark' or 'light'.</dd>
+</dl></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.MainWindow.clear_fields"><code class="name flex">
+<span>def <span class="ident">clear_fields</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clear_fields(self):
+    &#34;&#34;&#34;
+    Czyści wszystkie pola formularza i resetuje wybór materiału.
+
+    Czyści również obszar wykresu, jeśli istnieje.
+
+    Clears all form fields and resets material selection.
+
+    Also clears the plot area if it exists.
+    &#34;&#34;&#34;
+    for field in [self.init_temp, self.curie_temp, self.mag_moment,
+                  self.power, self.duration, self.wavelength,
+                  self.ges, self.asf]:
+        field.clear()
+    self.material_type.setCurrentIndex(0)
+    if hasattr(self, &#39;plot_canvas&#39;):
+        self.plot_canvas.clear()</code></pre>
+</details>
+<div class="desc"><p>Czyści wszystkie pola formularza i resetuje wybór materiału.</p>
+<p>Czyści również obszar wykresu, jeśli istnieje.</p>
+<p>Clears all form fields and resets material selection.</p>
+<p>Also clears the plot area if it exists.</p></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.MainWindow.collect_simulation_parameters"><code class="name flex">
+<span>def <span class="ident">collect_simulation_parameters</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def collect_simulation_parameters(self):
+    &#34;&#34;&#34;
+    Zbiera wszystkie parametry symulacji, łącznie z danymi formularza i właściwościami materiału.
+
+    Collects all simulation parameters, including form inputs and material properties.
+    &#34;&#34;&#34;
+    params = {
+        &#39;user&#39;: self.get_params_from_form(),
+        &#39;material&#39;: {
+            &#39;name&#39;: getattr(self, &#39;material_name&#39;, None),
+            **getattr(self, &#39;material_props&#39;, {})
+        },
+    }
+    return params</code></pre>
+</details>
+<div class="desc"><p>Zbiera wszystkie parametry symulacji, łącznie z danymi formularza i właściwościami materiału.</p>
+<p>Collects all simulation parameters, including form inputs and material properties.</p></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.MainWindow.download_all_plots"><code class="name flex">
+<span>def <span class="ident">download_all_plots</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def download_all_plots(self):
+    &#34;&#34;&#34;
+    Otwiera dialog wyboru folderu i zapisuje wszystkie wykresy do wybranego katalogu.
+
+    Opens directory selection dialog and saves all plots to the chosen folder.
+    &#34;&#34;&#34;
+    directory = QFileDialog.getExistingDirectory(
+        self,
+        &#34;Wybierz folder do zapisania wszystkich wykresów&#34;,
+        options=QFileDialog.Option.ShowDirsOnly | QFileDialog.Option.DontUseNativeDialog
+    )
+    if directory:
+        self.plot_canvas.save_all_plots(directory)</code></pre>
+</details>
+<div class="desc"><p>Otwiera dialog wyboru folderu i zapisuje wszystkie wykresy do wybranego katalogu.</p>
+<p>Opens directory selection dialog and saves all plots to the chosen folder.</p></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.MainWindow.download_current_plot"><code class="name flex">
+<span>def <span class="ident">download_current_plot</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def download_current_plot(self):
+    &#34;&#34;&#34;
+    Otwiera dialog zapisu i zapisuje aktualnie wyświetlany wykres do pliku.
+
+    Opens save dialog and saves the currently displayed plot to a file.
+    &#34;&#34;&#34;
+    file_path, _ = QFileDialog.getSaveFileName(
+        self,
+        &#34;Zapisz wykres&#34;,
+        &#34;&#34;,
+        &#34;Plik PNG (*.png);;Plik PDF (*.pdf);;Plik SVG (*.svg)&#34;,
+        options=QFileDialog.Option.DontUseNativeDialog
+    )
+    if file_path:
+        self.plot_canvas.save_current_plot(file_path)</code></pre>
+</details>
+<div class="desc"><p>Otwiera dialog zapisu i zapisuje aktualnie wyświetlany wykres do pliku.</p>
+<p>Opens save dialog and saves the currently displayed plot to a file.</p></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.MainWindow.download_data"><code class="name flex">
+<span>def <span class="ident">download_data</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def download_data(self):
+    &#34;&#34;&#34;
+    Pyta użytkownika o format (JSON lub XML), następnie zapisuje dane symulacji.
+
+    Asks user for format (JSON or XML), then saves simulation data.
+    &#34;&#34;&#34;
+    params = self.collect_simulation_parameters()
+    t = self.translations[self.current_language]
+
+    file_path, selected_filter = QFileDialog.getSaveFileName(
+        self,
+        t[&#39;save_dialog_title&#39;],
+        &#34;&#34;,
+        f&#34;{t[&#39;save_filter_json&#39;]};;{t[&#39;save_filter_xml&#39;]}&#34;,
+        options=QFileDialog.Option.DontUseNativeDialog
+    )
+    if not file_path:
+        return
+
+    def quantity_to_plain(obj):
+        if hasattr(obj, &#39;magnitude&#39;) and hasattr(obj, &#39;units&#39;):
+            return f&#34;{obj.magnitude} {obj.units}&#34;
+        if isinstance(obj, list):
+            return [quantity_to_plain(x) for x in obj]
+        if isinstance(obj, dict):
+            return {k: quantity_to_plain(v) for k, v in obj.items()}
+        return obj
+
+    # Wybierz format
+    file_format = &#34;json&#34; if selected_filter.startswith(&#34;JSON&#34;) else &#34;xml&#34;
+
+    try:
+        saved_path = save_simulation_parameters(
+            params=params,
+            file_path=file_path,
+            file_format=file_format,
+            parameter_encoder=ParameterEncoder,
+            quantity_to_plain_func=quantity_to_plain
+        )
+        success_msg = t[&#39;save_success_json&#39;] if file_format == &#34;json&#34; else t[&#39;save_success_xml&#39;]
+        QMessageBox.information(self, t[&#39;information_title&#39;], success_msg.format(path=saved_path))
+
+    except Exception as e:
+        error_msg = t[&#39;save_error_json&#39;] if file_format == &#34;json&#34; else t[&#39;save_error_xml&#39;]
+        QMessageBox.critical(self, t[&#39;critical_title&#39;], error_msg.format(err=str(e)))</code></pre>
+</details>
+<div class="desc"><p>Pyta użytkownika o format (JSON lub XML), następnie zapisuje dane symulacji.</p>
+<p>Asks user for format (JSON or XML), then saves simulation data.</p></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.MainWindow.get_params_from_form"><code class="name flex">
+<span>def <span class="ident">get_params_from_form</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_params_from_form(self):
+    &#34;&#34;&#34;
+    Pobiera i waliduje parametry z formularza GUI.
+
+    Retrieves and validates parameters from the GUI form.
+    &#34;&#34;&#34;
+    try:
+        material = self.material_type.currentText().strip()
+        if self.material_type.currentIndex() == 0:
+            raise ValueError(self.error_material_not_selected)
+
+        def validate_float(value_str, field_key):
+            field_label = self.field_labels.get(field_key, field_key)
+            if not value_str.strip():
+                raise ValueError(self.error_required_field.format(field=field_label))
+            try:
+                val = float(value_str)
+            except ValueError:
+                raise ValueError(self.error_invalid_number.format(field=field_label))
+            if val &lt;= 0:
+                raise ValueError(self.error_invalid_number.format(field=field_label))
+            return val
+
+        # Walidacja pól liczbowych
+        T0 = validate_float(self.init_temp.text(), &#34;init_temp_label&#34;)
+        Tc = validate_float(self.curie_temp.text(), &#34;curie_temp_label&#34;)
+        mu = validate_float(self.mag_moment.text(), &#34;mag_moment_label&#34;)
+        fluence = validate_float(self.power.text(), &#34;power_label&#34;)
+        pulse_duration = validate_float(self.duration.text(), &#34;duration_label&#34;) / 1000  # fs → ps
+        laser_wavelength = validate_float(self.wavelength.text(), &#34;wavelength_label&#34;)
+        ge = validate_float(self.ges.text(), &#34;ges_label&#34;)
+        asf = validate_float(self.asf.text(), &#34;asf_label&#34;)
+
+        return {
+            &#39;material&#39;: material,
+            &#39;T0&#39;: T0,
+            &#39;Tc&#39;: Tc,
+            &#39;mu&#39;: mu,
+            &#39;fluence&#39;: fluence,
+            &#39;pulse_duration&#39;: pulse_duration,
+            &#39;laser_wavelength&#39;: laser_wavelength,
+            &#39;ge&#39;: ge,
+            &#39;asf&#39;: asf
+        }
+
+    except ValueError as e:
+        QMessageBox.critical(self, self.critical_title, str(e))
+        return None</code></pre>
+</details>
+<div class="desc"><p>Pobiera i waliduje parametry z formularza GUI.</p>
+<p>Retrieves and validates parameters from the GUI form.</p></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.MainWindow.load_user_data"><code class="name flex">
+<span>def <span class="ident">load_user_data</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_user_data(self):
+    &#34;&#34;&#34;
+    Otwiera dialog wyboru pliku i ładuje dane użytkownika z pliku JSON,
+    następnie wypełnia formularz danymi.
+
+    Opens file selection dialog and loads user data from a JSON file,
+    then populates the form with the loaded data.
+    &#34;&#34;&#34;
+    t = self.translations[self.current_language]
+
+    file_path, _ = QFileDialog.getOpenFileName(
+        self,
+        t[&#39;open_dialog_title&#39;],
+        &#34;&#34;,
+        t[&#39;open_filter_json&#39;],
+        options=QFileDialog.Option.DontUseNativeDialog
+    )
+    if not file_path:
+        return
+
+    try:
+        user_data = load_simulation_parameters(file_path,self)
+
+        # Przekaż dane do formularza
+        self.populate_user_form(user_data)
+
+        QMessageBox.information(
+            self,
+            t[&#39;information_title&#39;],
+            t[&#39;load_success_json&#39;].format(path=file_path)
+        )
+    except Exception as e:
+        QMessageBox.critical(
+            self,
+            self.critical_title,
+            str(e)
+        )</code></pre>
+</details>
+<div class="desc"><p>Otwiera dialog wyboru pliku i ładuje dane użytkownika z pliku JSON,
+następnie wypełnia formularz danymi.</p>
+<p>Opens file selection dialog and loads user data from a JSON file,
+then populates the form with the loaded data.</p></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.MainWindow.mouseMoveEvent"><code class="name flex">
+<span>def <span class="ident">mouseMoveEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mouseMoveEvent(self, event):
+    &#34;&#34;&#34;
+    Obsługuje przesuwanie myszy podczas przeciągania okna.
+
+    Przesuwa okno zgodnie z ruchem myszy, jeśli wcześniej zapisana została pozycja startowa.
+
+    Handles mouse move events during window dragging.
+
+    Moves the window according to mouse movement if initial click position was saved.
+    &#34;&#34;&#34;
+    if self.initial_pos is not None:
+        delta = event.position().toPoint() - self.initial_pos
+        self.window().move(
+            self.window().x() + delta.x(),
+            self.window().y() + delta.y(),
+        )
+    super().mouseMoveEvent(event)
+    event.accept()</code></pre>
+</details>
+<div class="desc"><p>Obsługuje przesuwanie myszy podczas przeciągania okna.</p>
+<p>Przesuwa okno zgodnie z ruchem myszy, jeśli wcześniej zapisana została pozycja startowa.</p>
+<p>Handles mouse move events during window dragging.</p>
+<p>Moves the window according to mouse movement if initial click position was saved.</p></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.MainWindow.mousePressEvent"><code class="name flex">
+<span>def <span class="ident">mousePressEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mousePressEvent(self, event):
+    &#34;&#34;&#34;
+    Obsługuje naciśnięcie przycisku myszy.
+
+    Jeśli lewy przycisk i okno jest zmaksymalizowane, przywraca do rozmiaru normalnego
+    i zapisuje pozycję kliknięcia, by umożliwić płynne przeciąganie.
+
+    Handles mouse press events.
+
+    If left button is pressed and window is maximized, restores to normal size
+    and records click position to enable smooth dragging.
+    &#34;&#34;&#34;
+    if event.button() == Qt.MouseButton.LeftButton:
+        # jeśli było zmaksymalizowane, to przywróć przed ruszeniem
+        if self.isMaximized():
+            # pamiętaj współrzędne kliknięcia względem całego ekranu
+            global_pos = event.globalPosition().toPoint()
+            # przywróć okno do stanu normalnego
+            self.showNormal()
+            # po przywróceniu oblicz nową initial_pos tak,
+            # aby mysz „złapała” okno w tym samym punkcie
+            geo = self.geometry()
+            # np. ustaw initial_pos tak, żeby relatywna pozycja się zachowała
+            click_x = global_pos.x() - geo.x()
+            click_y = global_pos.y() - geo.y()
+            self.initial_pos = QPoint(click_x, click_y)
+        else:
+            self.initial_pos = event.position().toPoint()
+
+    super().mousePressEvent(event)
+    event.accept()</code></pre>
+</details>
+<div class="desc"><p>Obsługuje naciśnięcie przycisku myszy.</p>
+<p>Jeśli lewy przycisk i okno jest zmaksymalizowane, przywraca do rozmiaru normalnego
+i zapisuje pozycję kliknięcia, by umożliwić płynne przeciąganie.</p>
+<p>Handles mouse press events.</p>
+<p>If left button is pressed and window is maximized, restores to normal size
+and records click position to enable smooth dragging.</p></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.MainWindow.mouseReleaseEvent"><code class="name flex">
+<span>def <span class="ident">mouseReleaseEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mouseReleaseEvent(self, event):
+    &#34;&#34;&#34;
+    Obsługuje zwolnienie przycisku myszy.
+
+    Jeśli okno nie jest zmaksymalizowane, a jego górna krawędź dotyka górnej krawędzi ekranu,
+    automatycznie maksymalizuje okno.
+
+    Handles mouse release events.
+
+    If the window is not maximized and its top edge touches the top of the screen,
+    automatically maximizes the window.
+    &#34;&#34;&#34;
+    super().mouseReleaseEvent(event)
+    if not self.isMaximized() and self.y() &lt;= 0:
+        self.showMaximized()
+    self.initial_pos = None
+    event.accept()</code></pre>
+</details>
+<div class="desc"><p>Obsługuje zwolnienie przycisku myszy.</p>
+<p>Jeśli okno nie jest zmaksymalizowane, a jego górna krawędź dotyka górnej krawędzi ekranu,
+automatycznie maksymalizuje okno.</p>
+<p>Handles mouse release events.</p>
+<p>If the window is not maximized and its top edge touches the top of the screen,
+automatically maximizes the window.</p></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.MainWindow.on_simulation_error"><code class="name flex">
+<span>def <span class="ident">on_simulation_error</span></span>(<span>self, e)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def on_simulation_error(self, e):
+    &#34;&#34;&#34;
+    Obsługuje błędy symulacji, zamyka dialog ładowania i wyświetla komunikat krytyczny.
+
+    Handles simulation errors, closes loading dialog, and shows critical message.
+    &#34;&#34;&#34;
+    self.loading_dialog.close()
+    QMessageBox.critical(self, self.critical_title, str(e))</code></pre>
+</details>
+<div class="desc"><p>Obsługuje błędy symulacji, zamyka dialog ładowania i wyświetla komunikat krytyczny.</p>
+<p>Handles simulation errors, closes loading dialog, and shows critical message.</p></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.MainWindow.on_simulation_finished"><code class="name flex">
+<span>def <span class="ident">on_simulation_finished</span></span>(<span>self, result)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def on_simulation_finished(self, result):
+    &#34;&#34;&#34;
+    Obsługuje zakończenie symulacji, aktualizuje wykres i zamyka dialog ładowania.
+
+    Handles simulation finish, updates plot, and closes loading dialog.
+    &#34;&#34;&#34;
+    self.plot_data = result
+    self.plot_canvas.set_all_plots(self.plot_data)
+    self.update_plot()
+    self.loading_dialog.close()</code></pre>
+</details>
+<div class="desc"><p>Obsługuje zakończenie symulacji, aktualizuje wykres i zamyka dialog ładowania.</p>
+<p>Handles simulation finish, updates plot, and closes loading dialog.</p></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.MainWindow.populate_user_form"><code class="name flex">
+<span>def <span class="ident">populate_user_form</span></span>(<span>self, data: dict)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def populate_user_form(self, data: dict):
+    &#34;&#34;&#34;
+    Wypełnia formularz GUI na podstawie danych z pliku.
+
+    Fills the GUI form fields based on the loaded data.
+
+    Args:
+        data (dict): Dictionary with parameters to set in the form.
+    &#34;&#34;&#34;
+    self.material_type.setCurrentText(data[&#34;material&#34;])
+    self.init_temp.setText(str(data[&#34;T0&#34;]))
+    self.curie_temp.setText(str(data[&#34;Tc&#34;]))
+    self.mag_moment.setText(str(data[&#34;mu&#34;]))
+    self.power.setText(str(data[&#34;fluence&#34;]))
+    self.duration.setText(str(data[&#34;pulse_duration&#34;] / 1000))  # fs → ps
+    self.wavelength.setText(str(data[&#34;laser_wavelength&#34;]))
+    self.ges.setText(str(data[&#34;ge&#34;]))
+    self.asf.setText(str(data[&#34;asf&#34;]))</code></pre>
+</details>
+<div class="desc"><p>Wypełnia formularz GUI na podstawie danych z pliku.</p>
+<p>Fills the GUI form fields based on the loaded data.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>data</code></strong> :&ensp;<code>dict</code></dt>
+<dd>Dictionary with parameters to set in the form.</dd>
+</dl></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.MainWindow.set_dark_ui"><code class="name flex">
+<span>def <span class="ident">set_dark_ui</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_dark_ui(self):
+    &#34;&#34;&#34;
+    Ustawia ciemny motyw interfejsu użytkownika,
+    zmieniając kolory tekstów, ikon oraz paletę kolorów aplikacji.
+
+    Sets the dark UI theme by changing text colors, icons,
+    and the application color palette.
+    &#34;&#34;&#34;
+    self.widgets[&#39;material_box&#39;].setStyleSheet(&#34;color: white;&#34;)
+    self.widgets[&#39;laser_box&#39;].setStyleSheet(&#34;color: white;&#34;)
+    self.widgets[&#39;others_box&#39;].setStyleSheet(&#34;color: white;&#34;)
+    self.widgets[&#39;description&#39;].setStyleSheet(&#34;color: white;&#34;)
+    self.widgets[&#39;title&#39;].setStyleSheet(&#34;color: white;&#34;)
+    new_logo = QPixmap(&#34;../resources/images/logo_dark.png&#34;).scaled(90, 90, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+    self.logo_label.setPixmap(new_logo)
+    self.download_current_btn.setIcon(QIcon(&#34;../resources/images/download_photo_dark.png&#34;))
+    self.download_data_btn.setIcon(QIcon(&#34;../resources/images/download_data_dark.png&#34;))
+    self.zoom_btn.setIcon(QIcon(&#34;../resources/images/maxGraph_dark.png&#34;))
+    self.down_arrow_btn.setIcon(QIcon(&#34;../resources/images/down_dark.png&#34;))
+    self.up_arrow_btn.setIcon(QIcon(&#34;../resources/images/up_dark.png&#34;))
+    self.download_all_btn.setIcon(QIcon(&#34;../resources/images/download_all_dark.png&#34;))
+    self.load_from_file_btn.setIcon(QIcon(&#34;../resources/images/from_file_dark.png&#34;))
+    self.image_path = &#34;../resources/images/loading_dark.png&#34;
+
+    for le in self.centralWidget().findChildren(QLineEdit):
+        le.setStyleSheet(&#34;&#34;&#34;
+            QLineEdit {
+                background-color: white;
+                color: black;
+                border: 1px solid gray;
+                border-radius: 4px;
+                padding: 2px 4px;
+            }
+        &#34;&#34;&#34;)
+
+    for cb in self.findChildren(QComboBox):
+        cb.setStyleSheet(&#34;&#34;&#34;
+                    QComboBox {
+                        background-color: #2a2a2a;
+                        color: white;
+                        border: 1px solid #555;
+                    }
+                    QComboBox QAbstractItemView {
+                        background-color: #3a3a3a;
+                        color: white;
+                        selection-background-color: #555;
+                        selection-color: black;
+                    }
+                &#34;&#34;&#34;)
+    QApplication.instance().setStyleSheet(&#34;&#34;&#34;
+        QMessageBox {
+            background-color: black;
+            color: white;
+        }
+        QMessageBox QLabel {
+            color: white;
+            font-size: 14px;
+        }
+        QMessageBox QPushButton {
+            min-width: 80px;
+            padding: 5px;
+            background-color: black;
+            border:1px solid white;
+        }
+    &#34;&#34;&#34;)
+
+    for button in self.findChildren(QToolButton):
+        button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        button.setFixedSize(QSize(30, 30))
+        button.setIconSize(QSize(30, 30))
+        button.setStyleSheet(&#34;&#34;&#34;
+                   border: none;
+                   background-color: transparent;
+                   border-radius: 15px;
+    &#34;&#34;&#34;)
+
+    # Buttons
+    self.widgets[&#39;clear_btn&#39;].setStyleSheet(&#34;background-color: #444; color: white; border-radius: 5px;&#34;)
+    self.widgets[&#39;start_btn&#39;].setStyleSheet(&#34;background-color: #444; color: white; border-radius: 5px;&#34;)
+
+    dark_palette = QPalette()
+
+    dark_palette.setColor(QPalette.ColorRole.Window, QColor(53, 53, 53))
+    dark_palette.setColor(QPalette.ColorRole.WindowText, QColor(255, 255, 255))
+    dark_palette.setColor(QPalette.ColorRole.Base, QColor(42, 42, 42))
+    dark_palette.setColor(QPalette.ColorRole.AlternateBase, QColor(66, 66, 66))
+    dark_palette.setColor(QPalette.ColorRole.ToolTipBase, QColor(255, 255, 255))
+    dark_palette.setColor(QPalette.ColorRole.ToolTipText, QColor(255, 255, 255))
+    dark_palette.setColor(QPalette.ColorRole.Text, QColor(255, 255, 255))
+    dark_palette.setColor(QPalette.ColorRole.Button, QColor(53, 53, 53))
+    dark_palette.setColor(QPalette.ColorRole.ButtonText, QColor(255, 255, 255))
+    dark_palette.setColor(QPalette.ColorRole.BrightText, QColor(255, 0, 0))
+
+    QApplication.setPalette(dark_palette)</code></pre>
+</details>
+<div class="desc"><p>Ustawia ciemny motyw interfejsu użytkownika,
+zmieniając kolory tekstów, ikon oraz paletę kolorów aplikacji.</p>
+<p>Sets the dark UI theme by changing text colors, icons,
+and the application color palette.</p></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.MainWindow.set_light_ui"><code class="name flex">
+<span>def <span class="ident">set_light_ui</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_light_ui(self):
+    &#34;&#34;&#34;
+    Ustawia jasny motyw interfejsu użytkownika,
+    zmieniając kolory tekstów, ikon oraz paletę kolorów aplikacji.
+
+    Sets the light UI theme by changing text colors, icons,
+    and the application color palette.
+    &#34;&#34;&#34;
+    self.widgets[&#39;material_box&#39;].setStyleSheet(&#34;color: black;&#34;)
+    self.widgets[&#39;laser_box&#39;].setStyleSheet(&#34;color: black;&#34;)
+    self.widgets[&#39;others_box&#39;].setStyleSheet(&#34;color: black;&#34;)
+    self.widgets[&#39;description&#39;].setStyleSheet(&#34;color: black;&#34;)
+    self.widgets[&#39;title&#39;].setStyleSheet(&#34;color: black;&#34;)
+    new_logo = QPixmap(&#34;../resources/images/logo_light.png&#34;).scaled(90, 90, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+    self.logo_label.setPixmap(new_logo)
+    self.download_current_btn.setIcon(QIcon(&#34;../resources/images/download_photo_light.png&#34;))
+    self.download_data_btn.setIcon(QIcon(&#34;../resources/images/download_data_light.png&#34;))
+    self.zoom_btn.setIcon(QIcon(&#34;../resources/images/maxGraph_light.png&#34;))
+    self.down_arrow_btn.setIcon(QIcon(&#34;../resources/images/down_light.png&#34;))
+    self.up_arrow_btn.setIcon(QIcon(&#34;../resources/images/up_light.png&#34;))
+    self.download_all_btn.setIcon(QIcon(&#34;../resources/images/download_all_light.png&#34;))
+    self.load_from_file_btn.setIcon(QIcon(&#34;../resources/images/from_file_light.png&#34;))
+    self.image_path = &#34;../resources/images/loading_light.png&#34;
+
+    self.widgets[&#39;clear_btn&#39;].setStyleSheet(&#34;background-color: #ddd; color: black; border-radius: 5px;&#34;)
+    self.widgets[&#39;start_btn&#39;].setStyleSheet(&#34;background-color: #ddd; color: black; border-radius: 5px;&#34;)
+
+    for cb in self.findChildren(QComboBox):
+        cb.setStyleSheet(&#34;&#34;&#34;
+                    QComboBox {
+                        background-color: white;
+                        color: black;
+                        border: 1px solid gray;
+                    }
+                    QComboBox QAbstractItemView {
+                        background-color: white;
+                        color: black;
+                        selection-background-color: #cce;
+                        selection-color: black;
+                    }
+                &#34;&#34;&#34;)
+    QApplication.instance().setStyleSheet(&#34;&#34;&#34;
+        QMessageBox {
+            background-color: white;
+            color: black;
+        }
+        QMessageBox QLabel {
+            color: black;
+            font-size: 14px;
+        }
+        QMessageBox QPushButton {
+            min-width: 80px;
+            padding: 5px;
+        }
+    &#34;&#34;&#34;)
+
+    for button in self.findChildren(QToolButton):
+        button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        button.setFixedSize(QSize(30, 30))
+        button.setIconSize(QSize(30, 30))
+        button.setStyleSheet(&#34;&#34;&#34;
+                   border: none;
+                   background-color: transparent;
+                   border-radius: 15px;
+    &#34;&#34;&#34;)
+
+    light_palette = QPalette()
+
+    light_palette.setColor(QPalette.ColorRole.Window, QColor(240, 240, 240))
+    light_palette.setColor(QPalette.ColorRole.WindowText, QColor(0, 0, 0))
+    light_palette.setColor(QPalette.ColorRole.Base, QColor(255, 255, 255))
+    light_palette.setColor(QPalette.ColorRole.AlternateBase, QColor(220, 220, 220))
+    light_palette.setColor(QPalette.ColorRole.ToolTipBase, QColor(255, 255, 255))
+    light_palette.setColor(QPalette.ColorRole.ToolTipText, QColor(0, 0, 0))
+    light_palette.setColor(QPalette.ColorRole.Text, QColor(0, 0, 0))
+    light_palette.setColor(QPalette.ColorRole.Button, QColor(240, 240, 240))
+    light_palette.setColor(QPalette.ColorRole.ButtonText, QColor(0, 0, 0))
+    light_palette.setColor(QPalette.ColorRole.BrightText, QColor(255, 0, 0))
+
+    QApplication.setPalette(light_palette)</code></pre>
+</details>
+<div class="desc"><p>Ustawia jasny motyw interfejsu użytkownika,
+zmieniając kolory tekstów, ikon oraz paletę kolorów aplikacji.</p>
+<p>Sets the light UI theme by changing text colors, icons,
+and the application color palette.</p></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.MainWindow.show_info_message"><code class="name flex">
+<span>def <span class="ident">show_info_message</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def show_info_message(self):
+    &#34;&#34;&#34;
+    Wyświetla okno dialogowe z informacjami o aplikacji.
+    Displays an information dialog about the application.
+
+    Treść i tytuł pobierane są z tłumaczeń dla aktualnego języka.
+    The content and title are loaded from translations for the current language.
+    &#34;&#34;&#34;
+    t = self.translations[self.current_language]
+    msg = QMessageBox(self)
+    msg.setWindowTitle(t[&#34;info_title&#34;])
+    msg.setTextFormat(Qt.TextFormat.RichText)
+    msg.setText(f&#34;&lt;div style=&#39;min-width: 600px; max-width: 800px; text-align: justify;&#39;&gt;{t[&#39;info_message&#39;]}&lt;/div&gt;&#34;)
+    msg.exec()</code></pre>
+</details>
+<div class="desc"><p>Wyświetla okno dialogowe z informacjami o aplikacji.
+Displays an information dialog about the application.</p>
+<p>Treść i tytuł pobierane są z tłumaczeń dla aktualnego języka.
+The content and title are loaded from translations for the current language.</p></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.MainWindow.start_simulation"><code class="name flex">
+<span>def <span class="ident">start_simulation</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def start_simulation(self):
+    &#34;&#34;&#34;
+    Uruchamia symulację na podstawie parametrów z formularza,
+    pokazuje dialog ładowania i obsługuje wyniki oraz błędy.
+
+    Starts the simulation based on form parameters,
+    shows loading dialog, and handles results and errors.
+    &#34;&#34;&#34;
+    self.current_plot_index = 0
+    params = self.get_params_from_form()
+    if params is None:
+        return
+
+    self.loading_dialog = LoadingDialog(self.loading_title, self.loading_message, self.image_path)
+    self.loading_dialog.show()
+    QApplication.processEvents()
+
+    try:
+        start_time = time.time()
+        material_obj, prop = get_material_properties(
+            params[&#39;material&#39;], params[&#39;Tc&#39;], params[&#39;mu&#39;], params[&#39;ge&#39;]
+        )
+        self.material_props = prop
+        self.material_name = material_obj.name
+
+        self.plot_data = main(params)
+        self.plot_canvas.set_all_plots(self.plot_data)
+        self.update_plot()
+
+        duration = time.time() - start_time
+
+        save_simulation_report(params, self.material_name, self.material_props, self.plot_data, self, simulation_duration=duration)
+
+    except FloatingPointError as e:
+        QMessageBox.critical(self, self.critical_title,
+                             self.translations[self.current_language][&#39;error_numeric&#39;] + &#34;\n&#34; + str(e))
+    except Exception as e:
+        QMessageBox.critical(self, self.critical_title,
+                             self.translations[self.current_language][&#39;error_unknown_simulation&#39;] + &#34;\n&#34; + str(e))
+    finally:
+        self.loading_dialog.close()</code></pre>
+</details>
+<div class="desc"><p>Uruchamia symulację na podstawie parametrów z formularza,
+pokazuje dialog ładowania i obsługuje wyniki oraz błędy.</p>
+<p>Starts the simulation based on form parameters,
+shows loading dialog, and handles results and errors.</p></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.MainWindow.switch_plot_down"><code class="name flex">
+<span>def <span class="ident">switch_plot_down</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def switch_plot_down(self):
+    &#34;&#34;&#34;
+    Przełącza wykres na poprzedni typ i aktualizuje wyświetlenie.
+
+    Switches plot to the previous type and updates display.
+    &#34;&#34;&#34;
+    self.current_plot_index = (self.current_plot_index - 1) % 2
+    self.update_plot()</code></pre>
+</details>
+<div class="desc"><p>Przełącza wykres na poprzedni typ i aktualizuje wyświetlenie.</p>
+<p>Switches plot to the previous type and updates display.</p></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.MainWindow.switch_plot_up"><code class="name flex">
+<span>def <span class="ident">switch_plot_up</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def switch_plot_up(self):
+    &#34;&#34;&#34;
+    Przełącza wykres na następny typ i aktualizuje wyświetlenie.
+
+    Switches plot to the next type and updates display.
+    &#34;&#34;&#34;
+    self.current_plot_index = (self.current_plot_index + 1) % 2
+    self.update_plot()</code></pre>
+</details>
+<div class="desc"><p>Przełącza wykres na następny typ i aktualizuje wyświetlenie.</p>
+<p>Switches plot to the next type and updates display.</p></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.MainWindow.update_language"><code class="name flex">
+<span>def <span class="ident">update_language</span></span>(<span>self, lang)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_language(self, lang):
+    &#34;&#34;&#34;
+    Aktualizuje interfejs użytkownika na wybrany język.
+
+    Ustawia teksty etykiet, tytuły grup, przycisków i komunikatów błędów
+    na podstawie słownika tłumaczeń.
+
+    Args:
+        lang (str): Kod wybranego języka (np. &#34;English&#34;, &#34;Polski&#34;).
+
+    Updates the user interface to the selected language.
+
+    Sets label texts, group titles, buttons, and error messages
+    based on the translation dictionary.
+
+    Args:
+        lang (str): Selected language code (e.g., &#34;English&#34;, &#34;Polski&#34;).
+    &#34;&#34;&#34;
+    self.current_language = lang
+    t = self.translations[lang]
+    self.field_labels = {
+        &#39;init_temp_label&#39;: t[&#39;Initial temperature T0&#39;],
+        &#39;curie_temp_label&#39;: t[&#39;Curie temperature TC&#39;],
+        &#39;mag_moment_label&#39;: t[&#39;Magnetic moment μat&#39;],
+        &#39;power_label&#39;: t[&#39;Power of impulse (mJ/cm²)&#39;],
+        &#39;duration_label&#39;: t[&#39;Duration of the impulse (fs)&#39;],
+        &#39;wavelength_label&#39;: t[&#39;Laser wavelength (nm)&#39;],
+        &#39;ges_label&#39;: t[&#39;Electron-spin constant coupling ges&#39;],
+        &#39;asf_label&#39;: t[&#39;Spin-flip probability asf&#39;],
+        &#39;material_label&#39;: t[&#39;Type of material&#39;],
+    }
+    self.widgets[&#39;title&#39;].setText(t[&#39;LaserDeMag&#39;])
+    self.widgets[&#39;description&#39;].setText(t[&#39;Description&#39;])
+    self.widgets[&#39;material_box&#39;].setTitle(t[&#39;Material&#39;])
+    self.widgets[&#39;material_label&#39;].setText(t[&#39;Type of material&#39;])
+    self.material_type.clear()
+    self.material_type.addItems([t[&#39;Select the type&#39;], &#34;Fe&#34;, &#34;Ni&#34;, &#34;Co&#34;, &#34;Gd&#34;])
+    self.widgets[&#39;init_temp_label&#39;].setText(t[&#39;Initial temperature T0&#39;])
+    self.widgets[&#39;curie_temp_label&#39;].setText(t[&#39;Curie temperature TC&#39;])
+    self.widgets[&#39;mag_moment_label&#39;].setText(t[&#39;Magnetic moment μat&#39;])
+    self.widgets[&#39;laser_box&#39;].setTitle(t[&#39;Laser&#39;])
+    self.widgets[&#39;power_label&#39;].setText(t[&#39;Power of impulse (mJ/cm²)&#39;])
+    self.widgets[&#39;duration_label&#39;].setText(t[&#39;Duration of the impulse (fs)&#39;])
+    self.widgets[&#39;wavelength_label&#39;].setText(t[&#39;Laser wavelength (nm)&#39;])
+    self.widgets[&#39;others_box&#39;].setTitle(t[&#39;Others&#39;])
+    self.widgets[&#39;ges_label&#39;].setText(t[&#39;Electron-spin constant coupling ges&#39;])
+    self.widgets[&#39;asf_label&#39;].setText(t[&#39;Spin-flip probability asf&#39;])
+    self.widgets[&#39;clear_btn&#39;].setText(t[&#39;Clear fields&#39;])
+    self.widgets[&#39;start_btn&#39;].setText(t[&#39;Start the simulation&#39;])
+    self.plot_canvas.update_messages(t)
+    self.missing_fields_error = t[&#39;missing_fields_error&#39;]
+    self.error_invalid_format = t[&#39;error_invalid_format&#39;]
+    self.error_json_decode = t[&#39;error_json_decode&#39;]
+    self.error_file_not_found = t[&#39;error_file_not_found&#39;]
+    self.error_invalid_type= t[&#39;error_invalid_type&#39;]
+    self.error_invalid_material= t[&#39;error_invalid_material&#39;]
+    self.error_material_not_selected = t[&#39;error_material_not_selected&#39;]
+    self.error_invalid_number = t[&#39;error_invalid_number&#39;]
+    self.error_required_field = t[&#39;error_required_field&#39;]
+    self.information_title = t[&#39;information_title&#39;]
+    self.critical_title = t[&#39;critical_title&#39;]
+    self.save_success_json = t[&#39;save_success_json&#39;]
+    self.save_error_json = t[&#39;save_error_json&#39;]
+    self.save_success_xml = t[&#39;save_success_xml&#39;]
+    self.save_error_xml = t[&#39;save_error_xml&#39;]
+    self.error_numerical_simulation = t[&#39;error_numerical_simulation&#39;]
+    self.error_unknown_simulation = t[&#39;error_unknown_simulation&#39;]
+    self.loading_message = t[&#39;loading_message&#39;]
+    self.loading_title = t[&#39;loading_title&#39;]
+    self.save_report_title = t[&#39;save_report_title&#39;]</code></pre>
+</details>
+<div class="desc"><p>Aktualizuje interfejs użytkownika na wybrany język.</p>
+<p>Ustawia teksty etykiet, tytuły grup, przycisków i komunikatów błędów
+na podstawie słownika tłumaczeń.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>lang</code></strong> :&ensp;<code>str</code></dt>
+<dd>Kod wybranego języka (np. "English", "Polski").</dd>
+</dl>
+<p>Updates the user interface to the selected language.</p>
+<p>Sets label texts, group titles, buttons, and error messages
+based on the translation dictionary.</p>
+<h2 id="args_1">Args</h2>
+<dl>
+<dt><strong><code>lang</code></strong> :&ensp;<code>str</code></dt>
+<dd>Selected language code (e.g., "English", "Polski").</dd>
+</dl></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.MainWindow.update_plot"><code class="name flex">
+<span>def <span class="ident">update_plot</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_plot(self):
+    &#34;&#34;&#34;
+    Aktualizuje wykres w GUI w zależności od aktualnego indeksu wykresu.
+
+    Updates the GUI plot depending on the current plot index.
+    &#34;&#34;&#34;
+    self.plot_canvas.current_plot_index = self.current_plot_index  # zapewnia spójność z GUI
+    if self.current_plot_index == 0:
+        self.plot_canvas.show_map_plot(self.plot_data[&#34;maps&#34;])
+    else:
+        self.plot_canvas.show_line_plot(self.plot_data[&#34;lines&#34;])</code></pre>
+</details>
+<div class="desc"><p>Aktualizuje wykres w GUI w zależności od aktualnego indeksu wykresu.</p>
+<p>Updates the GUI plot depending on the current plot index.</p></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.MainWindow.window_state_changed"><code class="name flex">
+<span>def <span class="ident">window_state_changed</span></span>(<span>self, state)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def window_state_changed(self, state):
+    &#34;&#34;&#34;
+    Aktualizuje widoczność przycisków maksymalizacji i przywracania okna
+    w zależności od obecnego stanu okna (zmaksymalizowane/normalne).
+
+    Updates the visibility of maximize and restore buttons depending on the window state (maximized/normal).
+    &#34;&#34;&#34;
+    self.normal_button.setVisible(state == Qt.WindowState.WindowMaximized)
+    self.maximize_btn.setVisible(state != Qt.WindowState.WindowMaximized)</code></pre>
+</details>
+<div class="desc"><p>Aktualizuje widoczność przycisków maksymalizacji i przywracania okna
+w zależności od obecnego stanu okna (zmaksymalizowane/normalne).</p>
+<p>Updates the visibility of maximize and restore buttons depending on the window state (maximized/normal).</p></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.MainWindow.zoom_plot"><code class="name flex">
+<span>def <span class="ident">zoom_plot</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def zoom_plot(self):
+    &#34;&#34;&#34;
+    Otwiera aktualny wykres w trybie pełnoekranowym.
+
+    Opens the current plot in fullscreen mode.
+    &#34;&#34;&#34;
+    self.plot_canvas.open_current_plot_fullscreen()</code></pre>
+</details>
+<div class="desc"><p>Otwiera aktualny wykres w trybie pełnoekranowym.</p>
+<p>Opens the current plot in fullscreen mode.</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="LaserDeMag.ui.gui.ParameterEncoder"><code class="flex name class">
+<span>class <span class="ident">ParameterEncoder</span></span>
+<span>(</span><span>*,<br>skipkeys=False,<br>ensure_ascii=True,<br>check_circular=True,<br>allow_nan=True,<br>sort_keys=False,<br>indent=None,<br>separators=None,<br>default=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ParameterEncoder(json.JSONEncoder):
+    &#34;&#34;&#34;
+    Niestandardowy enkoder JSON dla obiektów używanych w aplikacji.
+
+    Obsługiwane typy:
+    - Quantity (Pint)
+    - NumPy scalars i tablice
+    - liczby zespolone
+    - krotki (zamieniane na listy)
+
+    ---
+    Custom JSON encoder for application-specific objects.
+
+    Supports:
+    - Quantity (Pint)
+    - NumPy scalars and arrays
+    - complex numbers
+    - tuples (converted to lists)
+    &#34;&#34;&#34;
+    def default(self, obj):
+        &#34;&#34;&#34;
+        Konwertuje niestandardowe typy obiektów na format JSON-serializowalny.
+
+        Obsługiwane typy:
+        - Quantity (Pint): zwraca słownik z wartością i jednostką.
+        - NumPy scalar: konwertuje na typ natywny Pythona.
+        - NumPy array: konwertuje na listę.
+        - Complex: zwraca słownik z częścią rzeczywistą i urojoną.
+        - Tuple: konwertuje na listę.
+        - Inne: wywołuje metodę bazową `default`.
+
+        Args:
+            obj: Obiekt do serializacji.
+
+        Returns:
+            JSON-serializowalny obiekt.
+
+        Converts custom object types to JSON-serializable formats.
+
+        Supported types:
+        - Quantity (Pint): returns a dict with value and unit.
+        - NumPy scalar: converts to native Python type.
+        - NumPy array: converts to list.
+        - Complex number: returns dict with real and imaginary parts.
+        - Tuple: converts to list.
+        - Others: calls base `default` method.
+
+        Args:
+            obj: Object to serialize.
+
+        Returns:
+            JSON-serializable object.
+        &#34;&#34;&#34;
+        # Pint Quantity
+        if isinstance(obj, Quantity):
+            return {&#34;value&#34;: obj.magnitude, &#34;unit&#34;: str(obj.units)}
+        # NumPy scalar
+        if isinstance(obj, (np.generic,)):
+            return obj.item()
+        # NumPy array
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        # Complex
+        if isinstance(obj, complex):
+            return {&#34;real&#34;: obj.real, &#34;imag&#34;: obj.imag}
+        # tuple -&gt; list
+        if isinstance(obj, tuple):
+            return list(obj)
+        # everything else
+        return super().default(obj)</code></pre>
+</details>
+<div class="desc"><p>Niestandardowy enkoder JSON dla obiektów używanych w aplikacji.</p>
+<p>Obsługiwane typy:
+- Quantity (Pint)
+- NumPy scalars i tablice
+- liczby zespolone
+- krotki (zamieniane na listy)</p>
+<hr>
+<p>Custom JSON encoder for application-specific objects.</p>
+<p>Supports:
+- Quantity (Pint)
+- NumPy scalars and arrays
+- complex numbers
+- tuples (converted to lists)</p>
+<p>Constructor for JSONEncoder, with sensible defaults.</p>
+<p>If skipkeys is false, then it is a TypeError to attempt
+encoding of keys that are not str, int, float or None.
+If
+skipkeys is True, such items are simply skipped.</p>
+<p>If ensure_ascii is true, the output is guaranteed to be str
+objects with all incoming non-ASCII characters escaped.
+If
+ensure_ascii is false, the output can contain non-ASCII characters.</p>
+<p>If check_circular is true, then lists, dicts, and custom encoded
+objects will be checked for circular references during encoding to
+prevent an infinite recursion (which would cause an RecursionError).
+Otherwise, no such check takes place.</p>
+<p>If allow_nan is true, then NaN, Infinity, and -Infinity will be
+encoded as such.
+This behavior is not JSON specification compliant,
+but is consistent with most JavaScript based encoders and decoders.
+Otherwise, it will be a ValueError to encode such floats.</p>
+<p>If sort_keys is true, then the output of dictionaries will be
+sorted by key; this is useful for regression tests to ensure
+that JSON serializations can be compared on a day-to-day basis.</p>
+<p>If indent is a non-negative integer, then JSON array
+elements and object members will be pretty-printed with that
+indent level.
+An indent level of 0 will only insert newlines.
+None is the most compact representation.</p>
+<p>If specified, separators should be an (item_separator, key_separator)
+tuple.
+The default is (', ', ': ') if <em>indent</em> is <code>None</code> and
+(',', ': ') otherwise.
+To get the most compact JSON representation,
+you should specify (',', ':') to eliminate whitespace.</p>
+<p>If specified, default is a function that gets called for objects
+that can't otherwise be serialized.
+It should return a JSON encodable
+version of the object or raise a <code>TypeError</code>.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>json.encoder.JSONEncoder</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="LaserDeMag.ui.gui.ParameterEncoder.default"><code class="name flex">
+<span>def <span class="ident">default</span></span>(<span>self, obj)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def default(self, obj):
+    &#34;&#34;&#34;
+    Konwertuje niestandardowe typy obiektów na format JSON-serializowalny.
+
+    Obsługiwane typy:
+    - Quantity (Pint): zwraca słownik z wartością i jednostką.
+    - NumPy scalar: konwertuje na typ natywny Pythona.
+    - NumPy array: konwertuje na listę.
+    - Complex: zwraca słownik z częścią rzeczywistą i urojoną.
+    - Tuple: konwertuje na listę.
+    - Inne: wywołuje metodę bazową `default`.
+
+    Args:
+        obj: Obiekt do serializacji.
+
+    Returns:
+        JSON-serializowalny obiekt.
+
+    Converts custom object types to JSON-serializable formats.
+
+    Supported types:
+    - Quantity (Pint): returns a dict with value and unit.
+    - NumPy scalar: converts to native Python type.
+    - NumPy array: converts to list.
+    - Complex number: returns dict with real and imaginary parts.
+    - Tuple: converts to list.
+    - Others: calls base `default` method.
+
+    Args:
+        obj: Object to serialize.
+
+    Returns:
+        JSON-serializable object.
+    &#34;&#34;&#34;
+    # Pint Quantity
+    if isinstance(obj, Quantity):
+        return {&#34;value&#34;: obj.magnitude, &#34;unit&#34;: str(obj.units)}
+    # NumPy scalar
+    if isinstance(obj, (np.generic,)):
+        return obj.item()
+    # NumPy array
+    if isinstance(obj, np.ndarray):
+        return obj.tolist()
+    # Complex
+    if isinstance(obj, complex):
+        return {&#34;real&#34;: obj.real, &#34;imag&#34;: obj.imag}
+    # tuple -&gt; list
+    if isinstance(obj, tuple):
+        return list(obj)
+    # everything else
+    return super().default(obj)</code></pre>
+</details>
+<div class="desc"><p>Konwertuje niestandardowe typy obiektów na format JSON-serializowalny.</p>
+<p>Obsługiwane typy:
+- Quantity (Pint): zwraca słownik z wartością i jednostką.
+- NumPy scalar: konwertuje na typ natywny Pythona.
+- NumPy array: konwertuje na listę.
+- Complex: zwraca słownik z częścią rzeczywistą i urojoną.
+- Tuple: konwertuje na listę.
+- Inne: wywołuje metodę bazową <code>default</code>.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>obj</code></strong></dt>
+<dd>Obiekt do serializacji.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>JSON-serializowalny obiekt.
+Converts custom object types to JSON-serializable formats.</p>
+<p>Supported types:
+- Quantity (Pint): returns a dict with value and unit.
+- NumPy scalar: converts to native Python type.
+- NumPy array: converts to list.
+- Complex number: returns dict with real and imaginary parts.
+- Tuple: converts to list.
+- Others: calls base <code>default</code> method.</p>
+<h2 id="args_1">Args</h2>
+<dl>
+<dt><strong><code>obj</code></strong></dt>
+<dd>Object to serialize.</dd>
+</dl>
+<h2 id="returns_1">Returns</h2>
+<p>JSON-serializable object.</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="LaserDeMag.ui.gui.PlotCanvas"><code class="flex name class">
+<span>class <span class="ident">PlotCanvas</span></span>
+<span>(</span><span>parent=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class PlotCanvas(FigureCanvas):
+    &#34;&#34;&#34;
+    Widget wykresu bazujący na matplotlib do wyświetlania wykresów liniowych i map danych.
+
+    Funkcje:
+    - wyświetlanie map danych (3 wykresy)
+    - wyświetlanie wykresów liniowych (2 wykresy w układzie 2x1)
+    - zapisywanie aktualnego wykresu lub wszystkich wykresów do plików
+    - wyświetlanie wykresu w trybie pełnoekranowym
+    - aktualizacja komunikatów ostrzeżeń i informacji
+
+    Args:
+        parent (QWidget, optional): Rodzic widgetu. Domyślnie None.
+
+    ---
+    Matplotlib-based plot widget for displaying line plots and data maps.
+
+    Features:
+    - show map plots (3 subplots)
+    - show line plots (2 subplots)
+    - save current plot or all plots to files
+    - fullscreen plot preview
+    - update warning and info messages
+
+    Args:
+        parent (QWidget, optional): Parent widget. Default is None.
+    &#34;&#34;&#34;
+    def __init__(self, parent=None):
+        self.fig = Figure(figsize=(5, 4), dpi=100)
+        super().__init__(self.fig)
+        self.setParent(parent)
+
+        self.orig_parent = parent
+        self.orig_layout = parent.layout() if parent else None
+
+        self.warning_message = &#34;&#34;
+        self.information_message = &#34;&#34;
+        self.critical_message = &#34;&#34;
+
+    def clear(self):
+        &#34;&#34;&#34;
+        Czyści aktualne dane wykresu i rysuje pusty wykres.
+
+        ---
+        Clears current plot data and redraws an empty plot.
+        &#34;&#34;&#34;
+        self.plot_data = {}
+        self.fig.clf()
+        self.draw()
+
+    def show_map_plot(self, map_data):
+        &#34;&#34;&#34;
+        Wyświetla wykres mapy danych z trzema podwykresami.
+
+        Args:
+            map_data (list of dict): Lista słowników zawierających dane do wykresu,
+                                     każdy z kluczami: &#39;x&#39;, &#39;y&#39;, &#39;xlabel&#39;, &#39;ylabel&#39;, &#39;title&#39;, &#39;label&#39;
+
+        ---
+        Shows a map plot with three subplots.
+
+        Args:
+            map_data (list of dict): List of dicts containing plot data with keys:
+                                     &#39;x&#39;, &#39;y&#39;, &#39;xlabel&#39;, &#39;ylabel&#39;, &#39;title&#39;, &#39;label&#39;
+        &#34;&#34;&#34;
+        self.current_plot_type = &#34;map&#34;
+        self.current_plot_index = 0
+        self.plot_data[&#34;maps&#34;] = map_data
+        self.fig.clf()
+        axs = self.fig.subplots(3, 1)
+        for i, ax in enumerate(axs):
+            d = map_data[i]
+            ax.plot(d[&#34;x&#34;], d[&#34;y&#34;], label=d.get(&#34;label&#34;, &#34;&#34;))
+            ax.set_xlabel(d[&#34;xlabel&#34;])
+            ax.set_ylabel(d[&#34;ylabel&#34;])
+            ax.set_title(d[&#34;title&#34;])
+            ax.legend()
+        self.fig.tight_layout()
+        self.fig.subplots_adjust(hspace=0.4)
+        self.draw()
+
+    def show_line_plot(self, line_data):
+        &#34;&#34;&#34;
+        Wyświetla wykres liniowy składający się z dwóch podwykresów.
+
+        Args:
+            line_data (list of dict): Lista słowników z danymi do wykresu liniowego,
+                                      każdy słownik z kluczami: &#39;x&#39;, &#39;y&#39;, &#39;xlabel&#39;, &#39;ylabel&#39;, &#39;title&#39;, &#39;label&#39;
+
+        ---
+        Shows a line plot consisting of two subplots.
+
+        Args:
+            line_data (list of dict): List of dicts with line plot data, each dict containing keys:
+                                      &#39;x&#39;, &#39;y&#39;, &#39;xlabel&#39;, &#39;ylabel&#39;, &#39;title&#39;, &#39;label&#39;
+        &#34;&#34;&#34;
+        self.current_plot_type = &#34;line&#34;
+        self.current_plot_index = 0
+        self.plot_data[&#34;lines&#34;] = line_data
+        self.fig.clf()
+        axs = self.fig.subplots(2, 1)
+        axs[0].plot(line_data[0][&#34;x&#34;], line_data[0][&#34;y&#34;], label=line_data[0][&#34;label&#34;])
+        axs[0].plot(line_data[1][&#34;x&#34;], line_data[1][&#34;y&#34;], label=line_data[1][&#34;label&#34;])
+        axs[0].set_title(line_data[0][&#34;title&#34;])
+        axs[0].set_xlabel(line_data[0][&#34;xlabel&#34;])
+        axs[0].set_ylabel(line_data[0][&#34;ylabel&#34;])
+        axs[0].legend()
+
+        axs[1].plot(line_data[2][&#34;x&#34;], line_data[2][&#34;y&#34;], label=line_data[2][&#34;label&#34;])
+        axs[1].set_title(line_data[2][&#34;title&#34;])
+        axs[1].set_xlabel(line_data[2][&#34;xlabel&#34;])
+        axs[1].set_ylabel(line_data[2][&#34;ylabel&#34;])
+        axs[1].legend()
+        self.draw()
+
+    def save_current_plot(self, file_path):
+        &#34;&#34;&#34;
+        Zapisuje aktualny wykres do pliku.
+
+        Args:
+            file_path (str): Ścieżka pliku, do którego zostanie zapisany wykres.
+
+        Wyświetla komunikat o sukcesie lub błędzie.
+
+        ---
+        Saves the current plot to a file.
+
+        Args:
+            file_path (str): Path to the file where the plot will be saved.
+
+        Shows success or error message box.
+        &#34;&#34;&#34;
+        try:
+            self.fig.savefig(file_path, bbox_inches=&#39;tight&#39;)
+            QMessageBox.information(
+                self,
+                self.information_message[&#34;title&#34;],
+                f&#34;{self.information_message[&#39;message&#39;]}\n{file_path}&#34;
+            )
+        except Exception as e:
+            QMessageBox.critical(
+                self,
+                self.critical_message[&#34;title&#34;],
+                f&#34;{self.critical_message[&#39;message&#39;]}:\n{str(e)}&#34;
+            )
+
+    def save_all_plots(self, directory):
+        &#34;&#34;&#34;
+        Zapisuje wszystkie dostępne wykresy do wskazanego katalogu.
+
+        Args:
+            directory (str): Ścieżka do katalogu, w którym zapisywane będą wykresy.
+
+        Wyświetla komunikat o sukcesie lub błędzie.
+
+        ---
+        Saves all available plots to the specified directory.
+
+        Args:
+            directory (str): Path to the directory where plots will be saved.
+
+        Shows success or error message box.
+        &#34;&#34;&#34;
+        try:
+            if not hasattr(self, &#34;plot_data&#34;) or not self.plot_data:
+                QMessageBox.warning(self, self.warning_message[&#34;title&#34;], self.warning_message[&#34;message&#34;])
+                return
+            line_groups = []
+            lines = self.plot_data.get(&#34;lines&#34;, [])
+            if lines:
+                if len(lines) &gt;= 3:
+                    line_groups.append(lines[0:2])  # pierwszy wykres: electrons + phonons
+                    line_groups.append([lines[2]])  # drugi wykres: magnetization
+                else:
+                    line_groups.append(lines)  # fallback: wszystko w jednym
+
+            all_plots = [
+                *[(data, &#34;map&#34;) for data in self.plot_data.get(&#34;maps&#34;, [])],
+                *[(group, &#34;line_grouped&#34;) for group in line_groups]
+            ]
+
+            for idx, (data, kind) in enumerate(all_plots):
+                fig, ax = plt.subplots()
+                if kind == &#34;map&#34;:
+                    ax.plot(data[&#34;x&#34;], data[&#34;y&#34;], label=data.get(&#34;label&#34;, &#34;&#34;))
+                    ax.legend()
+                elif kind == &#34;line_grouped&#34;:
+                    fig, ax = plt.subplots()
+                    for line in data:
+                        ax.plot(line[&#34;x&#34;], line[&#34;y&#34;], label=line[&#34;label&#34;])
+                    ax.set_title(data[0][&#34;title&#34;])
+                    ax.set_xlabel(data[0][&#34;xlabel&#34;])
+                    ax.set_ylabel(data[0][&#34;ylabel&#34;])
+                    ax.legend()
+                fig.tight_layout()
+                fig.savefig(os.path.join(directory, f&#34;plot_{kind}_{idx}.png&#34;))
+                plt.close(fig)
+
+            QMessageBox.information(self, self.information_message[&#34;title&#34;], self.information_message[&#34;message&#34;])
+
+
+        except Exception as e:
+            QMessageBox.critical(self, self.critical_message[&#34;title&#34;], f&#34;{self.critical_message[&#39;message&#39;]}:\n{str(e)}&#34;)
+
+
+    def set_all_plots(self, figures):
+        &#34;&#34;&#34;
+        Ustawia dane wykresów do wyświetlenia.
+
+        Args:
+            figures (dict): Dane wykresów.
+
+        ---
+        Sets plot data for displaying.
+
+        Args:
+            figures (dict): Plot data.
+        &#34;&#34;&#34;
+        self.plot_data = figures
+
+    def update_messages(self, translations):
+        &#34;&#34;&#34;
+        Aktualizuje komunikaty ostrzeżeń, informacji i błędów.
+
+        Args:
+            translations (dict): Słownik z komunikatami z kluczami &#39;warning&#39;, &#39;info&#39;, &#39;critical&#39;.
+
+        ---
+        Updates warning, information, and critical message texts.
+
+        Args:
+            translations (dict): Dictionary with keys &#39;warning&#39;, &#39;info&#39;, &#39;critical&#39;.
+        &#34;&#34;&#34;
+        self.warning_message = {
+            &#34;title&#34;: translations.get(&#39;warning_title&#39;, &#39;Warning&#39;),
+            &#34;message&#34;: translations.get(&#39;warning_message&#39;, &#39;No plot data to save.&#39;)
+        }
+        self.information_message = {
+            &#34;title&#34;: translations.get(&#39;information_title&#39;, &#39;Information&#39;),
+            &#34;message&#34;: translations.get(&#39;information_message&#39;, &#39;All plots saved successfully.&#39;)
+        }
+        self.critical_message = {
+            &#34;title&#34;: translations.get(&#39;critical_title&#39;, &#39;Critical Error&#39;),
+            &#34;message&#34;: translations.get(&#39;critical_message&#39;, &#39;Error saving all plots&#39;)
+        }
+        self.fullscreen_title = translations.get(&#39;fullscreen_title&#39;, &#34;Chart Fullscreen Preview&#34;)
+
+    def show_warning(self):
+        &#34;&#34;&#34;
+        Wyświetla okno dialogowe z ostrzeżeniem.
+
+        Displays a warning message box.
+
+        Args:
+            None
+
+        Returns:
+            None
+        &#34;&#34;&#34;
+        QMessageBox.warning(
+            self,
+            &#34;Warning&#34;,
+            self.warning_message
+        )
+
+    def show_information(self):
+        &#34;&#34;&#34;
+        Wyświetla okno dialogowe z informacją.
+
+        Displays an information message box.
+
+        Args:
+            None
+
+        Returns:
+            None
+        &#34;&#34;&#34;
+        QMessageBox.information(
+            self,
+            &#34;Information&#34;,
+            self.information_message
+        )
+
+    def show_critical(self):
+        &#34;&#34;&#34;
+        Wyświetla okno dialogowe z krytycznym błędem.
+
+        Displays a critical error message box.
+
+        Args:
+            None
+
+        Returns:
+            None
+        &#34;&#34;&#34;
+        QMessageBox.critical(
+            self,
+            &#34;Critical Error&#34;,
+            self.critical_message
+        )
+
+    def open_current_plot_fullscreen(self):
+        &#34;&#34;&#34;
+        Pokazuje aktualny wykres w trybie pełnoekranowym w nowym oknie.
+
+        ---
+        Shows the current plot in fullscreen mode in a new window.
+        &#34;&#34;&#34;
+        if not hasattr(self, &#34;plot_data&#34;) or not self.plot_data:
+            QMessageBox.warning(self, &#34;Brak danych&#34;, &#34;Brak danych wykresów do zapisu.&#34;)
+            return
+
+        # 1) Utwórz nowe pełnoekranowe okno
+        w = QMainWindow(self.orig_parent)
+        w.setWindowTitle(self.fullscreen_title)
+        w.showFullScreen()
+
+        # 2) Stwórz nowy PlotCanvas w tym oknie
+        full_canvas = PlotCanvas(parent=w)
+        full_canvas.plot_data = self.plot_data.copy()  # lub deepcopy jeśli trzeba
+        full_canvas.current_plot_type = self.current_plot_type
+        full_canvas.current_plot_index = self.current_plot_index
+
+        # 3) Wywołaj odpowiednią metodę rysującą
+        if full_canvas.current_plot_type == &#34;map&#34;:
+            full_canvas.show_map_plot(full_canvas.plot_data[&#34;maps&#34;])
+        else:
+            full_canvas.show_line_plot(full_canvas.plot_data[&#34;lines&#34;])
+
+        # 4) Włóż go do okna
+        container = QWidget()
+        layout = QVBoxLayout(container)
+        layout.addWidget(full_canvas)
+        w.setCentralWidget(container)
+
+        # 5) Obsługa Esc
+        def on_key(event):
+            if event.key()  == 16777216:
+                w.close()
+        w.keyPressEvent = on_key
+
+        w.show()</code></pre>
+</details>
+<div class="desc"><p>Widget wykresu bazujący na matplotlib do wyświetlania wykresów liniowych i map danych.</p>
+<p>Funkcje:
+- wyświetlanie map danych (3 wykresy)
+- wyświetlanie wykresów liniowych (2 wykresy w układzie 2x1)
+- zapisywanie aktualnego wykresu lub wszystkich wykresów do plików
+- wyświetlanie wykresu w trybie pełnoekranowym
+- aktualizacja komunikatów ostrzeżeń i informacji</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>parent</code></strong> :&ensp;<code>QWidget</code>, optional</dt>
+<dd>Rodzic widgetu. Domyślnie None.</dd>
+</dl>
+<hr>
+<p>Matplotlib-based plot widget for displaying line plots and data maps.</p>
+<p>Features:
+- show map plots (3 subplots)
+- show line plots (2 subplots)
+- save current plot or all plots to files
+- fullscreen plot preview
+- update warning and info messages</p>
+<h2 id="args_1">Args</h2>
+<dl>
+<dt><strong><code>parent</code></strong> :&ensp;<code>QWidget</code>, optional</dt>
+<dd>Parent widget. Default is None.</dd>
+</dl></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>matplotlib.backends.backend_qtagg.FigureCanvasQTAgg</li>
+<li>matplotlib.backends.backend_agg.FigureCanvasAgg</li>
+<li>matplotlib.backends.backend_qt.FigureCanvasQT</li>
+<li>matplotlib.backend_bases.FigureCanvasBase</li>
+<li>PyQt6.QtWidgets.QWidget</li>
+<li>PyQt6.QtCore.QObject</li>
+<li>PyQt6.sip.wrapper</li>
+<li>PyQt6.QtGui.QPaintDevice</li>
+<li>PyQt6.sip.simplewrapper</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="LaserDeMag.ui.gui.PlotCanvas.clear"><code class="name flex">
+<span>def <span class="ident">clear</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clear(self):
+    &#34;&#34;&#34;
+    Czyści aktualne dane wykresu i rysuje pusty wykres.
+
+    ---
+    Clears current plot data and redraws an empty plot.
+    &#34;&#34;&#34;
+    self.plot_data = {}
+    self.fig.clf()
+    self.draw()</code></pre>
+</details>
+<div class="desc"><p>Czyści aktualne dane wykresu i rysuje pusty wykres.</p>
+<hr>
+<p>Clears current plot data and redraws an empty plot.</p></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.PlotCanvas.open_current_plot_fullscreen"><code class="name flex">
+<span>def <span class="ident">open_current_plot_fullscreen</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def open_current_plot_fullscreen(self):
+    &#34;&#34;&#34;
+    Pokazuje aktualny wykres w trybie pełnoekranowym w nowym oknie.
+
+    ---
+    Shows the current plot in fullscreen mode in a new window.
+    &#34;&#34;&#34;
+    if not hasattr(self, &#34;plot_data&#34;) or not self.plot_data:
+        QMessageBox.warning(self, &#34;Brak danych&#34;, &#34;Brak danych wykresów do zapisu.&#34;)
+        return
+
+    # 1) Utwórz nowe pełnoekranowe okno
+    w = QMainWindow(self.orig_parent)
+    w.setWindowTitle(self.fullscreen_title)
+    w.showFullScreen()
+
+    # 2) Stwórz nowy PlotCanvas w tym oknie
+    full_canvas = PlotCanvas(parent=w)
+    full_canvas.plot_data = self.plot_data.copy()  # lub deepcopy jeśli trzeba
+    full_canvas.current_plot_type = self.current_plot_type
+    full_canvas.current_plot_index = self.current_plot_index
+
+    # 3) Wywołaj odpowiednią metodę rysującą
+    if full_canvas.current_plot_type == &#34;map&#34;:
+        full_canvas.show_map_plot(full_canvas.plot_data[&#34;maps&#34;])
+    else:
+        full_canvas.show_line_plot(full_canvas.plot_data[&#34;lines&#34;])
+
+    # 4) Włóż go do okna
+    container = QWidget()
+    layout = QVBoxLayout(container)
+    layout.addWidget(full_canvas)
+    w.setCentralWidget(container)
+
+    # 5) Obsługa Esc
+    def on_key(event):
+        if event.key()  == 16777216:
+            w.close()
+    w.keyPressEvent = on_key
+
+    w.show()</code></pre>
+</details>
+<div class="desc"><p>Pokazuje aktualny wykres w trybie pełnoekranowym w nowym oknie.</p>
+<hr>
+<p>Shows the current plot in fullscreen mode in a new window.</p></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.PlotCanvas.save_all_plots"><code class="name flex">
+<span>def <span class="ident">save_all_plots</span></span>(<span>self, directory)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def save_all_plots(self, directory):
+    &#34;&#34;&#34;
+    Zapisuje wszystkie dostępne wykresy do wskazanego katalogu.
+
+    Args:
+        directory (str): Ścieżka do katalogu, w którym zapisywane będą wykresy.
+
+    Wyświetla komunikat o sukcesie lub błędzie.
+
+    ---
+    Saves all available plots to the specified directory.
+
+    Args:
+        directory (str): Path to the directory where plots will be saved.
+
+    Shows success or error message box.
+    &#34;&#34;&#34;
+    try:
+        if not hasattr(self, &#34;plot_data&#34;) or not self.plot_data:
+            QMessageBox.warning(self, self.warning_message[&#34;title&#34;], self.warning_message[&#34;message&#34;])
+            return
+        line_groups = []
+        lines = self.plot_data.get(&#34;lines&#34;, [])
+        if lines:
+            if len(lines) &gt;= 3:
+                line_groups.append(lines[0:2])  # pierwszy wykres: electrons + phonons
+                line_groups.append([lines[2]])  # drugi wykres: magnetization
+            else:
+                line_groups.append(lines)  # fallback: wszystko w jednym
+
+        all_plots = [
+            *[(data, &#34;map&#34;) for data in self.plot_data.get(&#34;maps&#34;, [])],
+            *[(group, &#34;line_grouped&#34;) for group in line_groups]
+        ]
+
+        for idx, (data, kind) in enumerate(all_plots):
+            fig, ax = plt.subplots()
+            if kind == &#34;map&#34;:
+                ax.plot(data[&#34;x&#34;], data[&#34;y&#34;], label=data.get(&#34;label&#34;, &#34;&#34;))
+                ax.legend()
+            elif kind == &#34;line_grouped&#34;:
+                fig, ax = plt.subplots()
+                for line in data:
+                    ax.plot(line[&#34;x&#34;], line[&#34;y&#34;], label=line[&#34;label&#34;])
+                ax.set_title(data[0][&#34;title&#34;])
+                ax.set_xlabel(data[0][&#34;xlabel&#34;])
+                ax.set_ylabel(data[0][&#34;ylabel&#34;])
+                ax.legend()
+            fig.tight_layout()
+            fig.savefig(os.path.join(directory, f&#34;plot_{kind}_{idx}.png&#34;))
+            plt.close(fig)
+
+        QMessageBox.information(self, self.information_message[&#34;title&#34;], self.information_message[&#34;message&#34;])
+
+
+    except Exception as e:
+        QMessageBox.critical(self, self.critical_message[&#34;title&#34;], f&#34;{self.critical_message[&#39;message&#39;]}:\n{str(e)}&#34;)</code></pre>
+</details>
+<div class="desc"><p>Zapisuje wszystkie dostępne wykresy do wskazanego katalogu.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>directory</code></strong> :&ensp;<code>str</code></dt>
+<dd>Ścieżka do katalogu, w którym zapisywane będą wykresy.</dd>
+</dl>
+<p>Wyświetla komunikat o sukcesie lub błędzie.</p>
+<hr>
+<p>Saves all available plots to the specified directory.</p>
+<h2 id="args_1">Args</h2>
+<dl>
+<dt><strong><code>directory</code></strong> :&ensp;<code>str</code></dt>
+<dd>Path to the directory where plots will be saved.</dd>
+</dl>
+<p>Shows success or error message box.</p></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.PlotCanvas.save_current_plot"><code class="name flex">
+<span>def <span class="ident">save_current_plot</span></span>(<span>self, file_path)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def save_current_plot(self, file_path):
+    &#34;&#34;&#34;
+    Zapisuje aktualny wykres do pliku.
+
+    Args:
+        file_path (str): Ścieżka pliku, do którego zostanie zapisany wykres.
+
+    Wyświetla komunikat o sukcesie lub błędzie.
+
+    ---
+    Saves the current plot to a file.
+
+    Args:
+        file_path (str): Path to the file where the plot will be saved.
+
+    Shows success or error message box.
+    &#34;&#34;&#34;
+    try:
+        self.fig.savefig(file_path, bbox_inches=&#39;tight&#39;)
+        QMessageBox.information(
+            self,
+            self.information_message[&#34;title&#34;],
+            f&#34;{self.information_message[&#39;message&#39;]}\n{file_path}&#34;
+        )
+    except Exception as e:
+        QMessageBox.critical(
+            self,
+            self.critical_message[&#34;title&#34;],
+            f&#34;{self.critical_message[&#39;message&#39;]}:\n{str(e)}&#34;
+        )</code></pre>
+</details>
+<div class="desc"><p>Zapisuje aktualny wykres do pliku.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>file_path</code></strong> :&ensp;<code>str</code></dt>
+<dd>Ścieżka pliku, do którego zostanie zapisany wykres.</dd>
+</dl>
+<p>Wyświetla komunikat o sukcesie lub błędzie.</p>
+<hr>
+<p>Saves the current plot to a file.</p>
+<h2 id="args_1">Args</h2>
+<dl>
+<dt><strong><code>file_path</code></strong> :&ensp;<code>str</code></dt>
+<dd>Path to the file where the plot will be saved.</dd>
+</dl>
+<p>Shows success or error message box.</p></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.PlotCanvas.set_all_plots"><code class="name flex">
+<span>def <span class="ident">set_all_plots</span></span>(<span>self, figures)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_all_plots(self, figures):
+    &#34;&#34;&#34;
+    Ustawia dane wykresów do wyświetlenia.
+
+    Args:
+        figures (dict): Dane wykresów.
+
+    ---
+    Sets plot data for displaying.
+
+    Args:
+        figures (dict): Plot data.
+    &#34;&#34;&#34;
+    self.plot_data = figures</code></pre>
+</details>
+<div class="desc"><p>Ustawia dane wykresów do wyświetlenia.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>figures</code></strong> :&ensp;<code>dict</code></dt>
+<dd>Dane wykresów.</dd>
+</dl>
+<hr>
+<p>Sets plot data for displaying.</p>
+<h2 id="args_1">Args</h2>
+<dl>
+<dt><strong><code>figures</code></strong> :&ensp;<code>dict</code></dt>
+<dd>Plot data.</dd>
+</dl></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.PlotCanvas.show_critical"><code class="name flex">
+<span>def <span class="ident">show_critical</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def show_critical(self):
+    &#34;&#34;&#34;
+    Wyświetla okno dialogowe z krytycznym błędem.
+
+    Displays a critical error message box.
+
+    Args:
+        None
+
+    Returns:
+        None
+    &#34;&#34;&#34;
+    QMessageBox.critical(
+        self,
+        &#34;Critical Error&#34;,
+        self.critical_message
+    )</code></pre>
+</details>
+<div class="desc"><p>Wyświetla okno dialogowe z krytycznym błędem.</p>
+<p>Displays a critical error message box.</p>
+<h2 id="args">Args</h2>
+<p>None</p>
+<h2 id="returns">Returns</h2>
+<p>None</p></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.PlotCanvas.show_information"><code class="name flex">
+<span>def <span class="ident">show_information</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def show_information(self):
+    &#34;&#34;&#34;
+    Wyświetla okno dialogowe z informacją.
+
+    Displays an information message box.
+
+    Args:
+        None
+
+    Returns:
+        None
+    &#34;&#34;&#34;
+    QMessageBox.information(
+        self,
+        &#34;Information&#34;,
+        self.information_message
+    )</code></pre>
+</details>
+<div class="desc"><p>Wyświetla okno dialogowe z informacją.</p>
+<p>Displays an information message box.</p>
+<h2 id="args">Args</h2>
+<p>None</p>
+<h2 id="returns">Returns</h2>
+<p>None</p></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.PlotCanvas.show_line_plot"><code class="name flex">
+<span>def <span class="ident">show_line_plot</span></span>(<span>self, line_data)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def show_line_plot(self, line_data):
+    &#34;&#34;&#34;
+    Wyświetla wykres liniowy składający się z dwóch podwykresów.
+
+    Args:
+        line_data (list of dict): Lista słowników z danymi do wykresu liniowego,
+                                  każdy słownik z kluczami: &#39;x&#39;, &#39;y&#39;, &#39;xlabel&#39;, &#39;ylabel&#39;, &#39;title&#39;, &#39;label&#39;
+
+    ---
+    Shows a line plot consisting of two subplots.
+
+    Args:
+        line_data (list of dict): List of dicts with line plot data, each dict containing keys:
+                                  &#39;x&#39;, &#39;y&#39;, &#39;xlabel&#39;, &#39;ylabel&#39;, &#39;title&#39;, &#39;label&#39;
+    &#34;&#34;&#34;
+    self.current_plot_type = &#34;line&#34;
+    self.current_plot_index = 0
+    self.plot_data[&#34;lines&#34;] = line_data
+    self.fig.clf()
+    axs = self.fig.subplots(2, 1)
+    axs[0].plot(line_data[0][&#34;x&#34;], line_data[0][&#34;y&#34;], label=line_data[0][&#34;label&#34;])
+    axs[0].plot(line_data[1][&#34;x&#34;], line_data[1][&#34;y&#34;], label=line_data[1][&#34;label&#34;])
+    axs[0].set_title(line_data[0][&#34;title&#34;])
+    axs[0].set_xlabel(line_data[0][&#34;xlabel&#34;])
+    axs[0].set_ylabel(line_data[0][&#34;ylabel&#34;])
+    axs[0].legend()
+
+    axs[1].plot(line_data[2][&#34;x&#34;], line_data[2][&#34;y&#34;], label=line_data[2][&#34;label&#34;])
+    axs[1].set_title(line_data[2][&#34;title&#34;])
+    axs[1].set_xlabel(line_data[2][&#34;xlabel&#34;])
+    axs[1].set_ylabel(line_data[2][&#34;ylabel&#34;])
+    axs[1].legend()
+    self.draw()</code></pre>
+</details>
+<div class="desc"><p>Wyświetla wykres liniowy składający się z dwóch podwykresów.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>line_data</code></strong> :&ensp;<code>list</code> of <code>dict</code></dt>
+<dd>Lista słowników z danymi do wykresu liniowego,
+każdy słownik z kluczami: 'x', 'y', 'xlabel', 'ylabel', 'title', 'label'</dd>
+</dl>
+<hr>
+<p>Shows a line plot consisting of two subplots.</p>
+<h2 id="args_1">Args</h2>
+<dl>
+<dt><strong><code>line_data</code></strong> :&ensp;<code>list</code> of <code>dict</code></dt>
+<dd>List of dicts with line plot data, each dict containing keys:
+'x', 'y', 'xlabel', 'ylabel', 'title', 'label'</dd>
+</dl></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.PlotCanvas.show_map_plot"><code class="name flex">
+<span>def <span class="ident">show_map_plot</span></span>(<span>self, map_data)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def show_map_plot(self, map_data):
+    &#34;&#34;&#34;
+    Wyświetla wykres mapy danych z trzema podwykresami.
+
+    Args:
+        map_data (list of dict): Lista słowników zawierających dane do wykresu,
+                                 każdy z kluczami: &#39;x&#39;, &#39;y&#39;, &#39;xlabel&#39;, &#39;ylabel&#39;, &#39;title&#39;, &#39;label&#39;
+
+    ---
+    Shows a map plot with three subplots.
+
+    Args:
+        map_data (list of dict): List of dicts containing plot data with keys:
+                                 &#39;x&#39;, &#39;y&#39;, &#39;xlabel&#39;, &#39;ylabel&#39;, &#39;title&#39;, &#39;label&#39;
+    &#34;&#34;&#34;
+    self.current_plot_type = &#34;map&#34;
+    self.current_plot_index = 0
+    self.plot_data[&#34;maps&#34;] = map_data
+    self.fig.clf()
+    axs = self.fig.subplots(3, 1)
+    for i, ax in enumerate(axs):
+        d = map_data[i]
+        ax.plot(d[&#34;x&#34;], d[&#34;y&#34;], label=d.get(&#34;label&#34;, &#34;&#34;))
+        ax.set_xlabel(d[&#34;xlabel&#34;])
+        ax.set_ylabel(d[&#34;ylabel&#34;])
+        ax.set_title(d[&#34;title&#34;])
+        ax.legend()
+    self.fig.tight_layout()
+    self.fig.subplots_adjust(hspace=0.4)
+    self.draw()</code></pre>
+</details>
+<div class="desc"><p>Wyświetla wykres mapy danych z trzema podwykresami.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>map_data</code></strong> :&ensp;<code>list</code> of <code>dict</code></dt>
+<dd>Lista słowników zawierających dane do wykresu,
+każdy z kluczami: 'x', 'y', 'xlabel', 'ylabel', 'title', 'label'</dd>
+</dl>
+<hr>
+<p>Shows a map plot with three subplots.</p>
+<h2 id="args_1">Args</h2>
+<dl>
+<dt><strong><code>map_data</code></strong> :&ensp;<code>list</code> of <code>dict</code></dt>
+<dd>List of dicts containing plot data with keys:
+'x', 'y', 'xlabel', 'ylabel', 'title', 'label'</dd>
+</dl></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.PlotCanvas.show_warning"><code class="name flex">
+<span>def <span class="ident">show_warning</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def show_warning(self):
+    &#34;&#34;&#34;
+    Wyświetla okno dialogowe z ostrzeżeniem.
+
+    Displays a warning message box.
+
+    Args:
+        None
+
+    Returns:
+        None
+    &#34;&#34;&#34;
+    QMessageBox.warning(
+        self,
+        &#34;Warning&#34;,
+        self.warning_message
+    )</code></pre>
+</details>
+<div class="desc"><p>Wyświetla okno dialogowe z ostrzeżeniem.</p>
+<p>Displays a warning message box.</p>
+<h2 id="args">Args</h2>
+<p>None</p>
+<h2 id="returns">Returns</h2>
+<p>None</p></div>
+</dd>
+<dt id="LaserDeMag.ui.gui.PlotCanvas.update_messages"><code class="name flex">
+<span>def <span class="ident">update_messages</span></span>(<span>self, translations)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_messages(self, translations):
+    &#34;&#34;&#34;
+    Aktualizuje komunikaty ostrzeżeń, informacji i błędów.
+
+    Args:
+        translations (dict): Słownik z komunikatami z kluczami &#39;warning&#39;, &#39;info&#39;, &#39;critical&#39;.
+
+    ---
+    Updates warning, information, and critical message texts.
+
+    Args:
+        translations (dict): Dictionary with keys &#39;warning&#39;, &#39;info&#39;, &#39;critical&#39;.
+    &#34;&#34;&#34;
+    self.warning_message = {
+        &#34;title&#34;: translations.get(&#39;warning_title&#39;, &#39;Warning&#39;),
+        &#34;message&#34;: translations.get(&#39;warning_message&#39;, &#39;No plot data to save.&#39;)
+    }
+    self.information_message = {
+        &#34;title&#34;: translations.get(&#39;information_title&#39;, &#39;Information&#39;),
+        &#34;message&#34;: translations.get(&#39;information_message&#39;, &#39;All plots saved successfully.&#39;)
+    }
+    self.critical_message = {
+        &#34;title&#34;: translations.get(&#39;critical_title&#39;, &#39;Critical Error&#39;),
+        &#34;message&#34;: translations.get(&#39;critical_message&#39;, &#39;Error saving all plots&#39;)
+    }
+    self.fullscreen_title = translations.get(&#39;fullscreen_title&#39;, &#34;Chart Fullscreen Preview&#34;)</code></pre>
+</details>
+<div class="desc"><p>Aktualizuje komunikaty ostrzeżeń, informacji i błędów.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>translations</code></strong> :&ensp;<code>dict</code></dt>
+<dd>Słownik z komunikatami z kluczami 'warning', 'info', 'critical'.</dd>
+</dl>
+<hr>
+<p>Updates warning, information, and critical message texts.</p>
+<h2 id="args_1">Args</h2>
+<dl>
+<dt><strong><code>translations</code></strong> :&ensp;<code>dict</code></dt>
+<dd>Dictionary with keys 'warning', 'info', 'critical'.</dd>
+</dl></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="LaserDeMag.ui" href="index.html">LaserDeMag.ui</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="LaserDeMag.ui.gui.CustomTitleBar" href="#LaserDeMag.ui.gui.CustomTitleBar">CustomTitleBar</a></code></h4>
+<ul class="">
+<li><code><a title="LaserDeMag.ui.gui.CustomTitleBar.info_clicked" href="#LaserDeMag.ui.gui.CustomTitleBar.info_clicked">info_clicked</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.CustomTitleBar.mouseDoubleClickEvent" href="#LaserDeMag.ui.gui.CustomTitleBar.mouseDoubleClickEvent">mouseDoubleClickEvent</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.CustomTitleBar.theme_changed" href="#LaserDeMag.ui.gui.CustomTitleBar.theme_changed">theme_changed</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.CustomTitleBar.toggle_theme" href="#LaserDeMag.ui.gui.CustomTitleBar.toggle_theme">toggle_theme</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.CustomTitleBar.window_state_changed" href="#LaserDeMag.ui.gui.CustomTitleBar.window_state_changed">window_state_changed</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="LaserDeMag.ui.gui.LoadingDialog" href="#LaserDeMag.ui.gui.LoadingDialog">LoadingDialog</a></code></h4>
+</li>
+<li>
+<h4><code><a title="LaserDeMag.ui.gui.MainWindow" href="#LaserDeMag.ui.gui.MainWindow">MainWindow</a></code></h4>
+<ul class="">
+<li><code><a title="LaserDeMag.ui.gui.MainWindow.changeEvent" href="#LaserDeMag.ui.gui.MainWindow.changeEvent">changeEvent</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.MainWindow.change_theme" href="#LaserDeMag.ui.gui.MainWindow.change_theme">change_theme</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.MainWindow.clear_fields" href="#LaserDeMag.ui.gui.MainWindow.clear_fields">clear_fields</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.MainWindow.collect_simulation_parameters" href="#LaserDeMag.ui.gui.MainWindow.collect_simulation_parameters">collect_simulation_parameters</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.MainWindow.download_all_plots" href="#LaserDeMag.ui.gui.MainWindow.download_all_plots">download_all_plots</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.MainWindow.download_current_plot" href="#LaserDeMag.ui.gui.MainWindow.download_current_plot">download_current_plot</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.MainWindow.download_data" href="#LaserDeMag.ui.gui.MainWindow.download_data">download_data</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.MainWindow.get_params_from_form" href="#LaserDeMag.ui.gui.MainWindow.get_params_from_form">get_params_from_form</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.MainWindow.load_user_data" href="#LaserDeMag.ui.gui.MainWindow.load_user_data">load_user_data</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.MainWindow.mouseMoveEvent" href="#LaserDeMag.ui.gui.MainWindow.mouseMoveEvent">mouseMoveEvent</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.MainWindow.mousePressEvent" href="#LaserDeMag.ui.gui.MainWindow.mousePressEvent">mousePressEvent</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.MainWindow.mouseReleaseEvent" href="#LaserDeMag.ui.gui.MainWindow.mouseReleaseEvent">mouseReleaseEvent</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.MainWindow.on_simulation_error" href="#LaserDeMag.ui.gui.MainWindow.on_simulation_error">on_simulation_error</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.MainWindow.on_simulation_finished" href="#LaserDeMag.ui.gui.MainWindow.on_simulation_finished">on_simulation_finished</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.MainWindow.populate_user_form" href="#LaserDeMag.ui.gui.MainWindow.populate_user_form">populate_user_form</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.MainWindow.set_dark_ui" href="#LaserDeMag.ui.gui.MainWindow.set_dark_ui">set_dark_ui</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.MainWindow.set_light_ui" href="#LaserDeMag.ui.gui.MainWindow.set_light_ui">set_light_ui</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.MainWindow.show_info_message" href="#LaserDeMag.ui.gui.MainWindow.show_info_message">show_info_message</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.MainWindow.start_simulation" href="#LaserDeMag.ui.gui.MainWindow.start_simulation">start_simulation</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.MainWindow.switch_plot_down" href="#LaserDeMag.ui.gui.MainWindow.switch_plot_down">switch_plot_down</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.MainWindow.switch_plot_up" href="#LaserDeMag.ui.gui.MainWindow.switch_plot_up">switch_plot_up</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.MainWindow.update_language" href="#LaserDeMag.ui.gui.MainWindow.update_language">update_language</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.MainWindow.update_plot" href="#LaserDeMag.ui.gui.MainWindow.update_plot">update_plot</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.MainWindow.window_state_changed" href="#LaserDeMag.ui.gui.MainWindow.window_state_changed">window_state_changed</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.MainWindow.zoom_plot" href="#LaserDeMag.ui.gui.MainWindow.zoom_plot">zoom_plot</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="LaserDeMag.ui.gui.ParameterEncoder" href="#LaserDeMag.ui.gui.ParameterEncoder">ParameterEncoder</a></code></h4>
+<ul class="">
+<li><code><a title="LaserDeMag.ui.gui.ParameterEncoder.default" href="#LaserDeMag.ui.gui.ParameterEncoder.default">default</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="LaserDeMag.ui.gui.PlotCanvas" href="#LaserDeMag.ui.gui.PlotCanvas">PlotCanvas</a></code></h4>
+<ul class="">
+<li><code><a title="LaserDeMag.ui.gui.PlotCanvas.clear" href="#LaserDeMag.ui.gui.PlotCanvas.clear">clear</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.PlotCanvas.open_current_plot_fullscreen" href="#LaserDeMag.ui.gui.PlotCanvas.open_current_plot_fullscreen">open_current_plot_fullscreen</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.PlotCanvas.save_all_plots" href="#LaserDeMag.ui.gui.PlotCanvas.save_all_plots">save_all_plots</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.PlotCanvas.save_current_plot" href="#LaserDeMag.ui.gui.PlotCanvas.save_current_plot">save_current_plot</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.PlotCanvas.set_all_plots" href="#LaserDeMag.ui.gui.PlotCanvas.set_all_plots">set_all_plots</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.PlotCanvas.show_critical" href="#LaserDeMag.ui.gui.PlotCanvas.show_critical">show_critical</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.PlotCanvas.show_information" href="#LaserDeMag.ui.gui.PlotCanvas.show_information">show_information</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.PlotCanvas.show_line_plot" href="#LaserDeMag.ui.gui.PlotCanvas.show_line_plot">show_line_plot</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.PlotCanvas.show_map_plot" href="#LaserDeMag.ui.gui.PlotCanvas.show_map_plot">show_map_plot</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.PlotCanvas.show_warning" href="#LaserDeMag.ui.gui.PlotCanvas.show_warning">show_warning</a></code></li>
+<li><code><a title="LaserDeMag.ui.gui.PlotCanvas.update_messages" href="#LaserDeMag.ui.gui.PlotCanvas.update_messages">update_messages</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

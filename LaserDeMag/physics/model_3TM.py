@@ -1,12 +1,30 @@
 import sys, tqdm, warnings
 import numpy as np
+"""
+Model fizyczny 3TM i właściwości materiałów.
 
+Moduł wykorzystuje bibliotekę `udkm1Dsim` do budowy struktury i definicji parametrów materiału dla modelu trójtemperaturowego (3TM).
+
+---
+3TM physical model and material properties.
+
+This module uses `udkm1Dsim` to construct the material structure and define parameters for the three-temperature model (3TM).
+"""
 sys.modules['tqdm.notebook'] = tqdm
 import udkm1Dsim as ud
 units = ud.u
 
 units.setup_matplotlib()
 def fake_notebook(*args, **kwargs):
+    """
+    Zastępuje funkcję `tqdm.notebook` wersją terminalową.
+
+    ---
+    Replaces `tqdm.notebook` with terminal-compatible `tqdm`.
+
+    Returns:
+        tqdm.tqdm instance
+    """
     kwargs.setdefault('dynamic_ncols', True)
     return tqdm.tqdm(*args, **kwargs)
 
@@ -15,6 +33,36 @@ import udkm1Dsim as ud
 units = ud.u
 
 def get_material_properties(material, Tc, mu, ge):
+    """
+     Tworzy obiekt materiału oraz zwraca właściwości fizyczne dla modelu 3TM.
+
+     Args:
+         material (str): Nazwa materiału (Co, Ni, Fe, Gd).
+         Tc (float): Temperatura Curie.
+         mu (float): Moment magnetyczny.
+         ge (float): Stała sprzężenia spin-kratka.
+
+     Returns:
+         tuple: (Atom, dict) - obiekt Atom oraz słownik właściwości fizycznych.
+
+     Raises:
+         ValueError: Jeśli materiał nie jest wspierany.
+
+     ---
+     Creates a material object and returns its physical properties for the 3TM model.
+
+     Args:
+         material (str): Material name (Co, Ni, Fe, Gd).
+         Tc (float): Curie temperature.
+         mu (float): Magnetic moment.
+         ge (float): Spin-lattice coupling constant.
+
+     Returns:
+         tuple: (Atom, dict) - Atom object and a dictionary of physical properties.
+
+     Raises:
+         ValueError: If material is not supported.
+     """
     if material == 'Co':
         material_obj = ud.Atom('Co')
     elif material == 'Ni':
@@ -39,6 +87,26 @@ def get_material_properties(material, Tc, mu, ge):
     return material_obj, prop
 
 def create_structure(material_obj, prop):
+    """
+    Tworzy strukturę 1D cienkiej warstwy dla modelu 3TM.
+
+    Args:
+        material_obj (ud.Atom): Obiekt atomu materiału.
+        prop (dict): Właściwości materiałowe.
+
+    Returns:
+        ud.Structure: Struktura 1D do symulacji.
+
+    ---
+    Creates a 1D thin film structure for the 3TM simulation.
+
+    Args:
+        material_obj (ud.Atom): Material Atom object.
+        prop (dict): Material properties.
+
+    Returns:
+        ud.Structure: Structure object for simulation.
+    """
     layer = ud.AmorphousLayer(material_obj.name, f'{material_obj.name} amorphous', thickness=1 * units.nm,
                               density=7000 * units.kg / units.m ** 3, atom=material_obj, **prop)
     structure = ud.Structure(material_obj.name)

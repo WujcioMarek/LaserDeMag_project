@@ -1,3 +1,38 @@
+"""
+Moduł GUI aplikacji symulacyjnej.
+
+Zawiera definicję głównego okna aplikacji z interfejsem użytkownika do
+wprowadzania parametrów symulacji, uruchamiania symulacji, wyświetlania
+wyników na wykresach oraz zarządzania motywem kolorystycznym (ciemny/jasny).
+
+Funkcjonalności obejmują:
+- Walidację i pobieranie parametrów z formularza,
+- Uruchamianie symulacji z wyświetleniem paska ładowania,
+- Zarządzanie wykresami (podgląd, zapisywanie, zoom),
+- Obsługę zapisu i ładowania danych symulacji w formatach JSON/XML,
+- Przełączanie motywów UI oraz dynamiczne dostosowywanie stylów.
+
+Moduł wykorzystuje PyQt6 do tworzenia interfejsu oraz integruje
+logikę symulacji i zapisu danych.
+
+---
+
+GUI module for the simulation application.
+
+Contains the main application window class with the user interface for
+inputting simulation parameters, running simulations, displaying results
+via plots, and managing color themes (dark/light).
+
+Features include:
+- Validation and retrieval of form parameters,
+- Running simulations with a loading dialog,
+- Plot management (viewing, saving, zooming),
+- Saving and loading simulation data in JSON/XML formats,
+- Switching UI themes and dynamically applying styles.
+
+This module uses PyQt6 for the interface and integrates simulation logic
+and data handling.
+"""
 import json, os, time
 import numpy as np
 from PyQt6.QtCore import QSize, Qt, QEvent, pyqtSignal, QPoint
@@ -14,6 +49,22 @@ from pint import Quantity
 from LaserDeMag.io.file_handler import save_simulation_parameters, load_simulation_parameters, save_simulation_report
 
 class LoadingDialog(QDialog):
+    """
+    Okno dialogowe wyświetlające komunikat ładowania z opcjonalnym obrazkiem.
+
+    Args:
+        title (str): Tytuł okna dialogowego.
+        message (str): Komunikat wyświetlany w oknie.
+        image_path (str, optional): Ścieżka do obrazka do wyświetlenia. Domyślnie None.
+
+    ---
+    Loading dialog window displaying a message with optional image.
+
+    Args:
+        title (str): Dialog window title.
+        message (str): Message shown in the dialog.
+        image_path (str, optional): Path to an image to display. Default is None.
+    """
     def __init__(self, title, message, image_path=None):
         super().__init__()
         self.setWindowTitle(title)
@@ -37,7 +88,58 @@ class LoadingDialog(QDialog):
         self.setLayout(layout)
 
 class ParameterEncoder(json.JSONEncoder):
+    """
+    Niestandardowy enkoder JSON dla obiektów używanych w aplikacji.
+
+    Obsługiwane typy:
+    - Quantity (Pint)
+    - NumPy scalars i tablice
+    - liczby zespolone
+    - krotki (zamieniane na listy)
+
+    ---
+    Custom JSON encoder for application-specific objects.
+
+    Supports:
+    - Quantity (Pint)
+    - NumPy scalars and arrays
+    - complex numbers
+    - tuples (converted to lists)
+    """
     def default(self, obj):
+        """
+        Konwertuje niestandardowe typy obiektów na format JSON-serializowalny.
+
+        Obsługiwane typy:
+        - Quantity (Pint): zwraca słownik z wartością i jednostką.
+        - NumPy scalar: konwertuje na typ natywny Pythona.
+        - NumPy array: konwertuje na listę.
+        - Complex: zwraca słownik z częścią rzeczywistą i urojoną.
+        - Tuple: konwertuje na listę.
+        - Inne: wywołuje metodę bazową `default`.
+
+        Args:
+            obj: Obiekt do serializacji.
+
+        Returns:
+            JSON-serializowalny obiekt.
+
+        Converts custom object types to JSON-serializable formats.
+
+        Supported types:
+        - Quantity (Pint): returns a dict with value and unit.
+        - NumPy scalar: converts to native Python type.
+        - NumPy array: converts to list.
+        - Complex number: returns dict with real and imaginary parts.
+        - Tuple: converts to list.
+        - Others: calls base `default` method.
+
+        Args:
+            obj: Object to serialize.
+
+        Returns:
+            JSON-serializable object.
+        """
         # Pint Quantity
         if isinstance(obj, Quantity):
             return {"value": obj.magnitude, "unit": str(obj.units)}
@@ -57,6 +159,32 @@ class ParameterEncoder(json.JSONEncoder):
         return super().default(obj)
 
 class PlotCanvas(FigureCanvas):
+    """
+    Widget wykresu bazujący na matplotlib do wyświetlania wykresów liniowych i map danych.
+
+    Funkcje:
+    - wyświetlanie map danych (3 wykresy)
+    - wyświetlanie wykresów liniowych (2 wykresy w układzie 2x1)
+    - zapisywanie aktualnego wykresu lub wszystkich wykresów do plików
+    - wyświetlanie wykresu w trybie pełnoekranowym
+    - aktualizacja komunikatów ostrzeżeń i informacji
+
+    Args:
+        parent (QWidget, optional): Rodzic widgetu. Domyślnie None.
+
+    ---
+    Matplotlib-based plot widget for displaying line plots and data maps.
+
+    Features:
+    - show map plots (3 subplots)
+    - show line plots (2 subplots)
+    - save current plot or all plots to files
+    - fullscreen plot preview
+    - update warning and info messages
+
+    Args:
+        parent (QWidget, optional): Parent widget. Default is None.
+    """
     def __init__(self, parent=None):
         self.fig = Figure(figsize=(5, 4), dpi=100)
         super().__init__(self.fig)
@@ -70,11 +198,31 @@ class PlotCanvas(FigureCanvas):
         self.critical_message = ""
 
     def clear(self):
+        """
+        Czyści aktualne dane wykresu i rysuje pusty wykres.
+
+        ---
+        Clears current plot data and redraws an empty plot.
+        """
         self.plot_data = {}
         self.fig.clf()
         self.draw()
 
     def show_map_plot(self, map_data):
+        """
+        Wyświetla wykres mapy danych z trzema podwykresami.
+
+        Args:
+            map_data (list of dict): Lista słowników zawierających dane do wykresu,
+                                     każdy z kluczami: 'x', 'y', 'xlabel', 'ylabel', 'title', 'label'
+
+        ---
+        Shows a map plot with three subplots.
+
+        Args:
+            map_data (list of dict): List of dicts containing plot data with keys:
+                                     'x', 'y', 'xlabel', 'ylabel', 'title', 'label'
+        """
         self.current_plot_type = "map"
         self.current_plot_index = 0
         self.plot_data["maps"] = map_data
@@ -92,6 +240,20 @@ class PlotCanvas(FigureCanvas):
         self.draw()
 
     def show_line_plot(self, line_data):
+        """
+        Wyświetla wykres liniowy składający się z dwóch podwykresów.
+
+        Args:
+            line_data (list of dict): Lista słowników z danymi do wykresu liniowego,
+                                      każdy słownik z kluczami: 'x', 'y', 'xlabel', 'ylabel', 'title', 'label'
+
+        ---
+        Shows a line plot consisting of two subplots.
+
+        Args:
+            line_data (list of dict): List of dicts with line plot data, each dict containing keys:
+                                      'x', 'y', 'xlabel', 'ylabel', 'title', 'label'
+        """
         self.current_plot_type = "line"
         self.current_plot_index = 0
         self.plot_data["lines"] = line_data
@@ -112,6 +274,22 @@ class PlotCanvas(FigureCanvas):
         self.draw()
 
     def save_current_plot(self, file_path):
+        """
+        Zapisuje aktualny wykres do pliku.
+
+        Args:
+            file_path (str): Ścieżka pliku, do którego zostanie zapisany wykres.
+
+        Wyświetla komunikat o sukcesie lub błędzie.
+
+        ---
+        Saves the current plot to a file.
+
+        Args:
+            file_path (str): Path to the file where the plot will be saved.
+
+        Shows success or error message box.
+        """
         try:
             self.fig.savefig(file_path, bbox_inches='tight')
             QMessageBox.information(
@@ -127,6 +305,22 @@ class PlotCanvas(FigureCanvas):
             )
 
     def save_all_plots(self, directory):
+        """
+        Zapisuje wszystkie dostępne wykresy do wskazanego katalogu.
+
+        Args:
+            directory (str): Ścieżka do katalogu, w którym zapisywane będą wykresy.
+
+        Wyświetla komunikat o sukcesie lub błędzie.
+
+        ---
+        Saves all available plots to the specified directory.
+
+        Args:
+            directory (str): Path to the directory where plots will be saved.
+
+        Shows success or error message box.
+        """
         try:
             if not hasattr(self, "plot_data") or not self.plot_data:
                 QMessageBox.warning(self, self.warning_message["title"], self.warning_message["message"])
@@ -170,9 +364,33 @@ class PlotCanvas(FigureCanvas):
 
 
     def set_all_plots(self, figures):
+        """
+        Ustawia dane wykresów do wyświetlenia.
+
+        Args:
+            figures (dict): Dane wykresów.
+
+        ---
+        Sets plot data for displaying.
+
+        Args:
+            figures (dict): Plot data.
+        """
         self.plot_data = figures
 
     def update_messages(self, translations):
+        """
+        Aktualizuje komunikaty ostrzeżeń, informacji i błędów.
+
+        Args:
+            translations (dict): Słownik z komunikatami z kluczami 'warning', 'info', 'critical'.
+
+        ---
+        Updates warning, information, and critical message texts.
+
+        Args:
+            translations (dict): Dictionary with keys 'warning', 'info', 'critical'.
+        """
         self.warning_message = {
             "title": translations.get('warning_title', 'Warning'),
             "message": translations.get('warning_message', 'No plot data to save.')
@@ -188,6 +406,17 @@ class PlotCanvas(FigureCanvas):
         self.fullscreen_title = translations.get('fullscreen_title', "Chart Fullscreen Preview")
 
     def show_warning(self):
+        """
+        Wyświetla okno dialogowe z ostrzeżeniem.
+
+        Displays a warning message box.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
         QMessageBox.warning(
             self,
             "Warning",
@@ -195,6 +424,17 @@ class PlotCanvas(FigureCanvas):
         )
 
     def show_information(self):
+        """
+        Wyświetla okno dialogowe z informacją.
+
+        Displays an information message box.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
         QMessageBox.information(
             self,
             "Information",
@@ -202,6 +442,17 @@ class PlotCanvas(FigureCanvas):
         )
 
     def show_critical(self):
+        """
+        Wyświetla okno dialogowe z krytycznym błędem.
+
+        Displays a critical error message box.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
         QMessageBox.critical(
             self,
             "Critical Error",
@@ -209,6 +460,12 @@ class PlotCanvas(FigureCanvas):
         )
 
     def open_current_plot_fullscreen(self):
+        """
+        Pokazuje aktualny wykres w trybie pełnoekranowym w nowym oknie.
+
+        ---
+        Shows the current plot in fullscreen mode in a new window.
+        """
         if not hasattr(self, "plot_data") or not self.plot_data:
             QMessageBox.warning(self, "Brak danych", "Brak danych wykresów do zapisu.")
             return
@@ -245,6 +502,35 @@ class PlotCanvas(FigureCanvas):
         w.show()
 
 class CustomTitleBar(QWidget):
+    """
+    Klasa CustomTitleBar implementuje niestandardowy pasek tytułu okna z przyciskami
+    do zmiany motywu, zmiany języka, minimalizacji, maksymalizacji i zamknięcia okna.
+
+    Funkcje:
+    - Obsługa kliknięć przycisków tematu (ciemny/jasny),
+    - Przełączanie języka interfejsu (polski/angielski),
+    - Obsługa zdarzeń podwójnego kliknięcia (maksymalizacja/przywracanie okna),
+    - Aktualizacja widoczności przycisków w zależności od stanu okna.
+
+    Signals:
+    - theme_changed(str): Emitowany przy zmianie motywu ('light' lub 'dark'),
+    - info_clicked(): Emitowany po kliknięciu przycisku informacji.
+
+    ---
+
+    CustomTitleBar class implements a custom window title bar with buttons
+    for theme switching, language switching, minimizing, maximizing, and closing the window.
+
+    Features:
+    - Handling theme toggle button clicks (dark/light),
+    - Switching UI language (Polish/English),
+    - Handling double-click events for maximizing/restoring the window,
+    - Updating button visibility depending on the window state.
+
+    Signals:
+    - theme_changed(str): Emitted when the theme changes ('light' or 'dark'),
+    - info_clicked(): Emitted when the info button is clicked.
+    """
     theme_changed = pyqtSignal(str)  # Sygnał do zmiany motywu
     info_clicked = pyqtSignal()
     def __init__(self, parent):
@@ -324,6 +610,21 @@ class CustomTitleBar(QWidget):
 
 
     def mouseDoubleClickEvent(self, event):
+        """
+        Obsługuje zdarzenie podwójnego kliknięcia myszy na oknie.
+        Jeśli okno jest zmaksymalizowane, przywraca je do normalnego rozmiaru,
+        w przeciwnym razie maksymalizuje okno.
+
+        Handles the mouse double-click event on the window.
+        If the window is maximized, restores it to normal size,
+        otherwise maximizes the window.
+
+        Args:
+            event (QMouseEvent): Zdarzenie podwójnego kliknięcia myszy / Mouse double-click event.
+
+        Returns:
+            None
+        """
         win = self.window()
         if win.isMaximized():
             win.showNormal()
@@ -332,7 +633,19 @@ class CustomTitleBar(QWidget):
         event.accept()
 
     def toggle_theme(self):
-        """Toggles between light and dark theme."""
+        """
+        Przełącza motyw aplikacji między jasnym a ciemnym.
+        Aktualizuje ikonę przycisku i styl tytułu w zależności od motywu.
+
+        Toggles the application theme between light and dark.
+        Updates the button icon and title style according to the theme.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
         pal = QApplication.palette()
         bg = pal.color(QPalette.ColorRole.Window).name()
 
@@ -368,6 +681,19 @@ class CustomTitleBar(QWidget):
             self.info_button.setIcon(QIcon("../resources/images/info_light.png"))
 
     def window_state_changed(self, state):
+        """
+        Aktualizuje widoczność przycisków maksymalizacji i przywrócenia
+        w zależności od aktualnego stanu okna.
+
+        Updates the visibility of maximize and restore buttons
+        depending on the current window state.
+
+        Args:
+            state (Qt.WindowState): Aktualny stan okna / Current window state.
+
+        Returns:
+            None
+        """
         if state == Qt.WindowState.WindowMaximized:
             self.normal_button.setVisible(True)
             self.maximize_btn.setVisible(False)
@@ -377,6 +703,37 @@ class CustomTitleBar(QWidget):
 
 
 class MainWindow(QMainWindow):
+    """
+    Główne okno aplikacji LaserDeMag.
+
+    Okno zawiera niestandardowy pasek tytułu, panel kontrolny z formularzem
+    do wprowadzania parametrów symulacji oraz obszar wykresów wyników.
+    Zapewnia obsługę zmiany motywu, języka, wczytywania danych z pliku,
+    czyszczenia pól, uruchamiania symulacji oraz sterowania wykresami
+    (przełączanie, pobieranie, powiększanie).
+
+    Elementy UI:
+    - Pasek tytułu (CustomTitleBar) z przyciskami do sterowania oknem i zmianą motywu/języka,
+    - Panel formularza z grupami pól: Materiał, Laser, Inne,
+    - Przyciski akcji: wczytaj z pliku, wyczyść, rozpocznij symulację,
+    - Obszar wykresu (PlotCanvas) wraz z przyciskami do zmiany wykresów i pobierania danych.
+
+    ---
+
+    Main application window for LaserDeMag.
+
+    The window contains a custom title bar, a control panel with a form
+    for simulation parameters input, and a plotting area for results.
+    It supports theme switching, language update, loading data from file,
+    clearing input fields, starting simulation, and plot controls
+    (switching plots, downloading plots/data, zooming).
+
+    UI Elements:
+    - Custom title bar (CustomTitleBar) with window control and theme/language buttons,
+    - Form panel with grouped input fields: Material, Laser, Others,
+    - Action buttons: load from file, clear fields, start simulation,
+    - Plot area (PlotCanvas) with buttons for switching plots and downloading data.
+    """
     def __init__(self):
         super().__init__()
         self.setWindowTitle("LaserDeMag App")
@@ -589,6 +946,13 @@ class MainWindow(QMainWindow):
         self.zoom_btn.clicked.connect(self.zoom_plot)
 
     def show_info_message(self):
+        """
+        Wyświetla okno dialogowe z informacjami o aplikacji.
+        Displays an information dialog about the application.
+
+        Treść i tytuł pobierane są z tłumaczeń dla aktualnego języka.
+        The content and title are loaded from translations for the current language.
+        """
         t = self.translations[self.current_language]
         msg = QMessageBox(self)
         msg.setWindowTitle(t["info_title"])
@@ -597,16 +961,40 @@ class MainWindow(QMainWindow):
         msg.exec()
 
     def changeEvent(self, event):
+        """
+        Obsługuje zdarzenia zmiany stanu okna, np. maksymalizacji.
+        Handles window state change events, e.g., maximization.
+
+        Przekazuje zdarzenie do paska tytułu, aby zaktualizować przyciski.
+        Forwards the event to the title bar to update buttons accordingly.
+        """
         if event.type() == QEvent.Type.WindowStateChange:
             self.title_bar.window_state_changed(self.windowState())
         super().changeEvent(event)
         event.accept()
 
     def window_state_changed(self, state):
+        """
+        Aktualizuje widoczność przycisków maksymalizacji i przywracania okna
+        w zależności od obecnego stanu okna (zmaksymalizowane/normalne).
+
+        Updates the visibility of maximize and restore buttons depending on the window state (maximized/normal).
+        """
         self.normal_button.setVisible(state == Qt.WindowState.WindowMaximized)
         self.maximize_btn.setVisible(state != Qt.WindowState.WindowMaximized)
 
     def mousePressEvent(self, event):
+        """
+        Obsługuje naciśnięcie przycisku myszy.
+
+        Jeśli lewy przycisk i okno jest zmaksymalizowane, przywraca do rozmiaru normalnego
+        i zapisuje pozycję kliknięcia, by umożliwić płynne przeciąganie.
+
+        Handles mouse press events.
+
+        If left button is pressed and window is maximized, restores to normal size
+        and records click position to enable smooth dragging.
+        """
         if event.button() == Qt.MouseButton.LeftButton:
             # jeśli było zmaksymalizowane, to przywróć przed ruszeniem
             if self.isMaximized():
@@ -628,6 +1016,15 @@ class MainWindow(QMainWindow):
         event.accept()
 
     def mouseMoveEvent(self, event):
+        """
+        Obsługuje przesuwanie myszy podczas przeciągania okna.
+
+        Przesuwa okno zgodnie z ruchem myszy, jeśli wcześniej zapisana została pozycja startowa.
+
+        Handles mouse move events during window dragging.
+
+        Moves the window according to mouse movement if initial click position was saved.
+        """
         if self.initial_pos is not None:
             delta = event.position().toPoint() - self.initial_pos
             self.window().move(
@@ -638,6 +1035,17 @@ class MainWindow(QMainWindow):
         event.accept()
 
     def mouseReleaseEvent(self, event):
+        """
+        Obsługuje zwolnienie przycisku myszy.
+
+        Jeśli okno nie jest zmaksymalizowane, a jego górna krawędź dotyka górnej krawędzi ekranu,
+        automatycznie maksymalizuje okno.
+
+        Handles mouse release events.
+
+        If the window is not maximized and its top edge touches the top of the screen,
+        automatically maximizes the window.
+        """
         super().mouseReleaseEvent(event)
         if not self.isMaximized() and self.y() <= 0:
             self.showMaximized()
@@ -645,6 +1053,15 @@ class MainWindow(QMainWindow):
         event.accept()
 
     def clear_fields(self):
+        """
+        Czyści wszystkie pola formularza i resetuje wybór materiału.
+
+        Czyści również obszar wykresu, jeśli istnieje.
+
+        Clears all form fields and resets material selection.
+
+        Also clears the plot area if it exists.
+        """
         for field in [self.init_temp, self.curie_temp, self.mag_moment,
                       self.power, self.duration, self.wavelength,
                       self.ges, self.asf]:
@@ -654,6 +1071,23 @@ class MainWindow(QMainWindow):
             self.plot_canvas.clear()
 
     def update_language(self, lang):
+        """
+        Aktualizuje interfejs użytkownika na wybrany język.
+
+        Ustawia teksty etykiet, tytuły grup, przycisków i komunikatów błędów
+        na podstawie słownika tłumaczeń.
+
+        Args:
+            lang (str): Kod wybranego języka (np. "English", "Polski").
+
+        Updates the user interface to the selected language.
+
+        Sets label texts, group titles, buttons, and error messages
+        based on the translation dictionary.
+
+        Args:
+            lang (str): Selected language code (e.g., "English", "Polski").
+        """
         self.current_language = lang
         t = self.translations[lang]
         self.field_labels = {
@@ -708,15 +1142,30 @@ class MainWindow(QMainWindow):
         self.save_report_title = t['save_report_title']
 
     def change_theme(self, theme: str):
-        """Zmienia motyw na ciemny lub jasny na podstawie sygnału."""
+        """
+        Zmienia motyw graficzny aplikacji na ciemny lub jasny.
+
+        Args:
+            theme (str): Nazwa motywu, np. 'dark' lub 'light'.
+
+        Changes the application's graphical theme to dark or light.
+
+        Args:
+            theme (str): Theme name, e.g., 'dark' or 'light'.
+        """
         if theme == 'dark':
             self.set_dark_ui()
         elif theme == 'light':
             self.set_light_ui()
 
     def set_dark_ui(self):
-        """Zmienia kolor widgetów w MainWindow na ciemny."""
-        # Material Box Labels (example)
+        """
+        Ustawia ciemny motyw interfejsu użytkownika,
+        zmieniając kolory tekstów, ikon oraz paletę kolorów aplikacji.
+
+        Sets the dark UI theme by changing text colors, icons,
+        and the application color palette.
+        """
         self.widgets['material_box'].setStyleSheet("color: white;")
         self.widgets['laser_box'].setStyleSheet("color: white;")
         self.widgets['others_box'].setStyleSheet("color: white;")
@@ -805,8 +1254,13 @@ class MainWindow(QMainWindow):
         QApplication.setPalette(dark_palette)
 
     def set_light_ui(self):
-        """Zmienia kolor widgetów w MainWindow na jasny."""
-        # Material Box Labels (example)
+        """
+        Ustawia jasny motyw interfejsu użytkownika,
+        zmieniając kolory tekstów, ikon oraz paletę kolorów aplikacji.
+
+        Sets the light UI theme by changing text colors, icons,
+        and the application color palette.
+        """
         self.widgets['material_box'].setStyleSheet("color: black;")
         self.widgets['laser_box'].setStyleSheet("color: black;")
         self.widgets['others_box'].setStyleSheet("color: black;")
@@ -823,7 +1277,6 @@ class MainWindow(QMainWindow):
         self.load_from_file_btn.setIcon(QIcon("../resources/images/from_file_light.png"))
         self.image_path = "../resources/images/loading_light.png"
 
-        # Buttons
         self.widgets['clear_btn'].setStyleSheet("background-color: #ddd; color: black; border-radius: 5px;")
         self.widgets['start_btn'].setStyleSheet("background-color: #ddd; color: black; border-radius: 5px;")
 
@@ -882,6 +1335,11 @@ class MainWindow(QMainWindow):
         QApplication.setPalette(light_palette)
 
     def get_params_from_form(self):
+        """
+        Pobiera i waliduje parametry z formularza GUI.
+
+        Retrieves and validates parameters from the GUI form.
+        """
         try:
             material = self.material_type.currentText().strip()
             if self.material_type.currentIndex() == 0:
@@ -926,6 +1384,13 @@ class MainWindow(QMainWindow):
             return None
 
     def start_simulation(self):
+        """
+        Uruchamia symulację na podstawie parametrów z formularza,
+        pokazuje dialog ładowania i obsługuje wyniki oraz błędy.
+
+        Starts the simulation based on form parameters,
+        shows loading dialog, and handles results and errors.
+        """
         self.current_plot_index = 0
         params = self.get_params_from_form()
         if params is None:
@@ -960,16 +1425,31 @@ class MainWindow(QMainWindow):
         finally:
             self.loading_dialog.close()
     def on_simulation_finished(self, result):
+        """
+        Obsługuje zakończenie symulacji, aktualizuje wykres i zamyka dialog ładowania.
+
+        Handles simulation finish, updates plot, and closes loading dialog.
+        """
         self.plot_data = result
         self.plot_canvas.set_all_plots(self.plot_data)
         self.update_plot()
         self.loading_dialog.close()
 
     def on_simulation_error(self, e):
+        """
+        Obsługuje błędy symulacji, zamyka dialog ładowania i wyświetla komunikat krytyczny.
+
+        Handles simulation errors, closes loading dialog, and shows critical message.
+        """
         self.loading_dialog.close()
         QMessageBox.critical(self, self.critical_title, str(e))
 
     def update_plot(self):
+        """
+        Aktualizuje wykres w GUI w zależności od aktualnego indeksu wykresu.
+
+        Updates the GUI plot depending on the current plot index.
+        """
         self.plot_canvas.current_plot_index = self.current_plot_index  # zapewnia spójność z GUI
         if self.current_plot_index == 0:
             self.plot_canvas.show_map_plot(self.plot_data["maps"])
@@ -977,14 +1457,29 @@ class MainWindow(QMainWindow):
             self.plot_canvas.show_line_plot(self.plot_data["lines"])
 
     def switch_plot_up(self):
+        """
+        Przełącza wykres na następny typ i aktualizuje wyświetlenie.
+
+        Switches plot to the next type and updates display.
+        """
         self.current_plot_index = (self.current_plot_index + 1) % 2
         self.update_plot()
 
     def switch_plot_down(self):
+        """
+        Przełącza wykres na poprzedni typ i aktualizuje wyświetlenie.
+
+        Switches plot to the previous type and updates display.
+        """
         self.current_plot_index = (self.current_plot_index - 1) % 2
         self.update_plot()
 
     def download_current_plot(self):
+        """
+        Otwiera dialog zapisu i zapisuje aktualnie wyświetlany wykres do pliku.
+
+        Opens save dialog and saves the currently displayed plot to a file.
+        """
         file_path, _ = QFileDialog.getSaveFileName(
             self,
             "Zapisz wykres",
@@ -996,6 +1491,11 @@ class MainWindow(QMainWindow):
             self.plot_canvas.save_current_plot(file_path)
 
     def download_all_plots(self):
+        """
+        Otwiera dialog wyboru folderu i zapisuje wszystkie wykresy do wybranego katalogu.
+
+        Opens directory selection dialog and saves all plots to the chosen folder.
+        """
         directory = QFileDialog.getExistingDirectory(
             self,
             "Wybierz folder do zapisania wszystkich wykresów",
@@ -1006,7 +1506,9 @@ class MainWindow(QMainWindow):
 
     def download_data(self):
         """
-        Ask user whether JSON or XML, then save.
+        Pyta użytkownika o format (JSON lub XML), następnie zapisuje dane symulacji.
+
+        Asks user for format (JSON or XML), then saves simulation data.
         """
         params = self.collect_simulation_parameters()
         t = self.translations[self.current_language]
@@ -1049,13 +1551,18 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(self, t['critical_title'], error_msg.format(err=str(e)))
 
     def zoom_plot(self):
+        """
+        Otwiera aktualny wykres w trybie pełnoekranowym.
+
+        Opens the current plot in fullscreen mode.
+        """
         self.plot_canvas.open_current_plot_fullscreen()
 
     def collect_simulation_parameters(self):
         """
-        Returns a dict of all parameters:
-        - form inputs
-        - internal simulation settings (e.g. S, ud.Heat settings, units, etc.)
+        Zbiera wszystkie parametry symulacji, łącznie z danymi formularza i właściwościami materiału.
+
+        Collects all simulation parameters, including form inputs and material properties.
         """
         params = {
             'user': self.get_params_from_form(),
@@ -1067,6 +1574,13 @@ class MainWindow(QMainWindow):
         return params
 
     def load_user_data(self):
+        """
+        Otwiera dialog wyboru pliku i ładuje dane użytkownika z pliku JSON,
+        następnie wypełnia formularz danymi.
+
+        Opens file selection dialog and loads user data from a JSON file,
+        then populates the form with the loaded data.
+        """
         t = self.translations[self.current_language]
 
         file_path, _ = QFileDialog.getOpenFileName(
@@ -1101,8 +1615,10 @@ class MainWindow(QMainWindow):
         """
         Wypełnia formularz GUI na podstawie danych z pliku.
 
+        Fills the GUI form fields based on the loaded data.
+
         Args:
-            data (dict): Słownik z parametrami do ustawienia
+            data (dict): Dictionary with parameters to set in the form.
         """
         self.material_type.setCurrentText(data["material"])
         self.init_temp.setText(str(data["T0"]))
