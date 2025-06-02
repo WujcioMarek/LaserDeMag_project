@@ -61,7 +61,10 @@
     "error_unknown_simulation": "An unexpected error occurred during the simulation. Ensure all values are valid and within realistic physical ranges.",
     "loading_message": "Simulation in progress, please wait...",
     "loading_title": "Please wait",
-    "save_report_title": "Save simulation report"
+    "save_report_title": "Save simulation report",
+    "select_directory": "Select directory to save all plots",
+    "save_plot": "Save plot",
+    "file_types": "PNG File (*.png);;PDF File (*.pdf);;SVG File (*.svg)"
   },
   "Polski": {
     "Language": "Język:",
@@ -125,6 +128,9 @@
     "error_unknown_simulation": "Wystąpił nieoczekiwany błąd podczas obliczeń. Upewnij się, że wszystkie wartości są poprawne i mieszczą się w realistycznych granicach fizycznych.",
     "loading_message": "Symulacja w toku, proszę czekać...",
     "loading_title": "Proszę czekać",
-    "save_report_title": "Zapisz raport symulacji"
+    "save_report_title": "Zapisz raport symulacji",
+    "select_directory": "Wybierz folder do zapisania wszystkich wykresów",
+    "save_plot": "Zapisz wykres",
+    "file_types": "Plik PNG (*.png);;Plik PDF (*.pdf);;Plik SVG (*.svg)"
   }
 }

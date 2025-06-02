@@ -33,7 +33,7 @@ Features include:
 This module uses PyQt6 for the interface and integrates simulation logic
 and data handling.
 """
-import json, os, time
+import json, os, time, sys
 import numpy as np
 from PyQt6.QtCore import QSize, Qt, QEvent, pyqtSignal, QPoint
 from PyQt6.QtGui import QPalette, QIcon, QColor, QFont, QPixmap
@@ -47,6 +47,35 @@ from LaserDeMag.physics.model_3TM import get_material_properties
 from LaserDeMag.main import main
 from pint import Quantity
 from LaserDeMag.io.file_handler import save_simulation_parameters, load_simulation_parameters, save_simulation_report
+
+if getattr(sys, 'frozen', False):
+    sys.stdout = open(os.devnull, 'w')
+    sys.stderr = open(os.devnull, 'w')
+
+def resource_path(relative_path):
+    """
+    PL: Zwraca absolutną ścieżkę do zasobu, działającą zarówno w trybie skryptu (.py),
+    jak i po spakowaniu aplikacji do .exe za pomocą PyInstaller.
+
+    Funkcja sprawdza, czy aplikacja działa w środowisku uruchomieniowym PyInstaller
+    (czyli czy istnieje atrybut _MEIPASS) i na tej podstawie buduje właściwą ścieżkę
+    do pliku zasobu.
+
+    EN: Returns the absolute path to a resource file, working both in development
+    mode (.py script) and when the application is bundled into an .exe file using PyInstaller.
+
+    The function checks whether the app is running in a PyInstaller environment
+    (i.e., whether the _MEIPASS attribute exists), and constructs the proper
+    path to the resource accordingly.
+
+    :param relative_path: relative path to the resource (e.g. 'resources/config.json')
+    :return: absolute path to the resource file
+    """
+    try:
+        base_path = sys._MEIPASS
+    except AttributeError:
+        base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    return os.path.join(base_path, relative_path)
 
 class LoadingDialog(QDialog):
     """
@@ -548,44 +577,44 @@ class CustomTitleBar(QWidget):
         title_bar_layout.addWidget(self.title)
 
         self.info_button = QPushButton()
-        self.info_button.setIcon(QIcon("../resources/images/info_light.png"))  # Upewnij się, że masz plik info.png
+        self.info_button.setIcon(QIcon(resource_path('resources/images/info_light.png')))
         self.info_button.setIconSize(QSize(32, 32))
         self.info_button.setStyleSheet("border: none;")
         self.info_button.clicked.connect(self.info_clicked.emit)
 
         # Theme switch button
         self.theme_switch_btn = QToolButton(self)
-        self.theme_switch_btn.setIcon(QIcon('../resources/images/light_ui.png'))
+        self.theme_switch_btn.setIcon(QIcon(resource_path('resources/images/light_ui.png')))
         self.theme_switch_btn.clicked.connect(self.toggle_theme)
 
         # ENG button
         self.english_btn = QToolButton(self)
-        self.english_btn.setIcon(QIcon('../resources/images/england.png'))
+        self.english_btn.setIcon(QIcon(resource_path('resources/images/england.png')))
         self.english_btn.clicked.connect(lambda: self.window().update_language("English"))
 
         # PL button
         self.polish_btn = QToolButton(self)
-        self.polish_btn.setIcon(QIcon('../resources/images/poland.png'))
+        self.polish_btn.setIcon(QIcon(resource_path('resources/images/poland.png')))
         self.polish_btn.clicked.connect(lambda: self.window().update_language("Polski"))
 
         # Min button
         self.minimize_btn = QToolButton(self)
-        self.minimize_btn.setIcon(QIcon('../resources/images/minimize.png'))
+        self.minimize_btn.setIcon(QIcon(resource_path('resources/images/minimize.png')))
         self.minimize_btn.clicked.connect(self.window().showMinimized)
 
         # Max button
         self.maximize_btn = QToolButton(self)
-        self.maximize_btn.setIcon(QIcon('../resources/images/maximize.png'))
+        self.maximize_btn.setIcon(QIcon(resource_path('resources/images/maximize.png')))
         self.maximize_btn.clicked.connect(self.window().showMaximized)
 
         # Close button
         self.close_btn = QToolButton(self)
-        self.close_btn.setIcon(QIcon('../resources/images/close.png'))
+        self.close_btn.setIcon(QIcon(resource_path('resources/images/close.png')))
         self.close_btn.clicked.connect(self.window().close)
 
         # Normal button
         self.normal_button = QToolButton(self)
-        self.normal_button.setIcon(QIcon('../resources/images/normal.png'))
+        self.normal_button.setIcon(QIcon(resource_path('resources/images/normal.png')))
         self.normal_button.clicked.connect(self.window().showNormal)
         self.normal_button.setVisible(False)
 
@@ -652,7 +681,7 @@ class CustomTitleBar(QWidget):
         # Check the current theme and switch
         if pal.color(QPalette.ColorRole.Window).lightness() > 127:
             self.theme_changed.emit('dark')
-            self.theme_switch_btn.setIcon(QIcon('../resources/images/dark_ui.png'))
+            self.theme_switch_btn.setIcon(QIcon(resource_path('resources/images/dark_ui.png')))
             self.title.setStyleSheet(
                 f"""font-weight: bold;
                    border: 2px solid {bg};
@@ -663,12 +692,12 @@ class CustomTitleBar(QWidget):
                 """
             )
             self.setStyleSheet("background-color: #336699;")
-            self.info_button.setIcon(QIcon("../resources/images/info_dark.png"))
+            self.info_button.setIcon(QIcon(resource_path('resources/images/info_dark.png')))
 
 
         else:
             self.theme_changed.emit('light')
-            self.theme_switch_btn.setIcon(QIcon('../resources/images/light_ui.png'))
+            self.theme_switch_btn.setIcon(QIcon(resource_path('resources/images/light_ui.png')))
             self.title.setStyleSheet(
                 f"""font-weight: bold;
                    border: 2px solid {bg};
@@ -678,7 +707,7 @@ class CustomTitleBar(QWidget):
                    background-color: transparent;
                 """
             )
-            self.info_button.setIcon(QIcon("../resources/images/info_light.png"))
+            self.info_button.setIcon(QIcon(resource_path('resources/images/info_light.png')))
 
     def window_state_changed(self, state):
         """
@@ -734,11 +763,14 @@ class MainWindow(QMainWindow):
     - Action buttons: load from file, clear fields, start simulation,
     - Plot area (PlotCanvas) with buttons for switching plots and downloading data.
     """
+
     def __init__(self):
         super().__init__()
         self.setWindowTitle("LaserDeMag App")
         self.resize(1200, 900)
-        with open("../resources/translations/translations.json", "r", encoding="utf-8") as f:
+        #with open("../resources/translations/translations.json", "r", encoding="utf-8") as f:
+        #    self.translations = json.load(f)
+        with open(resource_path('resources/translations/translations.json'),"r", encoding="utf-8") as f:
             self.translations = json.load(f)
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         self.initial_pos = None
@@ -757,7 +789,7 @@ class MainWindow(QMainWindow):
         # Title and description for the form
         header_layout = QHBoxLayout()
         self.logo_label = QLabel()
-        self.logo_pixmap = QPixmap("../resources/images/logo_light.png").scaled(90, 90, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+        self.logo_pixmap = QPixmap(resource_path('resources/images/logo_light.png')).scaled(90, 90, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
         self.logo_label.setPixmap(self.logo_pixmap)
         #title_label = QLabel("LaserDeMag")
         self.widgets['title'] = QLabel("LaserDeMag")
@@ -845,7 +877,7 @@ class MainWindow(QMainWindow):
 
         # Buttons for actions
         self.load_from_file_btn = QToolButton()
-        self.load_from_file_btn.setIcon(QIcon("../resources/images/from_file_light.png"))
+        self.load_from_file_btn.setIcon(QIcon(resource_path('resources/images/from_file_light.png')))
         self.widgets['clear_btn'] = QPushButton("Clear Fields")
         self.widgets['start_btn'] = QPushButton("Start Simulation")
         btn_layout = QHBoxLayout()
@@ -871,26 +903,26 @@ class MainWindow(QMainWindow):
         buttons_panel = QVBoxLayout()
         switch_plot_layout = QVBoxLayout()
         self.up_arrow_btn = QToolButton()
-        self.up_arrow_btn.setIcon(QIcon("../resources/images/up_light.png"))
+        self.up_arrow_btn.setIcon(QIcon(resource_path('resources/images/up_light.png')))
         self.down_arrow_btn = QToolButton()
-        self.down_arrow_btn.setIcon(QIcon("../resources/images/down_light.png"))
+        self.down_arrow_btn.setIcon(QIcon(resource_path('resources/images/down_light.png')))
         switch_plot_layout.addWidget(self.up_arrow_btn)
         switch_plot_layout.addWidget(self.down_arrow_btn)
 
         # Sekcja z przyciskami do pobierania danych
         download_layout = QVBoxLayout()
         self.download_current_btn = QToolButton()
-        self.download_current_btn.setIcon(QIcon("../resources/images/download_photo_light.png"))  # Ikona pobierania wykresu
+        self.download_current_btn.setIcon(QIcon(resource_path('resources/images/download_photo_light.png')))
         self.download_current_btn.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.download_current_btn.setFixedSize(QSize(30, 30))
         self.download_current_btn.setIconSize(QSize(30, 30))
         self.download_current_btn.setStyleSheet("border: none; background-color: transparent; border-radius: 15px;")
         self.download_all_btn = QToolButton()
-        self.download_all_btn.setIcon(QIcon("../resources/images/download_all_light.png"))  # Ikona pobierania wszystkich wykresów
+        self.download_all_btn.setIcon(QIcon(resource_path('resources/images/download_all_light.png')))
         self.download_data_btn = QToolButton()
-        self.download_data_btn.setIcon(QIcon("../resources/images/download_data_light.png"))  # Ikona pobierania danych
+        self.download_data_btn.setIcon(QIcon(resource_path('resources/images/download_data_light.png')))
         self.zoom_btn = QToolButton()
-        self.zoom_btn.setIcon(QIcon("../resources/images/maxGraph_light.png"))  # Ikona powiększania wykresu
+        self.zoom_btn.setIcon(QIcon(resource_path('resources/images/maxGraph_light.png')))
 
         download_layout.addWidget(self.download_current_btn)
         download_layout.addWidget(self.download_all_btn)
@@ -996,16 +1028,10 @@ class MainWindow(QMainWindow):
         and records click position to enable smooth dragging.
         """
         if event.button() == Qt.MouseButton.LeftButton:
-            # jeśli było zmaksymalizowane, to przywróć przed ruszeniem
             if self.isMaximized():
-                # pamiętaj współrzędne kliknięcia względem całego ekranu
                 global_pos = event.globalPosition().toPoint()
-                # przywróć okno do stanu normalnego
                 self.showNormal()
-                # po przywróceniu oblicz nową initial_pos tak,
-                # aby mysz „złapała” okno w tym samym punkcie
                 geo = self.geometry()
-                # np. ustaw initial_pos tak, żeby relatywna pozycja się zachowała
                 click_x = global_pos.x() - geo.x()
                 click_y = global_pos.y() - geo.y()
                 self.initial_pos = QPoint(click_x, click_y)
@@ -1140,6 +1166,9 @@ class MainWindow(QMainWindow):
         self.loading_message = t['loading_message']
         self.loading_title = t['loading_title']
         self.save_report_title = t['save_report_title']
+        self.select_directory = t['select_directory']
+        self.save_plot = t['save_plot']
+        self.file_types = t['file_types']
 
     def change_theme(self, theme: str):
         """
@@ -1171,16 +1200,16 @@ class MainWindow(QMainWindow):
         self.widgets['others_box'].setStyleSheet("color: white;")
         self.widgets['description'].setStyleSheet("color: white;")
         self.widgets['title'].setStyleSheet("color: white;")
-        new_logo = QPixmap("../resources/images/logo_dark.png").scaled(90, 90, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+        new_logo = QPixmap(resource_path('resources/images/logo_dark.png')).scaled(90, 90, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
         self.logo_label.setPixmap(new_logo)
-        self.download_current_btn.setIcon(QIcon("../resources/images/download_photo_dark.png"))
-        self.download_data_btn.setIcon(QIcon("../resources/images/download_data_dark.png"))
-        self.zoom_btn.setIcon(QIcon("../resources/images/maxGraph_dark.png"))
-        self.down_arrow_btn.setIcon(QIcon("../resources/images/down_dark.png"))
-        self.up_arrow_btn.setIcon(QIcon("../resources/images/up_dark.png"))
-        self.download_all_btn.setIcon(QIcon("../resources/images/download_all_dark.png"))
-        self.load_from_file_btn.setIcon(QIcon("../resources/images/from_file_dark.png"))
-        self.image_path = "../resources/images/loading_dark.png"
+        self.download_current_btn.setIcon(QIcon(resource_path('resources/images/download_photo_dark.png')))
+        self.download_data_btn.setIcon(QIcon(resource_path('resources/images/download_data_dark.png')))
+        self.zoom_btn.setIcon(QIcon(resource_path('resources/images/maxGraph_dark.png')))
+        self.down_arrow_btn.setIcon(QIcon(resource_path('resources/images/down_dark.png')))
+        self.up_arrow_btn.setIcon(QIcon(resource_path('resources/images/up_dark.png')))
+        self.download_all_btn.setIcon(QIcon(resource_path('resources/images/download_all_dark.png')))
+        self.load_from_file_btn.setIcon(QIcon(resource_path('resources/images/from_file_dark.png')))
+        self.image_path = resource_path('resources/images/loading_dark.png')
 
         for le in self.centralWidget().findChildren(QLineEdit):
             le.setStyleSheet("""
@@ -1266,16 +1295,16 @@ class MainWindow(QMainWindow):
         self.widgets['others_box'].setStyleSheet("color: black;")
         self.widgets['description'].setStyleSheet("color: black;")
         self.widgets['title'].setStyleSheet("color: black;")
-        new_logo = QPixmap("../resources/images/logo_light.png").scaled(90, 90, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+        new_logo = QPixmap(resource_path('resources/images/logo_light.png')).scaled(90, 90, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
         self.logo_label.setPixmap(new_logo)
-        self.download_current_btn.setIcon(QIcon("../resources/images/download_photo_light.png"))
-        self.download_data_btn.setIcon(QIcon("../resources/images/download_data_light.png"))
-        self.zoom_btn.setIcon(QIcon("../resources/images/maxGraph_light.png"))
-        self.down_arrow_btn.setIcon(QIcon("../resources/images/down_light.png"))
-        self.up_arrow_btn.setIcon(QIcon("../resources/images/up_light.png"))
-        self.download_all_btn.setIcon(QIcon("../resources/images/download_all_light.png"))
-        self.load_from_file_btn.setIcon(QIcon("../resources/images/from_file_light.png"))
-        self.image_path = "../resources/images/loading_light.png"
+        self.download_current_btn.setIcon(QIcon(resource_path('resources/images/download_photo_light.png')))
+        self.download_data_btn.setIcon(QIcon(resource_path('resources/images/download_data_light.png')))
+        self.zoom_btn.setIcon(QIcon(resource_path('resources/images/maxGraph_light.png')))
+        self.down_arrow_btn.setIcon(QIcon(resource_path('resources/images/down_light.png')))
+        self.up_arrow_btn.setIcon(QIcon(resource_path('resources/images/up_light.png')))
+        self.download_all_btn.setIcon(QIcon(resource_path('resources/images/download_all_light.png')))
+        self.load_from_file_btn.setIcon(QIcon(resource_path('resources/images/from_file_light.png')))
+        self.image_path = resource_path('resources/images/loading_light.png')
 
         self.widgets['clear_btn'].setStyleSheet("background-color: #ddd; color: black; border-radius: 5px;")
         self.widgets['start_btn'].setStyleSheet("background-color: #ddd; color: black; border-radius: 5px;")
@@ -1450,7 +1479,7 @@ class MainWindow(QMainWindow):
 
         Updates the GUI plot depending on the current plot index.
         """
-        self.plot_canvas.current_plot_index = self.current_plot_index  # zapewnia spójność z GUI
+        self.plot_canvas.current_plot_index = self.current_plot_index
         if self.current_plot_index == 0:
             self.plot_canvas.show_map_plot(self.plot_data["maps"])
         else:
@@ -1480,11 +1509,12 @@ class MainWindow(QMainWindow):
 
         Opens save dialog and saves the currently displayed plot to a file.
         """
+        t = self.translations[self.current_language]
         file_path, _ = QFileDialog.getSaveFileName(
             self,
-            "Zapisz wykres",
+            t['save_plot'],
             "",
-            "Plik PNG (*.png);;Plik PDF (*.pdf);;Plik SVG (*.svg)",
+            t['file_types'],
             options=QFileDialog.Option.DontUseNativeDialog
         )
         if file_path:
@@ -1496,9 +1526,10 @@ class MainWindow(QMainWindow):
 
         Opens directory selection dialog and saves all plots to the chosen folder.
         """
+        t = self.translations[self.current_language]
         directory = QFileDialog.getExistingDirectory(
             self,
-            "Wybierz folder do zapisania wszystkich wykresów",
+            t['select_directory'],
             options=QFileDialog.Option.ShowDirsOnly | QFileDialog.Option.DontUseNativeDialog
         )
         if directory:
@@ -1532,7 +1563,6 @@ class MainWindow(QMainWindow):
                 return {k: quantity_to_plain(v) for k, v in obj.items()}
             return obj
 
-        # Wybierz format
         file_format = "json" if selected_filter.startswith("JSON") else "xml"
 
         try:
