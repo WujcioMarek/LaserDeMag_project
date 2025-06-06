@@ -1,4 +1,4 @@
-
+from scipy.interpolate import interp1d
 def plot_results(S, delays, temp_map, material_name):
     import numpy as np
     """
@@ -40,48 +40,73 @@ def plot_results(S, delays, temp_map, material_name):
     >>> result["maps"][0]["xlabel"]
     'Distance [nm]'
     """
+    def tc(n):
+        return 631 * (4 + 8 * np.cos(np.pi / (n + 1))) / 12
+
+    n_values = np.arange(1, 21)
+    tc_values = tc(n_values)
+
     distances = S.get_distances_of_layers()[2].to('nm').magnitude
     delay_ps = delays.to('ps').magnitude
     select = S.get_all_positions_per_unique_layer()[material_name]
 
+    x_ticks = np.round(np.arange(0, 10.21, 0.6), 3)
+    mid_idx = temp_map.shape[0] // 2
+
+    maps = []
+    for i, label in enumerate(["Electrons", "Phonons", "Magnetization"]):
+        interp_func = interp1d(distances, temp_map[mid_idx, :, i], kind='linear', bounds_error=False,
+                               fill_value="extrapolate")
+        y_interp = interp_func(x_ticks)
+        maps.append({
+            "x": x_ticks,
+            "y": y_interp,
+            "label": label,
+            "xlabel": "Distance [nm]",
+            "ylabel": "Temperature [K]" if i < 2 else "Magnetization",
+            "title": f"Temperature {label}" if i < 2 else "Magnetization"
+        })
+
+    lines = [
+        {
+            "x": delay_ps,
+            "y": np.mean(temp_map[:, select, 0], 1),
+            "label": "electrons",
+            "ylabel": "Temperature [K]",
+            "xlabel": "Delay [ps]",
+            "title": "M3TM Koopmans et. al"
+        },
+        {
+            "x": delay_ps,
+            "y": np.mean(temp_map[:, select, 1], 1),
+            "label": "phonons",
+            "ylabel": "Temperature [K]",
+            "xlabel": "Delay [ps]",
+            "title": "M3TM Koopmans et. al"
+        },
+        {
+            "x": delay_ps,
+            "y": np.mean(temp_map[:, select, 2], 1),
+            "label": "M",
+            "ylabel": "Magnetization",
+            "xlabel": "Delay [ps]",
+            "title": "Magnetization"
+        }
+    ]
+
+    dim_effect = {
+        "x": n_values,
+        "y": tc_values,
+        "label": "Ni",
+        "xlabel": "n",
+        "ylabel": "TC [K]",
+        "title": "Dimensional Effect"
+    }
+
     data = {
-        "maps": [
-            {
-                "x": distances,
-                "y": temp_map[temp_map.shape[1] // 2, :, i],  # środek opóźnień
-                "label": label,
-                "xlabel": "Distance [nm]",
-                "ylabel": "Temperature [K]",
-                "title": f"Temperature {label}"
-            }
-            for i, label in enumerate(["Electrons", "Phonons", "Magnetization"])
-        ],
-        "lines": [  # wykresy liniowe
-            {
-                "x": delay_ps,
-                "y": np.mean(temp_map[:, select, 0], 1),
-                "label": "electrons",
-                "ylabel": "Temperature [K]",
-                "xlabel": "Delay [ps]",
-                "title": "M3TM Koopmans et. al"
-            },
-            {
-                "x": delay_ps,
-                "y": np.mean(temp_map[:, select, 1], 1),
-                "label": "phonons",
-                "ylabel": "Temperature [K]",
-                "xlabel": "Delay [ps]",
-                "title": "M3TM Koopmans et. al"
-            },
-            {
-                "x": delay_ps,
-                "y": np.mean(temp_map[:, select, 2], 1),
-                "label": "M",
-                "ylabel": "Magnetization",
-                "xlabel": "Delay [ps]",
-                "title": "Magnetization"
-            }
-        ]
+        "maps": maps,
+        "lines": lines,
+        "dim_effect": dim_effect
     }
 
     return data

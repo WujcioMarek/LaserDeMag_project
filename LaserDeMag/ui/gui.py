@@ -237,6 +237,65 @@ class PlotCanvas(FigureCanvas):
         self.fig.clf()
         self.draw()
 
+    def show_dimensional_effect_plot(self, dim_effect_data):
+        """
+        Wyświetla wykres efektu wymiarowego z możliwością podglądu wartości Y po najechaniu na punkt.
+
+        Args:
+            dim_effect_data (dict): Słownik z kluczami: 'x', 'y', 'xlabel', 'ylabel', 'title', 'label'.
+
+        ---
+        Displays dimensional effect plot with value tooltip on hover.
+
+        Args:
+            dim_effect_data (dict): Dictionary with keys: 'x', 'y', 'xlabel', 'ylabel', 'title', 'label'.
+        """
+        self.current_plot_type = "dimensional_effect"
+        self.current_plot_index = 0
+        self.plot_data["dim_effect"] = dim_effect_data
+
+        self.fig.clf()
+        ax = self.fig.subplots(1, 1)
+
+        ax.plot(dim_effect_data["x"], dim_effect_data["y"], 'r-', label=dim_effect_data["label"])
+        sc = ax.scatter(dim_effect_data["x"], dim_effect_data["y"], color='red', s=40)
+        ax.set_xlabel(dim_effect_data["xlabel"])
+        ax.set_ylabel(dim_effect_data["ylabel"])
+        ax.set_title(dim_effect_data["title"])
+        ax.set_xlim(0, max(dim_effect_data["x"]) + 0.5)
+        ax.set_xticks(np.arange(0, 21, 5))
+        ax.legend()
+        ax.grid(True)
+
+        annot = ax.annotate(
+            "", xy=(0, 0), xytext=(-40, 20), textcoords="offset points",
+            bbox=dict(boxstyle="round", fc="w"),
+            arrowprops=dict(arrowstyle="->")
+        )
+        annot.set_visible(False)
+
+        def update_annot(ind):
+            pos = sc.get_offsets()[ind["ind"][0]]
+            annot.xy = pos
+            annot.set_text(f"{pos[1]:.2f}")
+            annot.get_bbox_patch().set_alpha(0.9)
+
+        def hover(event):
+            vis = annot.get_visible()
+            if event.inaxes == ax:
+                cont, ind = sc.contains(event)
+                if cont:
+                    update_annot(ind)
+                    annot.set_visible(True)
+                    self.fig.canvas.draw_idle()
+                elif vis:
+                    annot.set_visible(False)
+                    self.fig.canvas.draw_idle()
+
+        self.fig.canvas.mpl_connect("motion_notify_event", hover)
+
+        self.draw()
+
     def show_map_plot(self, map_data):
         """
         Wyświetla wykres mapy danych z trzema podwykresami.
@@ -257,16 +316,61 @@ class PlotCanvas(FigureCanvas):
         self.plot_data["maps"] = map_data
         self.fig.clf()
         axs = self.fig.subplots(3, 1)
+
+        scatters = []
+        annots = []
         for i, ax in enumerate(axs):
             d = map_data[i]
-            ax.plot(d["x"], d["y"], label=d.get("label", ""))
+            ax.plot(d["x"], d["y"], linestyle='-', label=d.get("label", ""))
+            sc = ax.scatter(d["x"], d["y"], color='C{}'.format(i), s=30)
             ax.set_xlabel(d["xlabel"])
+            ax.set_xlim(left=0, right=10.5)
+            ax.set_xticks(np.arange(0, 10.5, 0.6))
             ax.set_ylabel(d["ylabel"])
             ax.set_title(d["title"])
             ax.legend()
+
+            annot = ax.annotate(
+                "", xy=(0, 0), xytext=(-40, 20), textcoords="offset points",
+                bbox=dict(boxstyle="round", fc="w"),
+                arrowprops=dict(arrowstyle="->")
+            )
+            annot.set_visible(False)
+
+            scatters.append(sc)
+            annots.append(annot)
+
         self.fig.tight_layout()
         self.fig.subplots_adjust(hspace=0.4)
         self.draw()
+
+        def update_annot(ind, sc, annot):
+            pos = sc.get_offsets()[ind["ind"][0]]
+            annot.xy = pos
+            text = f"{pos[1]:.2f}"
+            annot.set_text(text)
+            annot.get_bbox_patch().set_alpha(0.8)
+
+        def hover(event):
+            vis_changed = False
+            for sc, annot in zip(scatters, annots):
+                vis = annot.get_visible()
+                if event.inaxes == sc.axes:
+                    cont, ind = sc.contains(event)
+                    if cont:
+                        update_annot(ind, sc, annot)
+                        annot.set_visible(True)
+                        vis_changed = True
+                        self.fig.canvas.draw_idle()
+                    else:
+                        if vis:
+                            annot.set_visible(False)
+                            vis_changed = True
+                            self.fig.canvas.draw_idle()
+            if vis_changed:
+                self.fig.canvas.draw_idle()
+
+        self.fig.canvas.mpl_connect("motion_notify_event", hover)
 
     def show_line_plot(self, line_data):
         """
@@ -358,35 +462,70 @@ class PlotCanvas(FigureCanvas):
             lines = self.plot_data.get("lines", [])
             if lines:
                 if len(lines) >= 3:
-                    line_groups.append(lines[0:2])  # pierwszy wykres: electrons + phonons
-                    line_groups.append([lines[2]])  # drugi wykres: magnetization
+                    line_groups.append(lines[0:2])
+                    line_groups.append([lines[2]])
                 else:
-                    line_groups.append(lines)  # fallback: wszystko w jednym
+                    line_groups.append(lines)
 
-            all_plots = [
-                *[(data, "map") for data in self.plot_data.get("maps", [])],
-                *[(group, "line_grouped") for group in line_groups]
-            ]
+            map_data = self.plot_data.get("maps", [])
 
-            for idx, (data, kind) in enumerate(all_plots):
-                fig, ax = plt.subplots()
-                if kind == "map":
-                    ax.plot(data["x"], data["y"], label=data.get("label", ""))
-                    ax.legend()
-                elif kind == "line_grouped":
-                    fig, ax = plt.subplots()
-                    for line in data:
-                        ax.plot(line["x"], line["y"], label=line["label"])
-                    ax.set_title(data[0]["title"])
-                    ax.set_xlabel(data[0]["xlabel"])
-                    ax.set_ylabel(data[0]["ylabel"])
-                    ax.legend()
+            if map_data:
+                fig, axs = plt.subplots(3, 1, figsize=(6, 10))
+                for i, d in enumerate(map_data):
+                    axs[i].plot(d["x"], d["y"], linestyle='-', label=d.get("label", ""))
+                    axs[i].scatter(d["x"], d["y"], color=f'C{i}', s=30)
+                    axs[i].set_xlabel(d["xlabel"])
+                    axs[i].set_ylabel(d["ylabel"])
+                    axs[i].set_title(d["title"])
+                    axs[i].legend()
+                    axs[i].set_xlim(left=0, right=10.5)
+                    axs[i].set_xticks(np.arange(0, 10.5, 0.6))
                 fig.tight_layout()
-                fig.savefig(os.path.join(directory, f"plot_{kind}_{idx}.png"))
+                fig.subplots_adjust(hspace=0.4)
+                fig.savefig(os.path.join(directory, "plot_map.png"))
                 plt.close(fig)
 
-            QMessageBox.information(self, self.information_message["title"], self.information_message["message"])
+            if line_groups:
+                fig, axs = plt.subplots(2, 1, figsize=(6, 8))
+                for i, group in enumerate(line_groups):
+                    for line in group:
+                        axs[i].plot(line["x"], line["y"], label=line["label"])
+                    axs[i].set_title(group[0]["title"])
+                    axs[i].set_xlabel(group[0]["xlabel"])
+                    axs[i].set_ylabel(group[0]["ylabel"])
+                    axs[i].legend()
+                fig.tight_layout()
+                fig.subplots_adjust(hspace=0.4)
+                fig.savefig(os.path.join(directory, "plot_line_grouped.png"))
+                plt.close(fig)
 
+            dim_effect = self.plot_data.get("dim_effect")
+            if dim_effect:
+                if isinstance(dim_effect, list):
+                    for idx, d in enumerate(dim_effect):
+                        fig, ax = plt.subplots()
+                        ax.plot(d["x"], d["y"], label=d("label", ""), color="red")
+                        ax.scatter(d["x"], d["y"], color="red", s=40)
+                        ax.set_title(d["title"])
+                        ax.set_xlabel(d["xlabel"])
+                        ax.set_ylabel(d["ylabel"])
+                        ax.legend()
+                        fig.tight_layout()
+                        fig.savefig(os.path.join(directory, f"plot_dim_effect_{idx}.png"))
+                        plt.close(fig)
+                else:
+                    fig, ax = plt.subplots()
+                    ax.plot(dim_effect["x"], dim_effect["y"], label=dim_effect.get("label", ""), color="red")
+                    ax.scatter(dim_effect["x"], dim_effect["y"], color="red", s=40)
+                    ax.set_title(dim_effect["title"])
+                    ax.set_xlabel(dim_effect["xlabel"])
+                    ax.set_ylabel(dim_effect["ylabel"])
+                    ax.legend()
+                    fig.tight_layout()
+                    fig.savefig(os.path.join(directory, "plot_dim_effect.png"))
+                    plt.close(fig)
+
+            QMessageBox.information(self, self.information_message["title"], self.information_message["message"])
 
         except Exception as e:
             QMessageBox.critical(self, self.critical_message["title"], f"{self.critical_message['message']}:\n{str(e)}")
@@ -499,30 +638,27 @@ class PlotCanvas(FigureCanvas):
             QMessageBox.warning(self, "Brak danych", "Brak danych wykresów do zapisu.")
             return
 
-        # 1) Utwórz nowe pełnoekranowe okno
         w = QMainWindow(self.orig_parent)
         w.setWindowTitle(self.fullscreen_title)
         w.showFullScreen()
 
-        # 2) Stwórz nowy PlotCanvas w tym oknie
         full_canvas = PlotCanvas(parent=w)
-        full_canvas.plot_data = self.plot_data.copy()  # lub deepcopy jeśli trzeba
+        full_canvas.plot_data = self.plot_data.copy()
         full_canvas.current_plot_type = self.current_plot_type
         full_canvas.current_plot_index = self.current_plot_index
 
-        # 3) Wywołaj odpowiednią metodę rysującą
         if full_canvas.current_plot_type == "map":
             full_canvas.show_map_plot(full_canvas.plot_data["maps"])
-        else:
+        elif full_canvas.current_plot_type == "lines":
             full_canvas.show_line_plot(full_canvas.plot_data["lines"])
+        else:
+            full_canvas.show_dimensional_effect_plot(full_canvas.plot_data["dim_effect"])
 
-        # 4) Włóż go do okna
         container = QWidget()
         layout = QVBoxLayout(container)
         layout.addWidget(full_canvas)
         w.setCentralWidget(container)
 
-        # 5) Obsługa Esc
         def on_key(event):
             if event.key()  == 16777216:
                 w.close()
@@ -1482,8 +1618,10 @@ class MainWindow(QMainWindow):
         self.plot_canvas.current_plot_index = self.current_plot_index
         if self.current_plot_index == 0:
             self.plot_canvas.show_map_plot(self.plot_data["maps"])
-        else:
+        elif self.current_plot_index == 1:
             self.plot_canvas.show_line_plot(self.plot_data["lines"])
+        else:
+            self.plot_canvas.show_dimensional_effect_plot(self.plot_data["dim_effect"])
 
     def switch_plot_up(self):
         """
@@ -1491,7 +1629,7 @@ class MainWindow(QMainWindow):
 
         Switches plot to the next type and updates display.
         """
-        self.current_plot_index = (self.current_plot_index + 1) % 2
+        self.current_plot_index = (self.current_plot_index + 1) % 3
         self.update_plot()
 
     def switch_plot_down(self):
@@ -1500,7 +1638,7 @@ class MainWindow(QMainWindow):
 
         Switches plot to the previous type and updates display.
         """
-        self.current_plot_index = (self.current_plot_index - 1) % 2
+        self.current_plot_index = (self.current_plot_index - 1) % 3
         self.update_plot()
 
     def download_current_plot(self):
