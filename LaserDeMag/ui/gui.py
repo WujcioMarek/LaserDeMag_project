@@ -1527,7 +1527,7 @@ class MainWindow(QMainWindow):
             Tc = validate_float(self.curie_temp.text(), "curie_temp_label")
             mu = validate_float(self.mag_moment.text(), "mag_moment_label")
             fluence = validate_float(self.power.text(), "power_label")
-            pulse_duration = validate_float(self.duration.text(), "duration_label") / 1000  # fs → ps
+            pulse_duration = validate_float(self.duration.text(), "duration_label") / 1000
             laser_wavelength = validate_float(self.wavelength.text(), "wavelength_label")
             ge = validate_float(self.ges.text(), "ges_label")
             asf = validate_float(self.asf.text(), "asf_label")
