@@ -43,7 +43,6 @@ from PyQt6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QMainWindow, QTo
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
-from LaserDeMag.physics.model_3TM import get_material_properties
 from LaserDeMag.main import main
 from pint import Quantity
 from LaserDeMag.io.file_handler import save_simulation_parameters, load_simulation_parameters, save_simulation_report
@@ -1522,14 +1521,13 @@ class MainWindow(QMainWindow):
                     raise ValueError(self.error_invalid_number.format(field=field_label))
                 return val
 
-            # Walidacja pól liczbowych
             T0 = validate_float(self.init_temp.text(), "init_temp_label")
             Tc = validate_float(self.curie_temp.text(), "curie_temp_label")
             mu = validate_float(self.mag_moment.text(), "mag_moment_label")
             fluence = validate_float(self.power.text(), "power_label")
-            pulse_duration = validate_float(self.duration.text(), "duration_label") / 1000
+            pulse_duration = validate_float(self.duration.text(), "duration_label")
             laser_wavelength = validate_float(self.wavelength.text(), "wavelength_label")
-            ge = validate_float(self.ges.text(), "ges_label")
+            ges = validate_float(self.ges.text(), "ges_label")
             asf = validate_float(self.asf.text(), "asf_label")
 
             return {
@@ -1540,7 +1538,7 @@ class MainWindow(QMainWindow):
                 'fluence': fluence,
                 'pulse_duration': pulse_duration,
                 'laser_wavelength': laser_wavelength,
-                'ge': ge,
+                'ge': ges,
                 'asf': asf
             }
 
@@ -1557,38 +1555,27 @@ class MainWindow(QMainWindow):
         shows loading dialog, and handles results and errors.
         """
         self.current_plot_index = 0
-        params = self.get_params_from_form()
-        if params is None:
+        form_data = self.get_params_from_form()
+        if not form_data:
             return
 
         self.loading_dialog = LoadingDialog(self.loading_title, self.loading_message, self.image_path)
         self.loading_dialog.show()
         QApplication.processEvents()
 
-        try:
-            start_time = time.time()
-            material_obj, prop = get_material_properties(
-                params['material'], params['Tc'], params['mu'], params['ge']
-            )
-            self.material_props = prop
-            self.material_name = material_obj.name
 
-            self.plot_data = main(params)
-            self.plot_canvas.set_all_plots(self.plot_data)
-            self.update_plot()
+        start_time = time.time()
+        self.material_name = form_data['material']
 
-            duration = time.time() - start_time
+        self.plot_data = main(form_data)
+        self.plot_canvas.set_all_plots(self.plot_data)
+        self.update_plot()
 
-            save_simulation_report(params, self.material_name, self.material_props, self.plot_data, self, simulation_duration=duration)
+        duration = time.time() - start_time
 
-        except FloatingPointError as e:
-            QMessageBox.critical(self, self.critical_title,
-                                 self.translations[self.current_language]['error_numeric'] + "\n" + str(e))
-        except Exception as e:
-            QMessageBox.critical(self, self.critical_title,
-                                 self.translations[self.current_language]['error_unknown_simulation'] + "\n" + str(e))
-        finally:
-            self.loading_dialog.close()
+        save_simulation_report(form_data, self.material_name,None, self.plot_data, self, simulation_duration=duration)
+
+
     def on_simulation_finished(self, result):
         """
         Obsługuje zakończenie symulacji, aktualizuje wykres i zamyka dialog ładowania.
@@ -1764,7 +1751,6 @@ class MainWindow(QMainWindow):
         try:
             user_data = load_simulation_parameters(file_path,self)
 
-            # Przekaż dane do formularza
             self.populate_user_form(user_data)
 
             QMessageBox.information(
@@ -1793,7 +1779,7 @@ class MainWindow(QMainWindow):
         self.curie_temp.setText(str(data["Tc"]))
         self.mag_moment.setText(str(data["mu"]))
         self.power.setText(str(data["fluence"]))
-        self.duration.setText(str(data["pulse_duration"] / 1000))  # fs → ps
+        self.duration.setText(str(data["pulse_duration"]))
         self.wavelength.setText(str(data["laser_wavelength"]))
         self.ges.setText(str(data["ge"]))
         self.asf.setText(str(data["asf"]))

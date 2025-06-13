@@ -10,16 +10,15 @@ oraz przygotowania danych do wizualizacji.
 This module includes a function that executes the full temperature distribution simulation using the 3TM model
 and prepares data for visualization.
 """
+from LaserDeMag.physics.model_3TM import run_model
+from LaserDeMag.physics.adapter_udkm import build_structure
+from LaserDeMag.visual.plotter import plot_results
 import udkm1Dsim as ud
 units = ud.u
-import numpy as np
-
 units.setup_matplotlib()
-from LaserDeMag.visual.plotter import plot_results
 
-units = ud.u
 
-def run_simulation(S, params,material_name):
+def run_simulation(params):
     """
     Uruchamia symulację temperaturową dla struktury materiałowej w modelu 3TM.
 
@@ -50,27 +49,11 @@ def run_simulation(S, params,material_name):
     Returns:
         dict: Data for plots (temperature maps and time graphs)
     """
-    h = ud.Heat(S, True)
-    h.save_data = False
-    h.disp_messages = True
-    h.heat_diffusion = True
 
-    h.excitation = {
-        'fluence': [params['fluence']] * units.mJ / units.cm ** 2,
-        'delay_pump': [0] * units.ps,
-        'pulse_width': [params['pulse_duration']] * units.ps,
-        'multilayer_absorption': True,
-        'wavelength': params['laser_wavelength'] * units.nm,
-        'theta': 45 * units.deg
-    }
+    structure = build_structure(params)
 
-    init_temp = np.ones([S.get_number_of_layers(), 3])
-    init_temp[:, 0] = params['T0']
-    init_temp[:, 1] = params['T0']
-    init_temp[:, 2] = 0.1
+    delays, temp_map = run_model(structure, params)
 
-    delays = np.r_[-0.1:5:0.005] * units.ps
-    temp_map, _ = h.get_temp_map(delays, init_temp)
+    return plot_results(structure, delays, temp_map, params['material'])
 
-    return plot_results(S, delays, temp_map, material_name)
 

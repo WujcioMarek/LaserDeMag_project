@@ -1,5 +1,5 @@
 from scipy.interpolate import interp1d
-def plot_results(S, delays, temp_map, material_name):
+def plot_results(structure, delays, temp_map, material_name):
     import numpy as np
     """
     Prepares temperature and magnetization data for plotting based on a 3TM simulation.
@@ -46,9 +46,9 @@ def plot_results(S, delays, temp_map, material_name):
     n_values = np.arange(1, 21)
     tc_values = tc(n_values)
 
-    distances = S.get_distances_of_layers()[2].to('nm').magnitude
+    distances = structure.get_distances_of_layers()[2].to('nm').magnitude
     delay_ps = delays.to('ps').magnitude
-    select = S.get_all_positions_per_unique_layer()[material_name]
+    select = structure.get_all_positions_per_unique_layer()[material_name]
 
     x_ticks = np.round(np.arange(0, 10.21, 0.6), 3)
     mid_idx = temp_map.shape[0] // 2
@@ -58,6 +58,7 @@ def plot_results(S, delays, temp_map, material_name):
         interp_func = interp1d(distances, temp_map[mid_idx, :, i], kind='linear', bounds_error=False,
                                fill_value="extrapolate")
         y_interp = interp_func(x_ticks)
+
         maps.append({
             "x": x_ticks,
             "y": y_interp,
@@ -70,7 +71,7 @@ def plot_results(S, delays, temp_map, material_name):
     lines = [
         {
             "x": delay_ps,
-            "y": np.mean(temp_map[:, select, 0], 1),
+            "y": np.mean(temp_map[:, select,0], 1),
             "label": "electrons",
             "ylabel": "Temperature [K]",
             "xlabel": "Delay [ps]",
@@ -78,7 +79,7 @@ def plot_results(S, delays, temp_map, material_name):
         },
         {
             "x": delay_ps,
-            "y": np.mean(temp_map[:, select, 1], 1),
+            "y": np.mean(temp_map[:, select,1], 1),
             "label": "phonons",
             "ylabel": "Temperature [K]",
             "xlabel": "Delay [ps]",
@@ -86,7 +87,7 @@ def plot_results(S, delays, temp_map, material_name):
         },
         {
             "x": delay_ps,
-            "y": np.mean(temp_map[:, select, 2], 1),
+            "y": np.mean(temp_map[:, select,2], 1),
             "label": "M",
             "ylabel": "Magnetization",
             "xlabel": "Delay [ps]",

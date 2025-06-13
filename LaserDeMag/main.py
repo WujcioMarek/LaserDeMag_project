@@ -17,8 +17,8 @@ The `main` function executes the full simulation workflow based on input paramet
 - Runs the simulation using the prepared structure and parameters,
 - Returns simulation results for further processing or visualization.
 """
-from LaserDeMag.physics.model_3TM import get_material_properties, create_structure
 from LaserDeMag.simulation.runner import run_simulation
+
 def main(params):
     """
     Run the full LaserDeMag simulation.
@@ -29,7 +29,4 @@ def main(params):
     Returns:
         dict: Results of the simulation (e.g., time delays, temperature maps).
     """
-    material_obj, prop = get_material_properties(params['material'], params['Tc'], params['mu'], params['ge'])
-    S = create_structure(material_obj, prop)
-    material_name = material_obj.name
-    return run_simulation(S, params, material_name)
+    return run_simulation(params)
