@@ -313,64 +313,28 @@ class PlotCanvas(FigureCanvas):
         """
         self.current_plot_type = "map"
         self.current_plot_index = 0
-        self.plot_data["maps"] = map_data
         self.fig.clf()
+
+        delays = map_data["delays"]
+        distances = map_data["distances"]
+        temp_map = map_data["temp_map"]
+
         axs = self.fig.subplots(3, 1)
+        labels = ["Electrons", "Phonons", "Magnetization"]
 
-        scatters = []
-        annots = []
-        for i, ax in enumerate(axs):
-            d = map_data[i]
-            ax.plot(d["x"], d["y"], linestyle='-', label=d.get("label", ""))
-            sc = ax.scatter(d["x"], d["y"], color='C{}'.format(i), s=30)
-            ax.set_xlabel(d["xlabel"])
-            ax.set_xlim(left=0, right=10.5)
-            ax.set_xticks(np.arange(0, 10.5, 0.6))
-            ax.set_ylabel(d["ylabel"])
-            ax.set_title(d["title"])
-            ax.legend()
-
-            annot = ax.annotate(
-                "", xy=(0, 0), xytext=(-40, 20), textcoords="offset points",
-                bbox=dict(boxstyle="round", fc="w"),
-                arrowprops=dict(arrowstyle="->")
+        for i in range(3):
+            pcm = axs[i].pcolormesh(
+                distances, delays, temp_map[:, :, i],
+                shading='auto',
+                cmap='inferno' if i < 2 else 'viridis'
             )
-            annot.set_visible(False)
-
-            scatters.append(sc)
-            annots.append(annot)
+            self.fig.colorbar(pcm, ax=axs[i])
+            axs[i].set_xlabel("Distance [nm]")
+            axs[i].set_ylabel("Delay [ps]")
+            axs[i].set_title(f"Temperature Map {labels[i]}" if i < 2 else "Magnetization")
 
         self.fig.tight_layout()
-        self.fig.subplots_adjust(hspace=0.4)
         self.draw()
-
-        def update_annot(ind, sc, annot):
-            pos = sc.get_offsets()[ind["ind"][0]]
-            annot.xy = pos
-            text = f"{pos[1]:.2f}"
-            annot.set_text(text)
-            annot.get_bbox_patch().set_alpha(0.8)
-
-        def hover(event):
-            vis_changed = False
-            for sc, annot in zip(scatters, annots):
-                vis = annot.get_visible()
-                if event.inaxes == sc.axes:
-                    cont, ind = sc.contains(event)
-                    if cont:
-                        update_annot(ind, sc, annot)
-                        annot.set_visible(True)
-                        vis_changed = True
-                        self.fig.canvas.draw_idle()
-                    else:
-                        if vis:
-                            annot.set_visible(False)
-                            vis_changed = True
-                            self.fig.canvas.draw_idle()
-            if vis_changed:
-                self.fig.canvas.draw_idle()
-
-        self.fig.canvas.mpl_connect("motion_notify_event", hover)
 
     def show_line_plot(self, line_data):
         """
@@ -478,8 +442,8 @@ class PlotCanvas(FigureCanvas):
                     axs[i].set_ylabel(d["ylabel"])
                     axs[i].set_title(d["title"])
                     axs[i].legend()
-                    axs[i].set_xlim(left=0, right=10.5)
-                    axs[i].set_xticks(np.arange(0, 10.5, 0.6))
+                    axs[i].set_xlim(left=0, right=15.5)
+                    axs[i].set_xticks(np.arange(0, 15.5, 0.6))
                 fig.tight_layout()
                 fig.subplots_adjust(hspace=0.4)
                 fig.savefig(os.path.join(directory, "plot_map.png"))
@@ -995,10 +959,10 @@ class MainWindow(QMainWindow):
         # Others Box
         others_box = QGroupBox("Others")
         others_layout = QGridLayout()
-        self.ges = QLineEdit()
-        others_layout.addWidget(QLabel("Electron-spin constant:"), 0, 0)
-        others_layout.addWidget(self.ges, 0, 1)
-        self.widgets['ges_label'] = others_layout.itemAtPosition(0, 0).widget()
+        self.N = QLineEdit()
+        others_layout.addWidget(QLabel("Number of material layers (N)"), 0, 0)
+        others_layout.addWidget(self.N, 0, 1)
+        self.widgets['n_label'] = others_layout.itemAtPosition(0, 0).widget()
 
         self.asf = QLineEdit()
         others_layout.addWidget(QLabel("Spin-flip probability:"), 1, 0)
@@ -1226,7 +1190,7 @@ class MainWindow(QMainWindow):
         """
         for field in [self.init_temp, self.curie_temp, self.mag_moment,
                       self.power, self.duration, self.wavelength,
-                      self.ges, self.asf]:
+                      self.N, self.asf]:
             field.clear()
         self.material_type.setCurrentIndex(0)
         if hasattr(self, 'plot_canvas'):
@@ -1259,7 +1223,7 @@ class MainWindow(QMainWindow):
             'power_label': t['Power of impulse (mJ/cm²)'],
             'duration_label': t['Duration of the impulse (fs)'],
             'wavelength_label': t['Laser wavelength (nm)'],
-            'ges_label': t['Electron-spin constant coupling ges'],
+            'n_label': t['Number of material layers (N)'],
             'asf_label': t['Spin-flip probability asf'],
             'material_label': t['Type of material'],
         }
@@ -1268,7 +1232,7 @@ class MainWindow(QMainWindow):
         self.widgets['material_box'].setTitle(t['Material'])
         self.widgets['material_label'].setText(t['Type of material'])
         self.material_type.clear()
-        self.material_type.addItems([t['Select the type'], "Fe", "Ni", "Co", "Gd"])
+        self.material_type.addItems([t['Select the type'], "Ni"])
         self.widgets['init_temp_label'].setText(t['Initial temperature T0'])
         self.widgets['curie_temp_label'].setText(t['Curie temperature TC'])
         self.widgets['mag_moment_label'].setText(t['Magnetic moment μat'])
@@ -1277,7 +1241,7 @@ class MainWindow(QMainWindow):
         self.widgets['duration_label'].setText(t['Duration of the impulse (fs)'])
         self.widgets['wavelength_label'].setText(t['Laser wavelength (nm)'])
         self.widgets['others_box'].setTitle(t['Others'])
-        self.widgets['ges_label'].setText(t['Electron-spin constant coupling ges'])
+        self.widgets['n_label'].setText(t['Number of material layers (N)'])
         self.widgets['asf_label'].setText(t['Spin-flip probability asf'])
         self.widgets['clear_btn'].setText(t['Clear fields'])
         self.widgets['start_btn'].setText(t['Start the simulation'])
@@ -1522,14 +1486,13 @@ class MainWindow(QMainWindow):
                     raise ValueError(self.error_invalid_number.format(field=field_label))
                 return val
 
-            # Walidacja pól liczbowych
             T0 = validate_float(self.init_temp.text(), "init_temp_label")
             Tc = validate_float(self.curie_temp.text(), "curie_temp_label")
             mu = validate_float(self.mag_moment.text(), "mag_moment_label")
             fluence = validate_float(self.power.text(), "power_label")
-            pulse_duration = validate_float(self.duration.text(), "duration_label") / 1000  # fs → ps
+            pulse_duration = validate_float(self.duration.text(), "duration_label")
             laser_wavelength = validate_float(self.wavelength.text(), "wavelength_label")
-            ge = validate_float(self.ges.text(), "ges_label")
+            N = validate_float(self.N.text(), "N_label")
             asf = validate_float(self.asf.text(), "asf_label")
 
             return {
@@ -1540,7 +1503,7 @@ class MainWindow(QMainWindow):
                 'fluence': fluence,
                 'pulse_duration': pulse_duration,
                 'laser_wavelength': laser_wavelength,
-                'ge': ge,
+                'N': N,
                 'asf': asf
             }
 
@@ -1568,10 +1531,10 @@ class MainWindow(QMainWindow):
         try:
             start_time = time.time()
             material_obj, prop = get_material_properties(
-                params['material'], params['Tc'], params['mu'], params['ge']
+                params['material'], params['Tc']
             )
             self.material_props = prop
-            self.material_name = material_obj.name
+            self.material_name =  params['material']
 
             self.plot_data = main(params)
             self.plot_canvas.set_all_plots(self.plot_data)
@@ -1764,7 +1727,6 @@ class MainWindow(QMainWindow):
         try:
             user_data = load_simulation_parameters(file_path,self)
 
-            # Przekaż dane do formularza
             self.populate_user_form(user_data)
 
             QMessageBox.information(
@@ -1793,9 +1755,9 @@ class MainWindow(QMainWindow):
         self.curie_temp.setText(str(data["Tc"]))
         self.mag_moment.setText(str(data["mu"]))
         self.power.setText(str(data["fluence"]))
-        self.duration.setText(str(data["pulse_duration"] / 1000))  # fs → ps
+        self.duration.setText(str(data["pulse_duration"]))  # fs → ps
         self.wavelength.setText(str(data["laser_wavelength"]))
-        self.ges.setText(str(data["ge"]))
+        self.N.setText(str(data["N"]))
         self.asf.setText(str(data["asf"]))
 
 

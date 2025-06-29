@@ -8,13 +8,14 @@ import json, datetime, os
 import xml.etree.ElementTree as ET
 import xml.dom.minidom
 from PyQt6.QtWidgets import QFileDialog, QMessageBox
+import numpy as np
 
 REQUIRED_USER_FIELDS = {
     "material", "T0", "Tc", "mu", "fluence",
-    "pulse_duration", "laser_wavelength", "ge", "asf"
+    "pulse_duration", "laser_wavelength", "N", "asf"
 }
 
-ALLOWED_MATERIALS = ["Co", "Fe", "Gd", "Ni"]
+ALLOWED_MATERIALS = ["Ni"]
 
 def save_simulation_parameters(params, file_path, file_format, parameter_encoder, quantity_to_plain_func):
     """
@@ -127,15 +128,13 @@ def load_simulation_parameters(file_path,parent_widget):
             error_message = parent_widget.missing_fields_error.format(fields=", ".join(missing))
             raise ValueError(error_message)
 
-        # Sprawdzenie czy wartości to liczby (zakładam, że pola numeryczne to poza "material")
         for key in REQUIRED_USER_FIELDS:
             if key == "material":
-                continue  # pomijamy materiał w tym sprawdzeniu
+                continue
             value = data[key]
             if not isinstance(value, (int, float)):
                 raise ValueError(parent_widget.error_invalid_type.format(field=key))
 
-        # Sprawdzenie czy materiał jest prawidłowy
         material = data.get("material")
         if material not in ALLOWED_MATERIALS:
             raise ValueError(parent_widget.error_invalid_material.format(
@@ -190,7 +189,7 @@ def save_simulation_report(params, material_name, material_props, plot_data, par
     )
 
     if not file_path:
-        return  # Użytkownik anulował
+        return
 
     if not os.path.splitext(file_path)[1]:
         file_path += ".txt"
@@ -212,11 +211,26 @@ def save_simulation_report(params, material_name, material_props, plot_data, par
 
             f.write("\n--- Wyniki symulacji (wybrane dane) ---\n")
             if 'maps' in plot_data:
-                f.write("Mapy:\n")
-                for i, d in enumerate(plot_data['maps']):
-                    f.write(f"  Mapa {i + 1} - {d.get('title', '')}:\n")
-                    f.write(f"    x: {d.get('x', [])[:5]}... (total {len(d.get('x', []))})\n")
-                    f.write(f"    y: {d.get('y', [])[:5]}... (total {len(d.get('y', []))})\n")
+                f.write("Mapa danych:\n")
+
+                maps = plot_data['maps']
+                delays = maps.get("delays", [])
+                distances = maps.get("distances", [])
+                temp_map = maps.get("temp_map", None)
+
+                f.write(f"  delays: {delays[:5]}... (total {len(delays)})\n")
+                f.write(f"  distances: {distances[:5]}... (total {len(distances)})\n")
+
+                if isinstance(temp_map, (list, np.ndarray)):
+                    arr = np.array(temp_map)
+                    f.write(f"  temp_map shape: {arr.shape} (time, space, component)\n")
+
+                    if arr.ndim == 3 and arr.shape[2] > 2:
+                        f.write("  Przykładowe wartości (T_spin):\n")
+                        for t in range(min(2, arr.shape[0])):
+                            f.write(f"    {arr[t, :5, 2]}...\n")
+                else:
+                    f.write("  temp_map: brak lub niepoprawny format\n")
 
             if 'lines' in plot_data:
                 f.write("Wykresy liniowe:\n")

@@ -1,5 +1,4 @@
-import sys, tqdm, warnings
-import numpy as np
+import sys, tqdm
 """
 Model fizyczny 3TM i właściwości materiałów.
 
@@ -32,15 +31,14 @@ tqdm.tqdm_notebook = fake_notebook
 import udkm1Dsim as ud
 units = ud.u
 
-def get_material_properties(material, Tc, mu, ge):
+def get_material_properties(material, Tc):
     """
      Tworzy obiekt materiału oraz zwraca właściwości fizyczne dla modelu 3TM.
 
      Args:
-         material (str): Nazwa materiału (Co, Ni, Fe, Gd).
+         material (str): Nazwa materiału (Ni).
          Tc (float): Temperatura Curie.
-         mu (float): Moment magnetyczny.
-         ge (float): Stała sprzężenia spin-kratka.
+
 
      Returns:
          tuple: (Atom, dict) - obiekt Atom oraz słownik właściwości fizycznych.
@@ -52,10 +50,8 @@ def get_material_properties(material, Tc, mu, ge):
      Creates a material object and returns its physical properties for the 3TM model.
 
      Args:
-         material (str): Material name (Co, Ni, Fe, Gd).
+         material (str): Material name (Ni).
          Tc (float): Curie temperature.
-         mu (float): Magnetic moment.
-         ge (float): Spin-lattice coupling constant.
 
      Returns:
          tuple: (Atom, dict) - Atom object and a dictionary of physical properties.
@@ -63,36 +59,42 @@ def get_material_properties(material, Tc, mu, ge):
      Raises:
          ValueError: If material is not supported.
      """
-    if material == 'Co':
-        material_obj = ud.Atom('Co')
-    elif material == 'Ni':
+    if material == 'Ni':
         material_obj = ud.Atom('Ni')
-    elif material == "Gd":
-        material_obj = ud.Atom('Gd')
-    elif material == "Fe":
-        material_obj = ud.Atom('Fe')
     else:
         raise ValueError(f"Nieznany materiał: {material}")
 
+    #G_se = 2e17
+    g = 4.0e18
+    R = 25.3/1e-12
+
     prop = {
-        'heat_capacity': ['0.1*T', 532 * units.J / units.kg / units.K, 1 / 7000],
-        'therm_cond': [20 * units.W / (units.m * units.K), 80 * units.W / (units.m * units.K), 0],
-        'sub_system_coupling': ['-{:.6f}*(T_0-T_1)'.format(ge),
-                                '{:.6f}*(T_0-T_1)'.format(ge),
-                                '{0:f}*T_2*T_1/{1:f}*(1-T_2* (1 + 2/(exp(2*T_2*{1:f}/T_0) - 1) ))'.format(25.3 / 1e-12, Tc)],
+        'heat_capacity': ['0.1*T', 445 * units.J / units.kg / units.K, 1 / 8900],
+        'therm_cond': [15 * units.W / (units.m * units.K), 90 * units.W / (units.m * units.K), 0],
+        'sub_system_coupling': ['-{:f}*(T_0-T_1)'.format(g),
+                                '{:f}*(T_0-T_1)'.format(g),
+                                '{0:f}*T_2*T_1/{1:f}*(1-T_2* (1 + 2/(exp(2*T_2*{1:f}/T_0) - 1) ))'.format(R, Tc)],
+                                #'{:e}*(T_1 - T_2)'.format(G_se)],
+                                #'{0:f}*T_2*T_1/{1:f}*(1-T_2* (1 + 2/(expm1(2*T_2*{1:f}/T_0)) ))'.format(17.2e12, Tc)],
+                                #f'{gs_test:.1e}*(T_1 - T_2)'],
+                                #'{:f}*(T_0-T_1)'.format(17.2e12, Tc)],
+                                #'{0:f}*T_2/{1:f}*(1 - {2:f}*(1 + 2/(exp(2*T_2*{1:f}/T_0) - 1)))'.format(25.3/1e-12, Tc,m)],
+                                #'{0:f}*T_2*T_1/{1:f}*(1 - T_2*(1 + {2:f}))'.format(R, Tc, safe_part)],
         'lin_therm_exp': [0, 11.8e-6, 0],
         'sound_vel': 4.910 * units.nm / units.ps,
-        'opt_ref_index': 2.9174 + 3.3545j
+        'opt_ref_index': 2.9174 + 3.3545j,
     }
+
     return material_obj, prop
 
-def create_structure(material_obj, prop):
+def create_structure(material_obj, prop,N):
     """
     Tworzy strukturę 1D cienkiej warstwy dla modelu 3TM.
 
     Args:
         material_obj (ud.Atom): Obiekt atomu materiału.
         prop (dict): Właściwości materiałowe.
+        N (int): Liczba warstw materiału.
 
     Returns:
         ud.Structure: Struktura 1D do symulacji.
@@ -103,12 +105,32 @@ def create_structure(material_obj, prop):
     Args:
         material_obj (ud.Atom): Material Atom object.
         prop (dict): Material properties.
+        N (int): Number of material layers.
 
     Returns:
         ud.Structure: Structure object for simulation.
     """
-    layer = ud.AmorphousLayer(material_obj.name, f'{material_obj.name} amorphous', thickness=1 * units.nm,
-                              density=7000 * units.kg / units.m ** 3, atom=material_obj, **prop)
+    lattice_constant_Ni = 0.35241  # nm
+    lattice_constant_Si = 0.5431   # nm
+    N = int(N)
+    Si = ud.Atom('Si')
+    prop_Si = {}
+    prop_Si['heat_capacity'] = [100 * units.J / units.kg / units.K, 603 * units.J / units.kg / units.K, 1]
+    prop_Si['therm_cond'] = [0, 100 * units.W / (units.m * units.K), 0]
+
+    prop_Si['sub_system_coupling'] = [0, 0, 0]
+
+    prop_Si['lin_therm_exp'] = [0, 2.6e-6, 0]
+    prop_Si['sound_vel'] = 8.433 * units.nm / units.ps
+    prop_Si['opt_ref_index'] = 3.6941 + 0.0065435j
+
+
+    layer = ud.AmorphousLayer(material_obj.name, material_obj.name, thickness=lattice_constant_Ni * units.nm,
+                              density=8900 * units.kg / units.m ** 3, atom=material_obj, **prop)
     structure = ud.Structure(material_obj.name)
-    structure.add_sub_structure(layer, 50)
+    structure.add_sub_structure(layer, N)
+
+    layer_Si = ud.AmorphousLayer('Si', "Si amorphous", thickness=1 * units.nm, density=2336 * units.kg / units.m ** 3,
+                                 atom=Si, **prop_Si)
+    structure.add_sub_structure(layer_Si, 50)
     return structure

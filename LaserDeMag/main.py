@@ -29,7 +29,7 @@ def main(params):
     Returns:
         dict: Results of the simulation (e.g., time delays, temperature maps).
     """
-    material_obj, prop = get_material_properties(params['material'], params['Tc'], params['mu'], params['ge'])
-    S = create_structure(material_obj, prop)
+    material_obj, prop = get_material_properties(params['material'], params['Tc'])
+    S = create_structure(material_obj, prop, params['N'])
     material_name = material_obj.name
     return run_simulation(S, params, material_name)

@@ -1,4 +1,3 @@
-from scipy.interpolate import interp1d
 def plot_results(S, delays, temp_map, material_name):
     import numpy as np
     """
@@ -40,6 +39,7 @@ def plot_results(S, delays, temp_map, material_name):
     >>> result["maps"][0]["xlabel"]
     'Distance [nm]'
     """
+
     def tc(n):
         return 631 * (4 + 8 * np.cos(np.pi / (n + 1))) / 12
 
@@ -50,22 +50,18 @@ def plot_results(S, delays, temp_map, material_name):
     delay_ps = delays.to('ps').magnitude
     select = S.get_all_positions_per_unique_layer()[material_name]
 
-    x_ticks = np.round(np.arange(0, 10.21, 0.6), 3)
-    mid_idx = temp_map.shape[0] // 2
+    maps = {
+        "delays": delay_ps,
+        "distances": distances,
+        "temp_map": temp_map  # (time, space, component)
+    }
 
-    maps = []
-    for i, label in enumerate(["Electrons", "Phonons", "Magnetization"]):
-        interp_func = interp1d(distances, temp_map[mid_idx, :, i], kind='linear', bounds_error=False,
-                               fill_value="extrapolate")
-        y_interp = interp_func(x_ticks)
-        maps.append({
-            "x": x_ticks,
-            "y": y_interp,
-            "label": label,
-            "xlabel": "Distance [nm]",
-            "ylabel": "Temperature [K]" if i < 2 else "Magnetization",
-            "title": f"Temperature {label}" if i < 2 else "Magnetization"
-        })
+    #mag = LLB(S, force_recalc=True, save_data=False)
+    #magnetization_map = mag.calc_magnetization_map(delays, temp_map=temp_map, H_ext=np.array([0, 0, 1])* 1e-3)
+    #M = np.mean(magnetization_map[:, select, 0], axis=1)
+
+    #T_spin = np.mean(temp_map[:, select, 2], axis=1)  # T₂ średnie z warstw Ni
+    #M = M_norm(T_spin, Tc=627)
 
     lines = [
         {

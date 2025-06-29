@@ -30,7 +30,7 @@ def run_simulation(S, params,material_name):
             - fluence: energia impulsu lasera (mJ/cm^2)
             - pulse_duration: czas trwania impulsu (ps)
             - laser_wavelength: długość fali lasera (nm)
-        material_name (str): Nazwa materiału (np. "Fe", "Co")
+        material_name (str): Nazwa materiału (np. "Ni")
 
     Returns:
         dict: Dane do wykresów (mapy temperatur i wykresy czasowe)
@@ -45,7 +45,7 @@ def run_simulation(S, params,material_name):
             - fluence: laser pulse energy (mJ/cm^2)
             - pulse_duration: pulse duration (ps)
             - laser_wavelength: laser wavelength (nm)
-        material_name (str): Name of the material (e.g., "Fe", "Co")
+        material_name (str): Name of the material (e.g., "Ni")
 
     Returns:
         dict: Data for plots (temperature maps and time graphs)
@@ -58,18 +58,23 @@ def run_simulation(S, params,material_name):
     h.excitation = {
         'fluence': [params['fluence']] * units.mJ / units.cm ** 2,
         'delay_pump': [0] * units.ps,
-        'pulse_width': [params['pulse_duration']] * units.ps,
+        'pulse_width': [params['pulse_duration'] * 1e-3] * units.ps,
         'multilayer_absorption': True,
         'wavelength': params['laser_wavelength'] * units.nm,
         'theta': 45 * units.deg
     }
 
+    h.boundary_conditions = {'top_type': 'isolator', 'bottom_type': 'isolator'}
+    #n=int(S.get_number_of_layers()/2)
+    n = int(S.get_number_of_layers() -50)
     init_temp = np.ones([S.get_number_of_layers(), 3])
     init_temp[:, 0] = params['T0']
     init_temp[:, 1] = params['T0']
-    init_temp[:, 2] = 0.1
+    #init_temp[:, 2] = params['T0']
+    init_temp[n:, 2] = 0
 
-    delays = np.r_[-0.1:5:0.005] * units.ps
+    delays = np.r_[-1:5:0.005] * units.ps
+    _, _, distances = S.get_distances_of_layers()
     temp_map, _ = h.get_temp_map(delays, init_temp)
 
     return plot_results(S, delays, temp_map, material_name)
