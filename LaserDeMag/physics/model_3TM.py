@@ -130,7 +130,7 @@ def create_structure(material_obj, prop,N):
     structure = ud.Structure(material_obj.name)
     structure.add_sub_structure(layer, N)
 
-    layer_Si = ud.AmorphousLayer('Si', "Si amorphous", thickness=1 * units.nm, density=2336 * units.kg / units.m ** 3,
+    layer_Si = ud.AmorphousLayer('Si', "Si amorphous", thickness=lattice_constant_Si * units.nm, density=2336 * units.kg / units.m ** 3,
                                  atom=Si, **prop_Si)
     structure.add_sub_structure(layer_Si, 50)
     return structure

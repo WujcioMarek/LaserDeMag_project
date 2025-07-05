@@ -46,7 +46,7 @@ from matplotlib.figure import Figure
 from LaserDeMag.physics.model_3TM import get_material_properties
 from LaserDeMag.main import main
 from pint import Quantity
-from LaserDeMag.io.file_handler import save_simulation_parameters, load_simulation_parameters, save_simulation_report
+from LaserDeMag.io.file_handler import save_simulation_parameters, load_simulation_parameters, save_simulation_report, save_simulation_to_excel
 
 if getattr(sys, 'frozen', False):
     sys.stdout = open(os.devnull, 'w')
@@ -1552,6 +1552,7 @@ class MainWindow(QMainWindow):
                                  self.translations[self.current_language]['error_unknown_simulation'] + "\n" + str(e))
         finally:
             self.loading_dialog.close()
+            save_simulation_to_excel(params,self.plot_data)
     def on_simulation_finished(self, result):
         """
         Obsługuje zakończenie symulacji, aktualizuje wykres i zamyka dialog ładowania.

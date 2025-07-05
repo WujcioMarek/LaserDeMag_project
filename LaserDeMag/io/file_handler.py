@@ -7,6 +7,8 @@ Simulation data saving and loading utilities.
 import json, datetime, os
 import xml.etree.ElementTree as ET
 import xml.dom.minidom
+from pathlib import Path
+from openpyxl import Workbook
 from PyQt6.QtWidgets import QFileDialog, QMessageBox
 import numpy as np
 
@@ -16,6 +18,84 @@ REQUIRED_USER_FIELDS = {
 }
 
 ALLOWED_MATERIALS = ["Ni"]
+
+def save_simulation_to_excel(params, plot_data, filename=None):
+    """
+    Zapisuje dane symulacji do pliku Excel (XLSX) na pulpicie użytkownika.
+
+    Funkcja zapisuje parametry wejściowe w pierwszych dwóch wierszach,
+    a dane z wykresów liniowych w układzie poziomym (każdy wykres w dwóch kolumnach: x i y).
+    Między kolejnymi wykresami znajduje się jedna pusta kolumna odstępu.
+
+    Args:
+        params (dict): Parametry symulacji do zapisania.
+        plot_data (dict): Dane wykresów w formacie {"lines": [{"title": ..., "x": [...], "y": [...]}]}.
+        filename (str, optional): Pełna ścieżka do pliku wynikowego. Domyślnie zapisuje na pulpit.
+
+    Returns:
+        str: Pełna ścieżka do zapisanego pliku Excel (.xlsx).
+
+    Raises:
+        Exception: Gdy zapis do pliku się nie powiedzie.
+
+    ---
+    Saves simulation data to an Excel (XLSX) file on the user's desktop.
+
+    The function writes input parameters in the first two rows,
+    and line chart data in a horizontal layout (each chart gets two columns: x and y),
+    with one empty column of spacing between charts.
+
+    Args:
+        params (dict): Simulation parameters to save.
+        plot_data (dict): Plot data in the format {"lines": [{"title": ..., "x": [...], "y": [...]}]}.
+        filename (str, optional): Full output file path. Defaults to saving on the desktop.
+
+    Returns:
+        str: Full path to the saved Excel (.xlsx) file.
+
+    Raises:
+        Exception: If saving the file fails.
+    """
+    if filename is None:
+        desktop_path = Path.home() / "Desktop"
+        filename = desktop_path / "simulation_results.xlsx"
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Simulation Data"
+
+    parameter_keys = list(params.keys())
+    ws.append(parameter_keys)
+
+    parameter_values = [params[key] for key in parameter_keys]
+    ws.append(parameter_values)
+
+    ws.append([])
+
+    if 'lines' in plot_data:
+        max_len = 0
+        for line in plot_data['lines']:
+            max_len = max(max_len, len(line.get('x', [])))
+
+        col = 1
+        for i, line in enumerate(plot_data['lines']):
+            x_vals = line.get('x', [])
+            y_vals = line.get('y', [])
+            title = line.get('title', f"Line {i + 1}")
+
+            ws.cell(row=4, column=col, value=f"{title} - x")
+            ws.cell(row=4, column=col + 1, value=f"{title} - y")
+
+            for row_i in range(max_len):
+                x = x_vals[row_i] if row_i < len(x_vals) else None
+                y = y_vals[row_i] if row_i < len(y_vals) else None
+                ws.cell(row=5 + row_i, column=col, value=x)
+                ws.cell(row=5 + row_i, column=col + 1, value=y)
+
+            col += 3
+
+    wb.save(filename)
+    print(f"File saved to: {filename}")
 
 def save_simulation_parameters(params, file_path, file_format, parameter_encoder, quantity_to_plain_func):
     """

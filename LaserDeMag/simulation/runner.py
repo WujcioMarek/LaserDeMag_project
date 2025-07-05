@@ -73,7 +73,7 @@ def run_simulation(S, params,material_name):
     #init_temp[:, 2] = params['T0']
     init_temp[n:, 2] = 0
 
-    delays = np.r_[-1:5:0.005] * units.ps
+    delays = np.r_[-0.1:5:0.005] * units.ps
     _, _, distances = S.get_distances_of_layers()
     temp_map, _ = h.get_temp_map(delays, init_temp)
 
