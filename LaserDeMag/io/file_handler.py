@@ -8,7 +8,7 @@ import json, datetime, os
 import xml.etree.ElementTree as ET
 import xml.dom.minidom
 from pathlib import Path
-from openpyxl import Workbook
+from openpyxl import Workbook, load_workbook
 from PyQt6.QtWidgets import QFileDialog, QMessageBox
 import numpy as np
 
@@ -19,57 +19,83 @@ REQUIRED_USER_FIELDS = {
 
 ALLOWED_MATERIALS = ["Ni"]
 
-def save_simulation_to_excel(params, plot_data, filename=None):
+def save_simulation_to_excel(params, plot_data):
     """
-    Zapisuje dane symulacji do pliku Excel (XLSX) na pulpicie użytkownika.
+       Zapisuje dane symulacji do pliku Excel (XLSX) w katalogu uruchomienia aplikacji.
 
-    Funkcja zapisuje parametry wejściowe w pierwszych dwóch wierszach,
-    a dane z wykresów liniowych w układzie poziomym (każdy wykres w dwóch kolumnach: x i y).
-    Między kolejnymi wykresami znajduje się jedna pusta kolumna odstępu.
+       Funkcja tworzy (jeśli nie istnieje) lub otwiera plik o nazwie 'Simulations.xlsx' w folderze,
+       w którym uruchamiana jest aplikacja. Dla każdej symulacji tworzony jest nowy arkusz,
+       którego nazwa zawiera liczbę warstw i moc lasera, np.: 'N=4, Fluence=2.5'.
 
-    Args:
-        params (dict): Parametry symulacji do zapisania.
-        plot_data (dict): Dane wykresów w formacie {"lines": [{"title": ..., "x": [...], "y": [...]}]}.
-        filename (str, optional): Pełna ścieżka do pliku wynikowego. Domyślnie zapisuje na pulpit.
+       Jeśli arkusz o danej nazwie już istnieje, funkcja doda numer sufiksu (np. _1, _2 itd.),
+       aby uniknąć nadpisywania danych.
 
-    Returns:
-        str: Pełna ścieżka do zapisanego pliku Excel (.xlsx).
+       Parametry wejściowe zapisywane są w pierwszych dwóch wierszach arkusza,
+       a dane z wykresów liniowych w układzie poziomym (każdy wykres w dwóch kolumnach: x i y),
+       z jedną pustą kolumną odstępu między kolejnymi wykresami.
 
-    Raises:
-        Exception: Gdy zapis do pliku się nie powiedzie.
+       Args:
+           params (dict): Parametry symulacji do zapisania. Muszą zawierać co najmniej:
+                          - "liczba_warstw" (int)
+                          - "moc_lasera" (float lub str)
+           plot_data (dict): Dane wykresów w formacie {"lines": [{"title": ..., "x": [...], "y": [...]}]}.
 
-    ---
-    Saves simulation data to an Excel (XLSX) file on the user's desktop.
+       Returns:
+           None
 
-    The function writes input parameters in the first two rows,
-    and line chart data in a horizontal layout (each chart gets two columns: x and y),
-    with one empty column of spacing between charts.
+       Raises:
+           Exception: Gdy zapis do pliku się nie powiedzie.
 
-    Args:
-        params (dict): Simulation parameters to save.
-        plot_data (dict): Plot data in the format {"lines": [{"title": ..., "x": [...], "y": [...]}]}.
-        filename (str, optional): Full output file path. Defaults to saving on the desktop.
+       ---
+       Saves simulation data to an Excel (XLSX) file in the application's execution directory.
 
-    Returns:
-        str: Full path to the saved Excel (.xlsx) file.
+       The function creates (if missing) or opens 'Simulations.xlsx' and adds a new sheet for each simulation.
+       The sheet name is based on the number of layers and laser fluence, e.g., 'N=4, Fluence=2.5'.
 
-    Raises:
-        Exception: If saving the file fails.
-    """
-    if filename is None:
-        desktop_path = Path.home() / "Desktop"
-        filename = desktop_path / "simulation_results.xlsx"
+       If a sheet with that name already exists, the function adds a numeric suffix to avoid overwriting.
 
-    wb = Workbook()
-    ws = wb.active
-    ws.title = "Simulation Data"
+       The function writes input parameters in the first two rows,
+       and line chart data in a horizontal layout (each chart gets two columns: x and y),
+       with one empty column of spacing between charts.
+
+       Args:
+           params (dict): Simulation parameters to save. Must include at least:
+                          - "liczba_warstw" (int)
+                          - "moc_lasera" (float or str)
+           plot_data (dict): Plot data in the format {"lines": [{"title": ..., "x": [...], "y": [...]}]}.
+
+       Returns:
+           None
+
+       Raises:
+           Exception: If saving the file fails.
+       """
+    current_dir = Path.cwd()
+    filename = current_dir / "Simulations.xlsx"
+
+    num_layers = params.get("N", "unknown")
+    fluence = params.get("fluence", "unknown")
+    sheet_name = f"N={num_layers}, Fluence={fluence}"
+
+    if filename.exists():
+        wb = load_workbook(filename)
+    else:
+        wb = Workbook()
+        default_sheet = wb.active
+        wb.remove(default_sheet)
+
+    original_name = sheet_name
+    counter = 1
+    while sheet_name in wb.sheetnames:
+        sheet_name = f"{original_name}_{counter}"
+        counter += 1
+
+    ws = wb.create_sheet(title=sheet_name)
 
     parameter_keys = list(params.keys())
     ws.append(parameter_keys)
-
     parameter_values = [params[key] for key in parameter_keys]
     ws.append(parameter_values)
-
     ws.append([])
 
     if 'lines' in plot_data:
@@ -94,8 +120,9 @@ def save_simulation_to_excel(params, plot_data, filename=None):
 
             col += 3
 
+    # Zapisz plik
     wb.save(filename)
-    print(f"File saved to: {filename}")
+    print(f"File saved to: {filename}, sheet: {sheet_name}")
 
 def save_simulation_parameters(params, file_path, file_format, parameter_encoder, quantity_to_plain_func):
     """
