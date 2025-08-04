@@ -65,12 +65,10 @@ def run_simulation(S, params,material_name):
     }
 
     h.boundary_conditions = {'top_type': 'isolator', 'bottom_type': 'isolator'}
-    #n=int(S.get_number_of_layers()/2)
     n = int(S.get_number_of_layers() -50)
     init_temp = np.ones([S.get_number_of_layers(), 3])
     init_temp[:, 0] = params['T0']
     init_temp[:, 1] = params['T0']
-    #init_temp[:, 2] = params['T0']
     init_temp[n:, 2] = 0
 
     delays = np.r_[-0.1:5:0.005] * units.ps

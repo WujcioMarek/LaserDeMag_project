@@ -53,15 +53,9 @@ def plot_results(S, delays, temp_map, material_name):
     maps = {
         "delays": delay_ps,
         "distances": distances,
-        "temp_map": temp_map  # (time, space, component)
+        "temp_map": temp_map
     }
 
-    #mag = LLB(S, force_recalc=True, save_data=False)
-    #magnetization_map = mag.calc_magnetization_map(delays, temp_map=temp_map, H_ext=np.array([0, 0, 1])* 1e-3)
-    #M = np.mean(magnetization_map[:, select, 0], axis=1)
-
-    #T_spin = np.mean(temp_map[:, select, 2], axis=1)  # T₂ średnie z warstw Ni
-    #M = M_norm(T_spin, Tc=627)
 
     lines = [
         {

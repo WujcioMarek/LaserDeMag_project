@@ -64,7 +64,6 @@ def get_material_properties(material, Tc):
     else:
         raise ValueError(f"Nieznany materiał: {material}")
 
-    #G_se = 2e17
     g = 4.0e18
     R = 25.3/1e-12
 
@@ -74,12 +73,6 @@ def get_material_properties(material, Tc):
         'sub_system_coupling': ['-{:f}*(T_0-T_1)'.format(g),
                                 '{:f}*(T_0-T_1)'.format(g),
                                 '{0:f}*T_2*T_1/{1:f}*(1-T_2* (1 + 2/(exp(2*T_2*{1:f}/T_0) - 1) ))'.format(R, Tc)],
-                                #'{:e}*(T_1 - T_2)'.format(G_se)],
-                                #'{0:f}*T_2*T_1/{1:f}*(1-T_2* (1 + 2/(expm1(2*T_2*{1:f}/T_0)) ))'.format(17.2e12, Tc)],
-                                #f'{gs_test:.1e}*(T_1 - T_2)'],
-                                #'{:f}*(T_0-T_1)'.format(17.2e12, Tc)],
-                                #'{0:f}*T_2/{1:f}*(1 - {2:f}*(1 + 2/(exp(2*T_2*{1:f}/T_0) - 1)))'.format(25.3/1e-12, Tc,m)],
-                                #'{0:f}*T_2*T_1/{1:f}*(1 - T_2*(1 + {2:f}))'.format(R, Tc, safe_part)],
         'lin_therm_exp': [0, 11.8e-6, 0],
         'sound_vel': 4.910 * units.nm / units.ps,
         'opt_ref_index': 2.9174 + 3.3545j,

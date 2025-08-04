@@ -11,6 +11,10 @@ from pathlib import Path
 from openpyxl import Workbook, load_workbook
 from PyQt6.QtWidgets import QFileDialog, QMessageBox
 import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+from tkinter import filedialog, messagebox, Listbox, MULTIPLE
+import tkinter as tk
 
 REQUIRED_USER_FIELDS = {
     "material", "T0", "Tc", "mu", "fluence",
@@ -18,6 +22,98 @@ REQUIRED_USER_FIELDS = {
 }
 
 ALLOWED_MATERIALS = ["Ni"]
+
+
+def generate_graph():
+    def select_file():
+        filepath = filedialog.askopenfilename(filetypes=[("Excel files", "*.xlsx *.xls")])
+        if not filepath:
+            return
+
+        try:
+            excel = pd.ExcelFile(filepath)
+            sheet_names = excel.sheet_names
+
+            listbox.delete(0, tk.END)
+            for name in sheet_names:
+                listbox.insert(tk.END, name)
+
+            btn_generate.config(state="normal")
+            root.filepath = filepath
+            root.sheet_names = sheet_names
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to load file: {e}")
+
+    def generate_plots():
+        selected_indices = listbox.curselection()
+        if not selected_indices:
+            messagebox.showwarning("Warning", "Please select at least one sheet.")
+            return
+
+        filepath = root.filepath
+        selected_sheets = [root.sheet_names[i] for i in selected_indices]
+        dataframes = {}
+
+        try:
+            for sheet in selected_sheets:
+                df = pd.read_excel(filepath, sheet_name=sheet, skiprows=4)
+                dataframes[sheet] = df
+        except Exception as e:
+            messagebox.showerror("Error", f"Error while reading sheets: {e}")
+            return
+
+        try:
+            colors = plt.get_cmap("tab10")
+
+            wykresy = [
+                (1, "M3TM Koopmans electrons", "M3TM_Koopmans_electrons.png"),
+                (4, "M3TM Koopmans phonons", "M3TM_Koopmans_phonons.png"),
+                (7, "Magnetization", "graph_magnetization.png")
+            ]
+
+            for idx, (col_idx, tytul, filename) in enumerate(wykresy):
+                plt.figure(figsize=(10, 6))
+                rysowano = False
+
+                for i, (sheet, df) in enumerate(dataframes.items()):
+                    if df.shape[1] > col_idx:
+                        x = df.iloc[:, 0]
+                        y = df.iloc[:, col_idx]
+
+                        if pd.api.types.is_numeric_dtype(y):
+                            plt.plot(x, y, label=sheet, color=colors(i))
+                            rysowano = True
+
+                if rysowano:
+                    plt.title(tytul)
+                    plt.xlabel("czas")
+                    plt.ylabel(tytul)
+                    plt.legend()
+                    plt.grid(True)
+                    plt.tight_layout()
+
+                    out_path = os.path.join(os.path.dirname(filepath), filename)
+                    plt.savefig(out_path)
+                plt.close()
+
+            messagebox.showinfo("Success", "Plots have been saved.")
+        except Exception as e:
+            messagebox.showerror("Error", f"Could not generate plots: {e}")
+
+    root = tk.Tk()
+    root.title("Excel Plot Generator")
+
+    btn_file = tk.Button(root, text="Select Excel file", command=select_file)
+    btn_file.pack(pady=10)
+
+    tk.Label(root, text="Select sheets:").pack()
+    listbox = Listbox(root, selectmode=MULTIPLE, width=50)
+    listbox.pack(pady=5)
+
+    btn_generate = tk.Button(root, text="Generate plots", command=generate_plots, state="disabled")
+    btn_generate.pack(pady=10)
+
+    root.mainloop()
 
 def save_simulation_to_excel(params, plot_data):
     """
@@ -120,7 +216,6 @@ def save_simulation_to_excel(params, plot_data):
 
             col += 3
 
-    # Zapisz plik
     wb.save(filename)
     print(f"File saved to: {filename}, sheet: {sheet_name}")
 
@@ -257,7 +352,6 @@ def load_simulation_parameters(file_path,parent_widget):
     except FileNotFoundError:
         raise ValueError(parent_widget.error_file_not_found.format(path=file_path))
 
-
 def save_simulation_report(params, material_name, material_props, plot_data, parent=None, simulation_duration=None):
     """
     Tworzy i zapisuje raport z przebiegu symulacji do pliku tekstowego.
@@ -289,9 +383,9 @@ def save_simulation_report(params, material_name, material_props, plot_data, par
     """
     file_path, selected_filter = QFileDialog.getSaveFileName(
         parent,
-        "Zapisz raport symulacji",
+        "Save simulation report",
         "",
-        "Pliki tekstowe (*.txt);;Wszystkie pliki (*)",
+        "Text files (*.txt);;All files (*)",
         options=QFileDialog.Option.DontUseNativeDialog
     )
 
@@ -303,22 +397,22 @@ def save_simulation_report(params, material_name, material_props, plot_data, par
 
     try:
         with open(file_path, 'w', encoding='utf-8') as f:
-            f.write("Raport z symulacji LaserDeMag\n")
-            f.write(f"Data symulacji: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            f.write("LaserDeMag simulation report\n")
+            f.write(f"Simulation date: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
             if simulation_duration is not None:
-                f.write(f"Czas trwania symulacji: {simulation_duration:.2f} sekund\n")
-            f.write("\n--- Parametry symulacji ---\n")
+                f.write(f"Simulation duration: {simulation_duration:.2f} seconds\n")
+            f.write("\n--- Simulation parameters ---\n")
             for key, val in params.items():
                 f.write(f"{key}: {val}\n")
 
-            f.write(f"\n--- Materiał ---\n")
-            f.write(f"Nazwa: {material_name}\n")
+            f.write(f"\n--- Material ---\n")
+            f.write(f"Name: {material_name}\n")
             for prop_key, prop_val in material_props.items():
                 f.write(f"{prop_key}: {prop_val}\n")
 
-            f.write("\n--- Wyniki symulacji (wybrane dane) ---\n")
+            f.write("\n--- Simulation results (selected data) ---\n")
             if 'maps' in plot_data:
-                f.write("Mapa danych:\n")
+                f.write("Data maps:\n")
 
                 maps = plot_data['maps']
                 delays = maps.get("delays", [])
@@ -333,24 +427,30 @@ def save_simulation_report(params, material_name, material_props, plot_data, par
                     f.write(f"  temp_map shape: {arr.shape} (time, space, component)\n")
 
                     if arr.ndim == 3 and arr.shape[2] > 2:
-                        f.write("  Przykładowe wartości (T_spin):\n")
+                        f.write("  Sample values (T_spin):\n")
                         for t in range(min(2, arr.shape[0])):
                             f.write(f"    {arr[t, :5, 2]}...\n")
                 else:
-                    f.write("  temp_map: brak lub niepoprawny format\n")
+                    f.write("  temp_map: missing or invalid format\n")
 
             if 'lines' in plot_data:
-                f.write("Wykresy liniowe:\n")
+                f.write("Line plots:\n")
                 for i, d in enumerate(plot_data['lines']):
-                    f.write(f"  Linia {i + 1} - {d.get('title', '')}:\n")
+                    f.write(f"  Line {i + 1} - {d.get('title', '')}:\n")
                     f.write(f"    x: {d.get('x', [])[:5]}... (total {len(d.get('x', []))})\n")
                     f.write(f"    y: {d.get('y', [])[:5]}... (total {len(d.get('y', []))})\n")
 
-            f.write("\n--- Koniec raportu ---\n")
+            f.write("\n--- End of report ---\n")
+
+        QMessageBox.information(
+            parent,
+            "Save successful",
+            f"The report was successfully saved to:\n{file_path}"
+        )
 
     except Exception as e:
         QMessageBox.critical(
             parent,
-            "Błąd zapisu",
-            f"Błąd podczas zapisywania raportu:\n{str(e)}"
+            "Save error",
+            f"An error occurred while saving the report:\n{str(e)}"
         )

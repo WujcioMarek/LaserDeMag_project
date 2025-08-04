@@ -46,7 +46,7 @@ from matplotlib.figure import Figure
 from LaserDeMag.physics.model_3TM import get_material_properties
 from LaserDeMag.main import main
 from pint import Quantity
-from LaserDeMag.io.file_handler import save_simulation_parameters, load_simulation_parameters, save_simulation_report, save_simulation_to_excel
+from LaserDeMag.io.file_handler import save_simulation_parameters, load_simulation_parameters, save_simulation_report, save_simulation_to_excel, generate_graph
 
 if getattr(sys, 'frozen', False):
     sys.stdout = open(os.devnull, 'w')
@@ -434,16 +434,24 @@ class PlotCanvas(FigureCanvas):
             map_data = self.plot_data.get("maps", [])
 
             if map_data:
+                delays = map_data["delays"]
+                distances = map_data["distances"]
+                temp_map = map_data["temp_map"]
+
                 fig, axs = plt.subplots(3, 1, figsize=(6, 10))
-                for i, d in enumerate(map_data):
-                    axs[i].plot(d["x"], d["y"], linestyle='-', label=d.get("label", ""))
-                    axs[i].scatter(d["x"], d["y"], color=f'C{i}', s=30)
-                    axs[i].set_xlabel(d["xlabel"])
-                    axs[i].set_ylabel(d["ylabel"])
-                    axs[i].set_title(d["title"])
-                    axs[i].legend()
-                    axs[i].set_xlim(left=0, right=15.5)
-                    axs[i].set_xticks(np.arange(0, 15.5, 0.6))
+                labels = ["Electrons", "Phonons", "Magnetization"]
+
+                for i in range(3):
+                    pcm = axs[i].pcolormesh(
+                        distances, delays, temp_map[:, :, i],
+                        shading='auto',
+                        cmap='inferno' if i < 2 else 'viridis'
+                    )
+                    fig.colorbar(pcm, ax=axs[i])
+                    axs[i].set_xlabel("Distance [nm]")
+                    axs[i].set_ylabel("Delay [ps]")
+                    axs[i].set_title(f"Temperature Map {labels[i]}" if i < 2 else "Magnetization")
+
                 fig.tight_layout()
                 fig.subplots_adjust(hspace=0.4)
                 fig.savefig(os.path.join(directory, "plot_map.png"))
@@ -678,6 +686,7 @@ class CustomTitleBar(QWidget):
 
         self.info_button = QPushButton()
         self.info_button.setIcon(QIcon(resource_path('resources/images/info_light.png')))
+        self.info_button.setToolTip("Show info about this program")
         self.info_button.setIconSize(QSize(32, 32))
         self.info_button.setStyleSheet("border: none;")
         self.info_button.clicked.connect(self.info_clicked.emit)
@@ -685,16 +694,19 @@ class CustomTitleBar(QWidget):
         # Theme switch button
         self.theme_switch_btn = QToolButton(self)
         self.theme_switch_btn.setIcon(QIcon(resource_path('resources/images/light_ui.png')))
+        self.theme_switch_btn.setToolTip("Change of color theme")
         self.theme_switch_btn.clicked.connect(self.toggle_theme)
 
         # ENG button
         self.english_btn = QToolButton(self)
         self.english_btn.setIcon(QIcon(resource_path('resources/images/england.png')))
+        self.english_btn.setToolTip("Change language to English")
         self.english_btn.clicked.connect(lambda: self.window().update_language("English"))
 
         # PL button
         self.polish_btn = QToolButton(self)
         self.polish_btn.setIcon(QIcon(resource_path('resources/images/poland.png')))
+        self.polish_btn.setToolTip("Change language to Polish")
         self.polish_btn.clicked.connect(lambda: self.window().update_language("Polski"))
 
         # Min button
@@ -775,10 +787,10 @@ class CustomTitleBar(QWidget):
         Returns:
             None
         """
+        app = QApplication.instance()
         pal = QApplication.palette()
         bg = pal.color(QPalette.ColorRole.Window).name()
 
-        # Check the current theme and switch
         if pal.color(QPalette.ColorRole.Window).lightness() > 127:
             self.theme_changed.emit('dark')
             self.theme_switch_btn.setIcon(QIcon(resource_path('resources/images/dark_ui.png')))
@@ -793,6 +805,14 @@ class CustomTitleBar(QWidget):
             )
             self.setStyleSheet("background-color: #336699;")
             self.info_button.setIcon(QIcon(resource_path('resources/images/info_dark.png')))
+            app.setStyleSheet("""
+                QToolTip {
+                    color: white;  
+                    border: 1px solid black; 
+                    padding: 5px;
+                    font-size: 12pt;
+                }
+            """)
 
 
         else:
@@ -808,6 +828,14 @@ class CustomTitleBar(QWidget):
                 """
             )
             self.info_button.setIcon(QIcon(resource_path('resources/images/info_light.png')))
+            app.setStyleSheet("""
+                QToolTip {
+                    color: white;   
+                    border: 1px solid black; 
+                    padding: 5px;
+                    font-size: 12pt;
+                }
+            """)
 
     def window_state_changed(self, state):
         """
@@ -868,52 +896,42 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("LaserDeMag App")
         self.resize(1200, 900)
-        #with open("../resources/translations/translations.json", "r", encoding="utf-8") as f:
-        #    self.translations = json.load(f)
         with open(resource_path('resources/translations/translations.json'),"r", encoding="utf-8") as f:
             self.translations = json.load(f)
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         self.initial_pos = None
 
-        # Central widget and main layout
         central_widget = QWidget()
-        main_layout = QHBoxLayout()  # Use HBox layout to arrange the form and plot side by side
+        main_layout = QHBoxLayout()
 
         self.title_bar = CustomTitleBar(self)
         self.title_bar.info_clicked.connect(self.show_info_message)
-        self.title_bar.setFixedHeight(40)  # Set a fixed height for the title bar
-        # Control panel for form fields
+        self.title_bar.setFixedHeight(40)
         control_panel = QVBoxLayout()
         self.widgets = {}
 
-        # Title and description for the form
         header_layout = QHBoxLayout()
         self.logo_label = QLabel()
         self.logo_pixmap = QPixmap(resource_path('resources/images/logo_light.png')).scaled(90, 90, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
         self.logo_label.setPixmap(self.logo_pixmap)
-        #title_label = QLabel("LaserDeMag")
         self.widgets['title'] = QLabel("LaserDeMag")
         self.widgets['title'].setFont(QFont("Arial", 16, QFont.Weight.Bold))
 
-        # Dodanie elementów do headera
         header_layout.addWidget(self.logo_label)
         header_layout.addSpacing(10)
         header_layout.addWidget(self.widgets['title'])
         header_layout.setAlignment(self.widgets['title'], Qt.AlignmentFlag.AlignVCenter)
         header_layout.addStretch()
 
-        # Opis
         self.widgets['description'] = QLabel("This is a simulation application.")
         self.widgets['description'].adjustSize()
         self.widgets['description'].setWordWrap(True)
         self.widgets['description'].setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
         self.widgets['description'].setStyleSheet("color: gray; font-size: 12px; margin-top: -5px;")
 
-        # --- Dodanie do panelu ---
         control_panel.addLayout(header_layout)
         control_panel.addWidget(self.widgets['description'])
 
-        # Material Box
         material_box = QGroupBox("Material")
         material_layout = QGridLayout()
         self.material_type = QComboBox()
@@ -937,7 +955,6 @@ class MainWindow(QMainWindow):
         self.widgets['mag_moment_label'] = material_layout.itemAtPosition(3, 0).widget()
         material_box.setLayout(material_layout)
 
-        # Laser Box
         laser_box = QGroupBox("Laser")
         laser_layout = QGridLayout()
         self.power = QLineEdit()
@@ -956,7 +973,6 @@ class MainWindow(QMainWindow):
         self.widgets['wavelength_label'] = laser_layout.itemAtPosition(2, 0).widget()
         laser_box.setLayout(laser_layout)
 
-        # Others Box
         others_box = QGroupBox("Others")
         others_layout = QGridLayout()
         self.N = QLineEdit()
@@ -970,14 +986,13 @@ class MainWindow(QMainWindow):
         self.widgets['asf_label'] = others_layout.itemAtPosition(1, 0).widget()
         others_box.setLayout(others_layout)
 
-        # Add to widgets dictionary for future reference
         self.widgets['material_box'] = material_box
         self.widgets['laser_box'] = laser_box
         self.widgets['others_box'] = others_box
 
-        # Buttons for actions
         self.load_from_file_btn = QToolButton()
         self.load_from_file_btn.setIcon(QIcon(resource_path('resources/images/from_file_light.png')))
+        self.load_from_file_btn.setToolTip("Load data from file")
         self.widgets['clear_btn'] = QPushButton("Clear Fields")
         self.widgets['start_btn'] = QPushButton("Start Simulation")
         btn_layout = QHBoxLayout()
@@ -1004,26 +1019,35 @@ class MainWindow(QMainWindow):
         switch_plot_layout = QVBoxLayout()
         self.up_arrow_btn = QToolButton()
         self.up_arrow_btn.setIcon(QIcon(resource_path('resources/images/up_light.png')))
+        self.up_arrow_btn.setToolTip("Show next chart")
         self.down_arrow_btn = QToolButton()
         self.down_arrow_btn.setIcon(QIcon(resource_path('resources/images/down_light.png')))
+        self.down_arrow_btn.setToolTip("Show previous chart")
         switch_plot_layout.addWidget(self.up_arrow_btn)
         switch_plot_layout.addWidget(self.down_arrow_btn)
 
-        # Sekcja z przyciskami do pobierania danych
         download_layout = QVBoxLayout()
         self.download_current_btn = QToolButton()
         self.download_current_btn.setIcon(QIcon(resource_path('resources/images/download_photo_light.png')))
+        self.download_current_btn.setToolTip("Download current chart")
         self.download_current_btn.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.download_current_btn.setFixedSize(QSize(30, 30))
         self.download_current_btn.setIconSize(QSize(30, 30))
         self.download_current_btn.setStyleSheet("border: none; background-color: transparent; border-radius: 15px;")
         self.download_all_btn = QToolButton()
         self.download_all_btn.setIcon(QIcon(resource_path('resources/images/download_all_light.png')))
+        self.download_all_btn.setToolTip("Download all charts")
         self.download_data_btn = QToolButton()
         self.download_data_btn.setIcon(QIcon(resource_path('resources/images/download_data_light.png')))
+        self.download_data_btn.setToolTip("Download data charts")
         self.zoom_btn = QToolButton()
         self.zoom_btn.setIcon(QIcon(resource_path('resources/images/maxGraph_light.png')))
+        self.zoom_btn.setToolTip("Zoom to max graph")
+        self.generate_graph_btn = QToolButton()
+        self.generate_graph_btn.setIcon(QIcon(resource_path('resources/images/graph_light.png')))
+        self.generate_graph_btn.setToolTip("Generate graphs based on Excel data")
 
+        download_layout.addWidget(self.generate_graph_btn)
         download_layout.addWidget(self.download_current_btn)
         download_layout.addWidget(self.download_all_btn)
         download_layout.addWidget(self.download_data_btn)
@@ -1076,6 +1100,7 @@ class MainWindow(QMainWindow):
         self.download_all_btn.clicked.connect(self.download_all_plots)
         self.download_data_btn.clicked.connect(self.download_data)
         self.zoom_btn.clicked.connect(self.zoom_plot)
+        self.generate_graph_btn.clicked.connect(generate_graph)
 
     def show_info_message(self):
         """
@@ -1310,6 +1335,7 @@ class MainWindow(QMainWindow):
         self.download_all_btn.setIcon(QIcon(resource_path('resources/images/download_all_dark.png')))
         self.load_from_file_btn.setIcon(QIcon(resource_path('resources/images/from_file_dark.png')))
         self.image_path = resource_path('resources/images/loading_dark.png')
+        self.generate_graph_btn.setIcon(QIcon(resource_path('resources/images/graph_dark.png')))
 
         for le in self.centralWidget().findChildren(QLineEdit):
             le.setStyleSheet("""
@@ -1405,9 +1431,19 @@ class MainWindow(QMainWindow):
         self.download_all_btn.setIcon(QIcon(resource_path('resources/images/download_all_light.png')))
         self.load_from_file_btn.setIcon(QIcon(resource_path('resources/images/from_file_light.png')))
         self.image_path = resource_path('resources/images/loading_light.png')
+        self.generate_graph_btn.setIcon(QIcon(resource_path('resources/images/graph_light.png')))
 
         self.widgets['clear_btn'].setStyleSheet("background-color: #ddd; color: black; border-radius: 5px;")
         self.widgets['start_btn'].setStyleSheet("background-color: #ddd; color: black; border-radius: 5px;")
+
+        app.setStyleSheet("""
+            QToolTip {  
+                background-color: white; 
+                border: 1px solid black; 
+                padding: 5px;
+                font-size: 12pt;
+            }
+        """)
 
         for cb in self.findChildren(QComboBox):
             cb.setStyleSheet("""
