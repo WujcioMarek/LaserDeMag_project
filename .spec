@@ -11,7 +11,7 @@ a = Analysis(
     binaries=[],
     datas=[
         ('LaserDeMag/resources','resources'),
-        ('C:/Users/Marek/PycharmProjects/LaserDeMag_project/.venv/Lib/site-packages/udkm1Dsim/parameters', 'udkm1Dsim/parameters'),
+        ('C:/Users/Mareczek/Desktop/LaserDeMag_project/.venv/Lib/site-packages/udkm1Dsim/parameters', 'udkm1Dsim/parameters'),
     ],
     hiddenimports=collect_submodules('udkm1Dsim'),
     hookspath=[],
