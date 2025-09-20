@@ -25,6 +25,61 @@ ALLOWED_MATERIALS = ["Ni"]
 
 
 def generate_graph():
+    """
+    Uruchamia graficzny interfejs do generowania wykresów z plików Excel.
+
+    Funkcja otwiera okno aplikacji, w którym użytkownik może:
+      - wybrać plik Excel (.xlsx, .xls),
+      - wskazać arkusze do analizy,
+      - wygenerować i zapisać wykresy na podstawie danych z tych arkuszy.
+
+    Wykresy generowane są dla zdefiniowanych kolumn (np. elektronów, fononów, magnetyzacji),
+    a następnie zapisywane w tym samym katalogu co wybrany plik Excel,
+    z predefiniowanymi nazwami plików PNG. Każdy wykres zawiera dane z wielu arkuszy
+    w formie osobnych linii z legendą.
+
+    Obsługiwane są sytuacje wyjątkowe:
+      - brak wyboru pliku lub arkusza,
+      - błędy przy odczycie arkuszy,
+      - błędy przy generowaniu wykresów.
+    Komunikaty błędów i sukcesów wyświetlane są w oknach dialogowych.
+
+    Args:
+        Brak (funkcja nie przyjmuje parametrów, wszystkie dane wybierane są przez GUI).
+
+    Returns:
+        None
+
+    Raises:
+        Exception: Gdy wystąpi błąd przy odczytywaniu arkuszy lub generowaniu wykresów.
+
+    ---
+    Launches a graphical interface for generating plots from Excel files.
+
+    The function opens a GUI window where the user can:
+      - select an Excel file (.xlsx, .xls),
+      - choose sheets to analyze,
+      - generate and save plots based on the selected sheets.
+
+    Plots are created for predefined columns (e.g., electrons, phonons, magnetization)
+    and saved as PNG files in the same directory as the chosen Excel file.
+    Each plot combines data from multiple sheets, displayed as separate lines with legends.
+
+    The function handles exceptional situations:
+      - no file or sheet selected,
+      - errors reading sheets,
+      - errors generating plots.
+    All errors and success messages are shown in dialog boxes.
+
+    Args:
+        None (the function takes no parameters; all inputs are provided through the GUI).
+
+    Returns:
+        None
+
+    Raises:
+        Exception: If an error occurs while reading sheets or generating plots.
+    """
     def select_file():
         filepath = filedialog.askopenfilename(filetypes=[("Excel files", "*.xlsx *.xls")])
         if not filepath:

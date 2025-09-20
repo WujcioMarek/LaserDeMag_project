@@ -1005,13 +1005,11 @@ class MainWindow(QMainWindow):
         control_panel.addWidget(others_box)
         control_panel.addLayout(btn_layout)
 
-        # Plot Layout (on the right side of the form)
         self.plot_frame = QFrame()
         self.plot_frame.setFrameShape(QFrame.Shape.StyledPanel)
         plot_layout = QVBoxLayout(self.plot_frame)
         self.plot_canvas = PlotCanvas(self.plot_frame)
         plot_layout.addWidget(self.plot_canvas)
-
 
         right_widget = QWidget()
         right_layout = QVBoxLayout()
@@ -1064,23 +1062,20 @@ class MainWindow(QMainWindow):
         control_panel_widget.setFixedWidth(320)
 
         splitter = QSplitter(Qt.Orientation.Horizontal)
-        splitter.addWidget(control_panel_widget)  # Left side: control panel with form elements
-        splitter.addWidget(self.plot_frame)  # Right side: plot area
+        splitter.addWidget(control_panel_widget)
+        splitter.addWidget(self.plot_frame)
         splitter.addWidget(right_widget)
-        splitter.setStretchFactor(0, 1)  # Left part should not stretch
-        splitter.setStretchFactor(1, 2)  # Right part (plot) should take more space
-        splitter.setStretchFactor(2, 1)  # Right part (plot) should take more space
+        splitter.setStretchFactor(0, 1)
+        splitter.setStretchFactor(1, 2)
+        splitter.setStretchFactor(2, 1)
 
         main_layout.addWidget(splitter)
         central_widget.setLayout(main_layout)
 
-
-        # Creating a main layout and adding the title bar at the top
         title_bar_layout = QVBoxLayout()
-        title_bar_layout.addWidget(self.title_bar)  # Add the title bar
-        title_bar_layout.addWidget(central_widget)  # Add
+        title_bar_layout.addWidget(self.title_bar)
+        title_bar_layout.addWidget(central_widget)
 
-        # Set the main layout of the window
         main_container = QWidget()
         main_container.setLayout(title_bar_layout)
         self.setCentralWidget(main_container)
@@ -1089,7 +1084,6 @@ class MainWindow(QMainWindow):
 
         self.update_language("English")
 
-        # Connect buttons to functions
         self.load_from_file_btn.clicked.connect(self.load_user_data)
         self.widgets['clear_btn'].clicked.connect(self.clear_fields)
         self.widgets['start_btn'].clicked.connect(self.start_simulation)
